@@ -1,0 +1,11 @@
+Verifying Port Authorities Configuration...
+
+Checking 인천항만공사...
+  Notice URL: https://www.icpa.or.kr/article/list.do?boardKey=213&menuKey=397&currentPageNo=1
+  Bid URL: None
+  -> Will SKIP Bid Board for 인천항만공사
+
+Checking 울산항만공사...
+  Notice URL: https://www.upa.or.kr/portal/board/post/list.do?bcIdx=676&mid=0601000000
+  Bid URL: https://www.upa.or.kr/portal/board/post/list.do?bcIdx=685&mid=0605080100
+  -> Will crawl Bid Board for 울산항만공사

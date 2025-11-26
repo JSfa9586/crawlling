@@ -1,0 +1,60 @@
+# Vercel 배포 시 무시할 파일
+
+# 문서 (배포에 불필요)
+README.md
+QUICK_START.md
+QUICK_START_KO.md
+DESIGN_GUIDE.md
+FINAL_REPORT.md
+IMPLEMENTATION_REPORT.md
+ACCESSIBILITY_CHECKLIST.md
+VERCEL_ENV_SETUP.md
+docs/
+.github/
+
+# 환경 변수 및 개발 설정
+.env.local
+.env.local.example
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.eslintrc.json
+.prettierrc.json
+.gitignore
+.gitattributes
+
+# 테스트 및 디버그
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+.jest/
+
+# 임시 파일 및 캐시
+.next/cache
+.turbo
+node_modules/.cache
+*.log
+logs/
+.DS_Store
+
+# Python 관련 (크롤러)
+*.py
+*.pyc
+__pycache__/
+venv/
+.venv/
+
+# 크롤링 데이터
+*.csv
+*.xlsx
+crawled_data/
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

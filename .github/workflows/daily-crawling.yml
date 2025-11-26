@@ -1,0 +1,193 @@
+name: Marine Ministry Crawling (4x Daily)
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable debug mode'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+  schedule:
+    - cron: '0 23 * * *'  # 08:00 KST (UTC-1일 23:00)
+    - cron: '0 2 * * *'   # 11:00 KST
+    - cron: '0 7 * * *'   # 16:00 KST
+    - cron: '0 11 * * *'  # 20:00 KST
+
+  push:
+    branches:
+      - main
+    paths:
+      - 'marine_ministry_crawler_final.py'
+      - 'upload_to_gsheet.py'
+      - 'requirements.txt'
+      - '.github/workflows/daily-crawling.yml'
+
+env:
+  PYTHON_VERSION: '3.11'
+  TZ: 'Asia/Seoul'
+
+jobs:
+  crawl-and-upload:
+    name: Crawl and Upload to Google Sheets
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Verify dependencies
+        run: |
+          echo "=== Python Version ==="
+          python --version
+          echo ""
+          echo "=== Installed Packages ==="
+          pip list
+
+      - name: Create Google credentials
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+        run: |
+          echo "$GOOGLE_CREDENTIALS_JSON" | jq empty || (echo "Invalid JSON format" && exit 1)
+          echo "$GOOGLE_CREDENTIALS_JSON" > gen-lang-client-0556505482-e847371ea87e.json
+          chmod 600 gen-lang-client-0556505482-e847371ea87e.json
+          echo "Credentials file created"
+
+      - name: Run EIAA crawler
+        id: eiaa_crawler
+        timeout-minutes: 10
+        env:
+          EIAA_USER_ID: ${{ secrets.EIAA_USER_ID }}
+          EIAA_PASSWORD: ${{ secrets.EIAA_PASSWORD }}
+        run: |
+          echo "=== Starting EIAA Crawler ==="
+          python eiaa_crawler.py
+          echo "EIAA Crawler completed"
+        continue-on-error: true
+
+      - name: Run crawler
+        id: crawler
+        timeout-minutes: 35
+        run: |
+          echo "=== Starting Crawler ==="
+          echo "Start time: $(date '+%Y-%m-%d %H:%M:%S')"
+
+          if [ "${{ github.event.inputs.debug_mode }}" == "true" ]; then
+            echo "Debug mode enabled"
+            python -u marine_ministry_crawler_final.py
+          else
+            python marine_ministry_crawler_final.py
+          fi
+
+          echo "End time: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "Crawler completed"
+        continue-on-error: false
+
+      - name: Check crawling results
+        id: check_results
+        run: |
+          echo "=== Checking Results ==="
+
+          CSV_FILE=$(ls marine_ministry_posts_*.csv 2>/dev/null | head -n 1)
+          if [ -z "$CSV_FILE" ]; then
+            echo "CSV file not found"
+            exit 1
+          fi
+
+          echo "File name: $CSV_FILE"
+          echo "File size: $(du -h $CSV_FILE | cut -f1)"
+
+          COUNT=$(($(wc -l < $CSV_FILE) - 1))
+          echo "Records collected: $COUNT"
+
+          echo "CRAWLED_COUNT=$COUNT" >> $GITHUB_ENV
+          echo "CSV_FILENAME=$CSV_FILE" >> $GITHUB_ENV
+
+          if [ $COUNT -eq 0 ]; then
+            echo "Warning: No data collected"
+          else
+            echo "Data collection successful"
+          fi
+
+      - name: Upload to Google Sheets
+        id: upload
+        timeout-minutes: 10
+        env:
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+        run: |
+          echo "=== Uploading to Google Sheets ==="
+          echo "Spreadsheet ID: ${SPREADSHEET_ID:0:10}..."
+
+          python upload_to_gsheet.py
+
+          echo "Upload completed"
+        continue-on-error: false
+
+      - name: Cleanup credentials
+        if: always()
+        run: |
+          echo "=== Cleaning up credentials ==="
+          rm -f gen-lang-client-0556505482-e847371ea87e.json
+          rm -f gen-lang-client-*.json
+          git status --short
+          echo "Cleanup completed"
+
+      - name: Upload crawling results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawling-results-${{ github.run_number }}
+          path: |
+            marine_ministry_posts_*.csv
+            marine_ministry_posts_*.xlsx
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload error logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-logs-${{ github.run_number }}
+          path: |
+            *.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== Execution Summary ==="
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run number: ${{ github.run_number }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Crawler result: ${{ steps.crawler.outcome }}"
+          echo "Upload result: ${{ steps.upload.outcome }}"
+          echo "Records collected: ${{ env.CRAWLED_COUNT }}"
+          echo ""
+          echo "Artifacts download:"
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
