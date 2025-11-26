@@ -47,9 +47,19 @@ class EIAACrawler:
             'userpw': self.password,
         }
         
-        # Referer 헤더 추가 (보안 체크 우회용)
+        # Referer 및 추가 헤더 설정 (보안 체크 우회용)
         headers = self.headers.copy()
         headers['Referer'] = login_page_url
+        headers['Origin'] = self.base_url
+        headers['Host'] = 'www.eiaa.or.kr'
+        headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+        headers['Accept-Language'] = 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+        headers['Cache-Control'] = 'max-age=0'
+        headers['Upgrade-Insecure-Requests'] = '1'
+        headers['Sec-Fetch-Site'] = 'same-origin'
+        headers['Sec-Fetch-Mode'] = 'navigate'
+        headers['Sec-Fetch-User'] = '?1'
+        headers['Sec-Fetch-Dest'] = 'document'
         
         # 로그인 요청
         try:
