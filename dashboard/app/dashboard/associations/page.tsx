@@ -169,6 +169,17 @@ export default function AssociationsDashboard() {
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
+    const quickFilters = [
+        { label: '공지사항', value: '공지사항' },
+        { label: '행사안내', value: '행사안내' },
+        { label: '경조사', value: '경조사' },
+        { label: '입찰정보', value: '입찰정보' },
+    ];
+
+    const relatedLinks = [
+        { name: '(사)환경영향평가협회', url: 'https://www.eiaa.or.kr/' },
+    ];
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8 animate-fadeIn">
@@ -177,9 +188,8 @@ export default function AssociationsDashboard() {
                     <p className="text-gray-600">환경영향평가협회 등 유관기관 공지사항</p>
                 </div>
 
-                {/* 1-Column Layout for full width since no sidebar */}
-                <div className="grid grid-cols-1 gap-6">
-                    <main className="space-y-6" aria-label="대시보드 메인 컨텐츠">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <main className="lg:col-span-3 space-y-6" aria-label="대시보드 메인 컨텐츠">
                         {/* StatCard 3개 그리드 (실행 시간 제외) */}
                         <section aria-label="통계 요약" className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <StatCard
@@ -213,7 +223,10 @@ export default function AssociationsDashboard() {
 
                         {/* 필터바 */}
                         <section aria-label="검색 필터">
-                            <FilterBar onFilter={handleFilter} />
+                            <FilterBar
+                                onFilter={handleFilter}
+                                quickFilters={quickFilters}
+                            />
                         </section>
 
                         {/* 데이터 테이블 */}
@@ -241,6 +254,28 @@ export default function AssociationsDashboard() {
                             </section>
                         )}
                     </main>
+
+                    {/* 사이드바 (관련기관 링크) */}
+                    <aside className="lg:col-span-1 space-y-6">
+                        <div className="bg-white rounded-lg shadow p-6 sticky top-6">
+                            <h2 className="text-lg font-semibold text-gray-900 mb-4">관련기관 링크</h2>
+                            <ul className="space-y-3">
+                                {relatedLinks.map((link) => (
+                                    <li key={link.name}>
+                                        <a
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center text-gray-600 hover:text-blue-600 transition-colors group"
+                                        >
+                                            <span className="w-2 h-2 bg-gray-300 rounded-full mr-3 group-hover:bg-blue-500 transition-colors" />
+                                            {link.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </aside>
                 </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 
 interface FilterBarProps {
   onFilter: (filters: FilterState) => void;
+  quickFilters?: { label: string; value: string }[];
 }
 
 export interface FilterState {
@@ -14,7 +15,7 @@ export interface FilterState {
   검색어?: string;
 }
 
-export function FilterBar({ onFilter }: FilterBarProps) {
+export function FilterBar({ onFilter, quickFilters }: FilterBarProps) {
   const [filters, setFilters] = useState<FilterState>({});
 
   const handleChange = (field: keyof FilterState, value: string) => {
@@ -291,25 +292,38 @@ export function FilterBar({ onFilter }: FilterBarProps) {
               📋 게시판 빠른 선택
             </label>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setBoardPreset('공지사항')}
-                className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
-              >
-                공지사항
-              </button>
-              <button
-                onClick={() => setBoardPreset('입찰')}
-                className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
-              >
-                입찰
-              </button>
-
-              <button
-                onClick={() => setBoardPreset('인사')}
-                className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
-              >
-                인사
-              </button>
+              {quickFilters ? (
+                quickFilters.map((filter) => (
+                  <button
+                    key={filter.value}
+                    onClick={() => setBoardPreset(filter.value)}
+                    className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
+                  >
+                    {filter.label}
+                  </button>
+                ))
+              ) : (
+                <>
+                  <button
+                    onClick={() => setBoardPreset('공지사항')}
+                    className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
+                  >
+                    공지사항
+                  </button>
+                  <button
+                    onClick={() => setBoardPreset('입찰')}
+                    className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
+                  >
+                    입찰
+                  </button>
+                  <button
+                    onClick={() => setBoardPreset('인사')}
+                    className="px-3 py-1.5 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors font-medium border border-green-200"
+                  >
+                    인사
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -180,7 +180,7 @@ class EIAACrawler:
         
         for i, link_info in enumerate(title_links):
             # 중복 제거 (같은 제목이 여러 번 나타날 수 있음)
-            if any(p['title'] == link_info['title'] and p['url'] == link_info['url'] for p in posts):
+            if any(p['제목'] == link_info['title'] and p['링크'] == full_url for p in posts):
                 continue
             
             # 날짜 매칭 (순서대로 매칭, 부족하면 '날짜없음')
@@ -203,10 +203,12 @@ class EIAACrawler:
                     full_url = f"{self.base_url}/{full_url}"
             
             posts.append({
-                'board': board_name,
-                'title': link_info['title'],
-                'date': date,
-                'url': full_url
+                '기관구분': '관련협회',
+                '기관명': '(사)환경영향평가협회',
+                '게시판': board_name,
+                '제목': link_info['title'],
+                '작성일': date,
+                '링크': full_url
             })
         
         return posts
@@ -218,7 +220,8 @@ class EIAACrawler:
         
         # utf-8-sig: 엑셀에서 한글 깨짐 방지
         with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
-            writer = csv.DictWriter(f, fieldnames=['board', 'title', 'date', 'url'])
+            fieldnames = ['기관구분', '기관명', '게시판', '제목', '작성일', '링크']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(data)
         

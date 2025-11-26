@@ -303,9 +303,16 @@ def main():
         'GOOGLE_CREDENTIALS_FILE',
         'gen-lang-client-0556505482-e847371ea87e.json'  # GitHub Actions 환경용
     )
-    # 로컬 환경 체크
+    # 로컬 환경 체크: 기본 파일이 없으면 현재 폴더에서 검색
     if not os.path.exists(CREDENTIALS_FILE):
-        CREDENTIALS_FILE = r'C:\AI\251118\gen-lang-client-0556505482-e847371ea87e.json'
+        import glob
+        json_files = glob.glob('gen-lang-client-*.json')
+        if json_files:
+            CREDENTIALS_FILE = json_files[0]
+            print(f"[INFO] 발견된 인증 파일 사용: {CREDENTIALS_FILE}")
+        else:
+            # 백업 경로 체크 (기존 코드 유지)
+            CREDENTIALS_FILE = r'C:\AI\251118\gen-lang-client-0556505482-e847371ea87e.json'
 
     SPREADSHEET_ID = os.getenv(
         'SPREADSHEET_ID',
