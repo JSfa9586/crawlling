@@ -78,17 +78,7 @@ jobs:
           chmod 600 gen-lang-client-0556505482-e847371ea87e.json
           echo "Credentials file created"
 
-      - name: Run EIAA crawler
-        id: eiaa_crawler
-        timeout-minutes: 10
-        env:
-          EIAA_USER_ID: ${{ secrets.EIAA_USER_ID }}
-          EIAA_PASSWORD: ${{ secrets.EIAA_PASSWORD }}
-        run: |
-          echo "=== Starting EIAA Crawler ==="
-          python eiaa_crawler.py
-          echo "EIAA Crawler completed"
-        continue-on-error: true
+
 
       - name: Run crawler
         id: crawler
