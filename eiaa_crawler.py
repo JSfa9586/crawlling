@@ -68,8 +68,10 @@ class EIAACrawler:
                 # 로그인 여부 확실히 확인하기 위해 마이페이지 등 접근 시도
                 return self.check_login_status()
             else:
-                print("✗ 로그인 실패! 응답 내용을 확인하세요.")
-                # print(response.text[:500]) 
+                print(f"✗ 로그인 실패! Status Code: {response.status_code}")
+                # 한글 깨짐 방지 처리
+                response.encoding = 'utf-8'
+                print(f"응답 내용(일부): {response.text[:500]}")
                 return False
         except Exception as e:
             print(f"로그인 요청 중 오류 발생: {e}")
