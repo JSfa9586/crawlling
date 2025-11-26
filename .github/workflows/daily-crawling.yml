@@ -23,6 +23,7 @@ on:
       - main
     paths:
       - 'marine_ministry_crawler_final.py'
+      - 'eiaa_crawler.py'
       - 'upload_to_gsheet.py'
       - 'requirements.txt'
       - '.github/workflows/daily-crawling.yml'
