@@ -198,14 +198,23 @@ class GoogleSheetsUploader:
             else:
                 new_df = df.copy()
                 duplicate_count = 0
-
+            
             if new_df.empty:
                 print(f"[INFO] 새로운 데이터가 없습니다 (중복: {duplicate_count}건)")
                 return 0, duplicate_count
-
+            
             # 데이터 추가
             # DataFrame을 리스트로 변환
             values = new_df.values.tolist()
+
+            # 시트가 비어있거나 헤더가 없는 경우 헤더 추가
+            if existing_df.empty or len(existing_df.columns) == 0:
+                print("[INFO] 시트가 비어있어 헤더를 먼저 추가합니다.")
+                headers = list(df.columns)
+                # 헤더가 이미 있는지 확인 (첫 번째 행 읽기)
+                first_row = worksheet.row_values(1)
+                if not first_row:
+                    worksheet.append_row(headers)
 
             # 배치로 추가 (더 빠름)
             worksheet.append_rows(values)

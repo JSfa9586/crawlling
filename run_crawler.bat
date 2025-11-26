@@ -7,6 +7,11 @@ echo [환경영향평가협회 크롤링 및 업로드 - 로컬 실행]
 echo ========================================================
 
 :: 1. 환경 변수 설정
+:: 자동 로그인을 원하시면 아래에 아이디와 비밀번호를 입력하세요 (등호 뒤에 입력)
+set EIAA_USER_ID=seco1229
+set EIAA_PASSWORD=seco9308
+
+:: 입력된 값이 없으면 사용자에게 물어봄
 if "%EIAA_USER_ID%"=="" set /p EIAA_USER_ID="EIAA 아이디를 입력하세요: "
 if "%EIAA_PASSWORD%"=="" set /p EIAA_PASSWORD="EIAA 비밀번호를 입력하세요: "
 

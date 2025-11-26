@@ -13,6 +13,7 @@ import csv
 import time
 from datetime import datetime
 import os
+import re  # 정규표현식 모듈 추가
 
 class EIAACrawler:
     def __init__(self, user_id, password):
@@ -141,60 +142,54 @@ class EIAACrawler:
         
         print(f"\n총 {len(all_posts)}개 게시글 수집 완료!\n")
         return all_posts
-    
     def extract_posts(self, soup, board_name):
-        """게시글 정보 추출"""
+        """게시글 정보 추출 (하이브리드 방식: 링크 -> 부모 행 -> 정규표현식 날짜 검색)"""
         posts = []
         
-        # 게시글 제목이 있는 링크 찾기 (href에 "cf=view" 포함)
-        # 브라우저 분석 결과: <a href="?cf=view&seq=...">제목</a> 형태
+        # 1. 먼저 게시글 링크를 모두 찾습니다.
+        links = []
+        for a in soup.find_all('a', href=True):
+            if 'cf=view' in a['href'] or 'seq=' in a['href']:
+                title = a.get_text(strip=True)
+                if title and len(title) > 2:
+                    links.append(a)
         
-        title_links = []
-        for link in soup.find_all('a', href=True):
-            if 'cf=view' in link['href'] or 'seq=' in link['href']:
-                title_text = link.get_text(strip=True)
-                # 빈 제목이나 너무 짧은 제목 제외
-                if title_text and len(title_text) > 2:
-                    title_links.append({
-                        'title': title_text,
-                        'url': link['href']
-                    })
+        print(f"[DEBUG] '{board_name}' - 발견된 링크 수: {len(links)}")
         
-        # 날짜 추출 (YYYY.MM.DD 형식)
-        # 브라우저 분석 결과: <td>2025.11.19</td> 형태
-        dates = []
-        for elem in soup.find_all(['td', 'span', 'div']): # td가 가장 유력하지만 범용성 유지
-            text = elem.get_text(strip=True)
-            # 날짜 형식 매칭 (예: 2025.11.19)
-            if text and len(text) == 10 and text.count('.') == 2:
-                try:
-                    # 날짜 유효성 검사
-                    datetime.strptime(text, '%Y.%m.%d')
-                    dates.append(text)
-                except:
-                    continue
-        
-        # 제목과 날짜 매칭
-        # 보통 제목과 날짜는 같은 행(tr)에 있거나 순서대로 나타남
-        # 여기서는 리스트 순서대로 매칭하는 전략 사용 (개수가 맞지 않을 수 있음에 유의)
-        
-        for i, link_info in enumerate(title_links):
-            # 중복 제거 (같은 제목이 여러 번 나타날 수 있음)
-            if any(p['제목'] == link_info['title'] and p['링크'] == full_url for p in posts):
-                continue
+        for i, link in enumerate(links):
+            title = link.get_text(strip=True)
+            href = link['href']
             
-            # 날짜 매칭 (순서대로 매칭, 부족하면 '날짜없음')
-            # 주의: 공지사항(상단 고정) 등으로 인해 날짜 개수와 제목 개수가 다를 수 있음
-            # 보통 날짜가 제목보다 뒤에 나오거나 같은 수로 나옴
-            date = dates[i] if i < len(dates) else "날짜없음"
+            # 날짜 추출 (Regex로 행 전체에서 검색)
+            date = "날짜없음"
+            parent_row = link.find_parent('tr')
             
-            # 전체 URL 구성
-            full_url = link_info['url']
+            # TR이 없으면 DIV 기반 레이아웃인지 확인 (rt-rwd-list-con)
+            if not parent_row:
+                parent_row = link.find_parent('div', class_=re.compile('rt-rwd-list-con'))
+            
+            if parent_row:
+                row_text = parent_row.get_text(strip=True)
+                
+                # 디버깅: 첫 3개 행의 텍스트 출력 (문제 해결용)
+                if i < 3:
+                     print(f"[DEBUG] Row {i} Text: {row_text[:100]}...") # 너무 길면 자름
+
+                # 1. YYYY.MM.DD 또는 YYYY-MM-DD 패턴 검색 (가장 강력함)
+                # \s*는 구분자 사이에 공백이 있어도 허용
+                match = re.search(r'(\d{4}[\.\-]\s*\d{1,2}[\.\-]\s*\d{1,2})', row_text)
+                if match:
+                    date = match.group(1).replace(' ', '') # 공백 제거
+                else:
+                    # 2. YY.MM.DD 패턴 검색 (예비용)
+                    match = re.search(r'(\d{2}[\.\-]\s*\d{1,2}[\.\-]\s*\d{1,2})', row_text)
+                    if match:
+                         date = match.group(1).replace(' ', '')
+
+            # URL 구성
+            full_url = href
             if not full_url.startswith('http'):
                 if full_url.startswith('?'):
-                    # 현재 게시판 경로 + 쿼리스트링
-                    # board_url에서 파일명 부분만 추출하거나, 단순히 base_url + board_path + query
-                    # 여기서는 간단히 board_name_to_path 사용
                     board_path = board_name_to_path(board_name)
                     full_url = f"{self.base_url}{board_path}{full_url}"
                 elif full_url.startswith('/'):
@@ -202,15 +197,20 @@ class EIAACrawler:
                 else:
                     full_url = f"{self.base_url}/{full_url}"
             
+            # 중복 제거
+            if any(p['링크'] == full_url for p in posts):
+                continue
+                
             posts.append({
                 '기관구분': '관련협회',
                 '기관명': '(사)환경영향평가협회',
                 '게시판': board_name,
-                '제목': link_info['title'],
-                '작성일': date,
+                '제목': title,
+                '등록일': date,
                 '링크': full_url
             })
-        
+            
+        print(f"[DEBUG] '{board_name}' - 추출된 게시글 수: {len(posts)}")
         return posts
     
     def save_to_csv(self, data, filename=None):
@@ -220,7 +220,8 @@ class EIAACrawler:
         
         # utf-8-sig: 엑셀에서 한글 깨짐 방지
         with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
-            fieldnames = ['기관구분', '기관명', '게시판', '제목', '작성일', '링크']
+            # 헤더 변경: 작성일 -> 등록일
+            fieldnames = ['기관구분', '기관명', '게시판', '제목', '등록일', '링크']
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(data)

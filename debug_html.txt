@@ -1,0 +1,982 @@
+<div class="rt-rwd-list-wrap">
+ <div class="rt-rwd-list-con rt-rwd-list-con-head rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    번호
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <p>
+    제목
+   </p>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      작성자
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-day">
+     <p>
+      등록일
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      조회수
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1170&amp;pg=1">
+    [개최] 					2025 환경영향평가협회 전문위원회 성과발표회 개최 알림
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+   <span>
+    <img alt="새로 등록된 글" src="/app/rtboard/assets/img/board_new.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.19
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      351
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1168&amp;pg=1">
+    [교육] 					2026년 환경영향평가기술자 실무역량교육 수요조사 협조 요청
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+   <span>
+    <img alt="새로 등록된 글" src="/app/rtboard/assets/img/board_new.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.17
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      321
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1156&amp;pg=1">
+    [법개정] 					환경영향평가법 시행령 및 규칙 일부개정[25.10.23시행]
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.05
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      308
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1139&amp;pg=1">
+    [알림] 					「2025 환경영향평가 정책워크숍」 개최 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.10.13
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      915
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1133&amp;pg=1">
+    [법개정] 					환경영향평가등의 대행비용 산정기준 [환경부고시 제2025-144호, 25. 9. 19., 일부개정.]
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.09.24
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      2028
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1108&amp;pg=1">
+    [안내] 					환경영향평가 대행 실적보고 신고기한 준수 당부 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.07.14
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      379
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1106&amp;pg=1">
+    [안내] 					「환경영향평가 성과평가 및 발표회(워크숍)」 개최계획
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.07.11
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      306
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1103&amp;pg=1">
+    [알림] 					환경영향평가법 시행령 개정 전 약식전략환경영향평가의 평가절차 개선·시행
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.07.04
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      448
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1094&amp;pg=1">
+    [알림] 					환경영향평가 대체서식지 조성관리 업무처리지침 제정 알림[환경부]
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.06.20
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      370
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=611&amp;pg=1">
+    [안내] 					측정대행업체 신고 관련 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2022.11.21
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      6644
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=230&amp;pg=1">
+    [안내] 					특허/실용신안/연구보고서 인정 신청 시 유의사항 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2020.12.24
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      7916
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-con-body rt-rwd-list-sign-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    공지
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=6&amp;pg=1">
+    [안내] 					환경영향평가협회 수수료 규정 시행 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2016.04.25
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      7623
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    326
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1166&amp;pg=1">
+    [안내] 						2025년 하반기 기후변화영향평가 이해관계자 교육 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.14
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      459
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    325
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1164&amp;pg=1">
+    [요청] 						(한국환경산업기술원) '지역 환경기술 혁신 프로젝트(가칭)' 기술수요조사 협조 요청
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.11
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      246
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    324
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1158&amp;pg=1">
+    [요청] 						(한강유역환경청) 심층·신속평가 등 환경평가제도 운영방안 설명회 개최 알림 및 참석 요청
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.07
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      673
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    323
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1157&amp;pg=1">
+    [요청] 						(연장)제안서 평가위원(후보자) 추천 요청(SH형 생물다양성 전략 및 가이드라인 수립 용역)
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.05
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      140
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    322
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1153&amp;pg=1">
+    [안내] 						[KEI] "2025 KEI 환경평가본부 성과발표회" 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.11.03
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      182
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    321
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1151&amp;pg=1">
+    [안내] 						환경분야 범부처 평가위원 후보단 신규 신청 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.10.29
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      279
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    320
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1143&amp;pg=1">
+    [안내] 						기후변화영향평가 교육 사전 수요조사 안내
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.10.17
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      417
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    319
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1142&amp;pg=1">
+    [개최] 						[KSEIA]환경사회 세이프가드에 관한 국제 심포지엄 개최(10/20일 오후 2시)
+   </a>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.10.13
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      68
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    318
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1137&amp;pg=1">
+    [안내] 						2025년도 엔지니어링 표준품셈 온라인 공청회 개최 안내(기후변화영향평가 분야, ~10.20(월)까지)
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.10.01
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      221
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="rt-rwd-list-con rt-rwd-list-norm-con clearfix">
+  <div class="rt-rwd-list-num">
+   <p>
+    317
+   </p>
+  </div>
+  <div class="rt-rwd-list-subject">
+   <a href="?cf=view&amp;seq=1136&amp;pg=1">
+    [안내] 						제23차 개발사업 공종의 이해 세미나 안내 (10/24(금) 2시, 삼경교육센터)
+   </a>
+   <span>
+    <img alt="첨부파일" src="/app/rtboard/theme/info/user/files/ico_file.png"/>
+   </span>
+  </div>
+  <div class="rt-rwd-list-type-wrap clearfix">
+   <div class="rt-rwd-list-type-con clearfix">
+    <div class="rt-rwd-list-type rt-rwd-list-type-writer">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       작성자 :
+      </span>
+      (사)환경영향평가협회
+     </p>
+    </div>
+    <div class="rt-rwd-list-type">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       등록일 :
+      </span>
+      2025.09.29
+     </p>
+    </div>
+    <div class="rt-rwd-list-type rt-rwd-list-type-date">
+     <p>
+      <span class="rt-rwd-list-type-m">
+       조회수 :
+      </span>
+      131
+     </p>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
