@@ -37,7 +37,7 @@ jobs:
   crawl-and-upload:
     name: Crawl and Upload to Google Sheets
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -81,7 +81,7 @@ jobs:
 
       - name: Run Marine Ministry crawler
         id: marine_crawler
-        timeout-minutes: 15
+        timeout-minutes: 45
         run: |
           echo "=== Starting Marine Ministry Crawler ==="
           if [ "${{ github.event.inputs.debug_mode }}" == "true" ]; then
@@ -91,16 +91,7 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Run EIAA crawler
-        id: eiaa_crawler
-        timeout-minutes: 10
-        env:
-          EIAA_USER_ID: ${{ secrets.EIAA_USER_ID }}
-          EIAA_PASSWORD: ${{ secrets.EIAA_PASSWORD }}
-        run: |
-          echo "=== Starting EIAA Crawler ==="
-          python eiaa_crawler.py
-        continue-on-error: true
+
 
       - name: Run MOLEG crawler
         id: moleg_crawler
@@ -121,11 +112,7 @@ jobs:
             echo "Marine CSV: $MARINE_CSV ($(wc -l < $MARINE_CSV) lines)"
           fi
 
-          # Check EIAA results
-          EIAA_CSV=$(ls eiaa_boards_*.csv 2>/dev/null | head -n 1)
-          if [ ! -z "$EIAA_CSV" ]; then
-            echo "EIAA CSV: $EIAA_CSV ($(wc -l < $EIAA_CSV) lines)"
-          fi
+
 
           # Check MOLEG results
           MOLEG_CSV=$(ls moleg_data.csv 2>/dev/null | head -n 1)
@@ -158,7 +145,7 @@ jobs:
           name: crawling-results-${{ github.run_number }}
           path: |
             marine_ministry_posts_*.csv
-            eiaa_boards_*.csv
+
             moleg_data.csv
             *.xlsx
 

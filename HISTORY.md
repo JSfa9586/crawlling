@@ -739,6 +739,13 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Change**: Reduced the maximum number of pages crawled per board from 10 pages to 5 pages in `marine_ministry_crawler_final.py`.
 - **Files Modified**: `marine_ministry_crawler_final.py`.
 
+## Phase 26: GitHub Actions Adjustment (2025-11-27)
+- **Problem**: EIAA crawler failing with 403 Forbidden in GitHub Actions (IP blocking/login issue). Marine Ministry crawler timing out after 15 minutes.
+- **Solution**:
+    - Removed EIAA crawler step from `.github/workflows/daily-crawling.yml` (user will run locally).
+    - Increased Marine Ministry crawler timeout to 45 minutes (job timeout to 60 minutes).
+- **Files Modified**: `.github/workflows/daily-crawling.yml`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
