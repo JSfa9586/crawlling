@@ -82,8 +82,21 @@ class MolegCrawler:
                         # 1: 제목, 2: 소관부처, 3: 법령분야, 4: 접수기간
                         title_col = cols[1]
                         a_tag = title_col.find('a')
-                        title = a_tag.get_text(strip=True) if a_tag else title_col.get_text(strip=True)
-                        link = self.base_url + a_tag['href'] if a_tag else ""
+                        
+                        status = ""
+                        title = ""
+                        
+                        if a_tag:
+                            # 상태(진행 등) 추출 및 제거
+                            status_span = a_tag.find('span')
+                            if status_span:
+                                status = status_span.get_text(strip=True)
+                                status_span.decompose() # 태그 제거
+                            
+                            title = a_tag.get_text(strip=True)
+                            link = self.base_url + a_tag['href']
+                        else:
+                            title = title_col.get_text(strip=True)
                         
                         org = cols[2].get_text(strip=True)
                         category = cols[3].get_text(strip=True)
@@ -93,8 +106,21 @@ class MolegCrawler:
                         # 1: 제목, 2: 행정규칙, 3: 기관, 4: 접수기간
                         title_col = cols[1]
                         a_tag = title_col.find('a')
-                        title = a_tag.get_text(strip=True) if a_tag else title_col.get_text(strip=True)
-                        link = self.base_url + a_tag['href'] if a_tag else ""
+                        
+                        status = ""
+                        title = ""
+                        
+                        if a_tag:
+                            # 상태(진행 등) 추출 및 제거
+                            status_span = a_tag.find('span')
+                            if status_span:
+                                status = status_span.get_text(strip=True)
+                                status_span.decompose()
+                            
+                            title = a_tag.get_text(strip=True)
+                            link = self.base_url + a_tag['href']
+                        else:
+                            title = title_col.get_text(strip=True)
                         
                         category = cols[2].get_text(strip=True) # 행정규칙
                         org = cols[3].get_text(strip=True)      # 기관
@@ -104,8 +130,21 @@ class MolegCrawler:
                         # 1: 제목, 2: 자치단체, 3: 공고번호, 4: 공고일자
                         title_col = cols[1]
                         a_tag = title_col.find('a')
-                        title = a_tag.get_text(strip=True) if a_tag else title_col.get_text(strip=True)
-                        link = self.base_url + a_tag['href'] if a_tag else ""
+                        
+                        status = ""
+                        title = ""
+                        
+                        if a_tag:
+                            # 상태(진행 등) 추출 및 제거
+                            status_span = a_tag.find('span')
+                            if status_span:
+                                status = status_span.get_text(strip=True)
+                                status_span.decompose()
+                            
+                            title = a_tag.get_text(strip=True)
+                            link = self.base_url + a_tag['href']
+                        else:
+                            title = title_col.get_text(strip=True)
                         
                         org = cols[2].get_text(strip=True)
                         category = cols[3].get_text(strip=True) # 공고번호
@@ -114,6 +153,7 @@ class MolegCrawler:
                     # 공통 포맷으로 저장
                     all_data.append({
                         '구분': board['name'],
+                        '상태': status,
                         '제목': title,
                         '기관': org,
                         '내용': category, # 법령분야/행정규칙/공고번호

@@ -99,6 +99,14 @@ export function LawsTable({
                                         lineHeight: '1.5em',
                                         maxHeight: '3em'
                                     }}>
+                                        {row.상태 && (
+                                            <span className={`inline-block px-2 py-0.5 mr-2 text-xs font-semibold rounded ${row.상태 === '진행' ? 'bg-blue-100 text-blue-800' :
+                                                row.상태 === '마감' ? 'bg-gray-100 text-gray-800' :
+                                                    'bg-green-100 text-green-800'
+                                                }`}>
+                                                {row.상태}
+                                            </span>
+                                        )}
                                         <a
                                             href={row.링크}
                                             target="_blank"

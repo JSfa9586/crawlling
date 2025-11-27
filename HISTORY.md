@@ -726,6 +726,14 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Updated `dashboard/lib/googleSheets.ts` to implement dynamic column mapping in `transformRowsToData`. It now reads the header row (first row) of the spreadsheet and maps columns to the `CrawlingData` interface based on their names.
 - **Files Modified**: `dashboard/lib/googleSheets.ts`.
 
+## Phase 24: Status Badge Implementation (2025-11-27)
+- **Problem**: Titles in "Related Laws" were prefixed with "진행" (e.g., "진행보훈병원..."), making them hard to read.
+- **Solution**:
+    - Modified `moleg_crawler.py` to extract the status text (from `span` tag) into a separate '상태' field and remove it from the '제목'.
+    - Updated `dashboard/types/index.ts` to include the optional `상태` field.
+    - Updated `dashboard/components/LawsTable.tsx` to display the '상태' as a badge (e.g., blue "진행" tag) next to the title.
+- **Files Modified**: `moleg_crawler.py`, `dashboard/types/index.ts`, `dashboard/components/LawsTable.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
