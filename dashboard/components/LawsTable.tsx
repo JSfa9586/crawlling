@@ -85,8 +85,21 @@ export function LawsTable({
                                 className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                                 onClick={() => onRowClick?.(row)}
                             >
-                                <td className="px-2 md:px-4 py-3 text-sm text-gray-900 truncate" title={row.기관명}>
-                                    {row.기관명}
+                                <td className="px-2 md:px-4 py-3 text-sm text-gray-900" title={row.기관명}>
+                                    {(() => {
+                                        const name = row.기관명;
+                                        if (!name) return '-';
+                                        const index = name.indexOf('(');
+                                        if (index !== -1) {
+                                            return (
+                                                <div className="flex flex-col leading-tight">
+                                                    <span>{name.substring(0, index)}</span>
+                                                    <span className="text-xs text-gray-500">{name.substring(index)}</span>
+                                                </div>
+                                            );
+                                        }
+                                        return name;
+                                    })()}
                                 </td>
                                 <td className="px-2 md:px-4 py-3 text-sm text-gray-600 truncate" title={row.게시판}>
                                     {row.게시판}

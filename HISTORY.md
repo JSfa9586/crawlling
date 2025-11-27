@@ -759,6 +759,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Updated `dashboard/app/dashboard/laws/page.tsx` to fetch stats via API (`/api/sheets?type=stats&sheet=관련법령`) and display 4 stat cards (Total, Organizations, Execution Time, New Post Time).
 - **Files Modified**: `dashboard/types/index.ts`, `dashboard/app/dashboard/laws/page.tsx`.
 
+## Phase 29: UI Improvement - Organization Name Formatting (2025-11-28)
+- **Problem**: Long organization names with parentheses (e.g., "Ministry of Oceans and Fisheries (Department...)") were being truncated in the "Related Laws" table.
+- **Solution**: Modified `dashboard/components/LawsTable.tsx` to display content within parentheses on a new line with a smaller font size, improving readability.
+- **Files Modified**: `dashboard/components/LawsTable.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
