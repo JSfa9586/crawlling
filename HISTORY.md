@@ -712,6 +712,20 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Updated `upload_to_gsheet.py` to replace all `NaN` values with empty strings (`df.fillna('')`) before uploading.
 - **Files Modified**: `upload_to_gsheet.py`.
 
+## Phase 22: GitHub Actions Integration & Deployment (2025-11-27)
+- **Goal**: Automate the new crawlers (EIAA, MOLEG) using GitHub Actions and deploy the changes.
+- **Implementation**:
+    - Updated `.github/workflows/daily-crawling.yml` to include `eiaa_crawler.py` and `moleg_crawler.py`.
+    - Added `EIAA_USER_ID` and `EIAA_PASSWORD` secrets mapping to the workflow.
+    - Updated artifact upload path to include `eiaa_boards_*.csv` and `moleg_data.csv`.
+    - Committed and pushed all changes to the `main` branch.
+- **Files Modified**: `.github/workflows/daily-crawling.yml`.
+
+## Phase 23: Fix Dashboard Data Mapping (2025-11-27)
+- **Problem**: "Related Laws" section in dashboard displayed empty or incorrect data because the column names in `moleg_data.csv` (`구분`, `기관`, `내용`, `기간`) did not match the hardcoded mapping in `transformRowToData`.
+- **Solution**: Updated `dashboard/lib/googleSheets.ts` to implement dynamic column mapping in `transformRowsToData`. It now reads the header row (first row) of the spreadsheet and maps columns to the `CrawlingData` interface based on their names.
+- **Files Modified**: `dashboard/lib/googleSheets.ts`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

@@ -77,31 +77,41 @@ export async function getSpreadsheetData(sheetName: string = '크롤링 결과')
 }
 
 /**
- * 스프레드시트의 행을 데이터 객체로 변환합니다.
- * @param row - 스프레드시트의 한 행 (배열)
- * @returns 변환된 데이터 객체
- */
-export function transformRowToData(row: string[]): any {
-  return {
-    기관구분: row[0] || null,
-    기관명: row[1] || null,
-    게시판: row[2] || null,
-    제목: row[3] || null,
-    작성일: row[4] || null,
-    링크: row[5] || null,
-    수집일시: row[6] || null,
-  };
-}
-
-/**
- * 여러 행을 데이터 배열로 변환합니다.
+ * 여러 행을 데이터 배열로 변환합니다. (헤더 기반 동적 매핑)
  * @param rows - 스프레드시트의 모든 행 (2D 배열)
- * @param skipHeader - 첫 행을 헤더로 스킵할지 여부
+ * @param skipHeader - 첫 행을 헤더로 스킵할지 여부 (기본값: true)
  * @returns 변환된 데이터 배열
  */
 export function transformRowsToData(rows: string[][], skipHeader = true): any[] {
+  if (rows.length === 0) return [];
+
+  const headers = rows[0];
   const startIndex = skipHeader ? 1 : 0;
-  return rows.slice(startIndex).map(transformRowToData);
+
+  // 헤더 인덱스 매핑
+  const mapIndex = {
+    기관구분: headers.indexOf('기관구분'),
+    기관명: headers.indexOf('기관명') !== -1 ? headers.indexOf('기관명') : headers.indexOf('기관'),
+    게시판: headers.indexOf('게시판') !== -1 ? headers.indexOf('게시판') : headers.indexOf('구분'),
+    제목: headers.indexOf('제목'),
+    작성일: headers.indexOf('작성일'),
+    링크: headers.indexOf('링크'),
+    수집일시: headers.indexOf('수집일시') !== -1 ? headers.indexOf('수집일시') : headers.indexOf('수집일'),
+    내용: headers.indexOf('내용'),
+    기간: headers.indexOf('기간'),
+  };
+
+  return rows.slice(startIndex).map((row) => ({
+    기관구분: mapIndex.기관구분 !== -1 ? row[mapIndex.기관구분] : null,
+    기관명: mapIndex.기관명 !== -1 ? row[mapIndex.기관명] : null,
+    게시판: mapIndex.게시판 !== -1 ? row[mapIndex.게시판] : null,
+    제목: mapIndex.제목 !== -1 ? row[mapIndex.제목] : null,
+    작성일: mapIndex.작성일 !== -1 ? row[mapIndex.작성일] : null,
+    링크: mapIndex.링크 !== -1 ? row[mapIndex.링크] : null,
+    수집일시: mapIndex.수집일시 !== -1 ? row[mapIndex.수집일시] : null,
+    내용: mapIndex.내용 !== -1 ? row[mapIndex.내용] : null,
+    기간: mapIndex.기간 !== -1 ? row[mapIndex.기간] : null,
+  }));
 }
 
 /**
