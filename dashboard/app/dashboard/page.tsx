@@ -19,7 +19,7 @@ const formatDateTime = (datetime: string) => {
   const parts = datetime.split(' ');
   if (parts.length === 2) {
     const [date, time] = parts;
-    const timeWithoutSeconds = time.substring(0, 5); // HH:MM만 표시
+    const timeWithoutSeconds = time.split(':').slice(0, 2).join(':'); // HH:MM만 표시 (한 자리 시간 대응)
     return (
       <div className="flex flex-col leading-tight">
         <span className="text-sm font-medium">{date}</span>

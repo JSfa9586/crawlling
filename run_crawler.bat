@@ -3,36 +3,42 @@ chcp 65001 > nul
 setlocal
 
 echo ========================================================
-echo [환경영향평가협회 크롤링 및 업로드 - 로컬 실행]
+echo [통합 크롤링 및 업로드 - 로컬 실행]
 echo ========================================================
 
 :: 1. 환경 변수 설정
-:: 자동 로그인을 원하시면 아래에 아이디와 비밀번호를 입력하세요 (등호 뒤에 입력)
 set EIAA_USER_ID=seco1229
 set EIAA_PASSWORD=seco9308
 
-:: 입력된 값이 없으면 사용자에게 물어봄
 if "%EIAA_USER_ID%"=="" set /p EIAA_USER_ID="EIAA 아이디를 입력하세요: "
 if "%EIAA_PASSWORD%"=="" set /p EIAA_PASSWORD="EIAA 비밀번호를 입력하세요: "
 
-:: 2. 크롤러 실행
+:: 2. EIAA 크롤러 실행
 echo.
-echo [1/2] 크롤러 실행 중...
+echo [1/3] 환경영향평가협회 크롤러 실행 중...
 python eiaa_crawler.py
-
 if %ERRORLEVEL% NEQ 0 (
-    echo [오류] 크롤링 중 문제가 발생했습니다.
+    echo [오류] EIAA 크롤링 실패.
     pause
     exit /b %ERRORLEVEL%
 )
 
-:: 3. 업로드 스크립트 실행
+:: 3. 법제처 크롤러 실행
 echo.
-echo [2/2] 구글 시트 업로드 중...
-python upload_to_gsheet.py
-
+echo [2/3] 법제처(관련법령) 크롤러 실행 중...
+python moleg_crawler.py
 if %ERRORLEVEL% NEQ 0 (
-    echo [오류] 업로드 중 문제가 발생했습니다.
+    echo [오류] 법제처 크롤링 실패.
+    pause
+    exit /b %ERRORLEVEL%
+)
+
+:: 4. 업로드 스크립트 실행
+echo.
+echo [3/3] 구글 시트 업로드 중...
+python upload_to_gsheet.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [오류] 업로드 실패.
     pause
     exit /b %ERRORLEVEL%
 )

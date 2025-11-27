@@ -190,6 +190,9 @@ class GoogleSheetsUploader:
             current_time = datetime.now(seoul_tz).strftime('%Y-%m-%d %H:%M:%S')
             df['수집일시'] = current_time
 
+            # NaN 값을 빈 문자열로 변환 (JSON 직렬화 오류 방지)
+            df = df.fillna('')
+
             # 중복 확인 (링크 기준)
             if not existing_df.empty and '링크' in existing_df.columns:
                 existing_links = set(existing_df['링크'].tolist())
@@ -344,6 +347,10 @@ def main():
         {
             'pattern': 'eiaa_boards_*.csv',
             'sheet_name': '관련협회'
+        },
+        {
+            'pattern': 'moleg_data.csv',
+            'sheet_name': '관련법령'
         }
     ]
 

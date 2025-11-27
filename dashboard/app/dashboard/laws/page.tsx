@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { StatCard } from '@/components/StatCard';
-import { DataTable } from '@/components/DataTable';
+import { LawsTable } from '@/components/LawsTable';
 import { FilterBar, FilterState } from '@/components/FilterBar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ErrorMessage } from '@/components/ErrorMessage';
@@ -18,7 +18,7 @@ const formatDateTime = (datetime: string) => {
     const parts = datetime.split(' ');
     if (parts.length === 2) {
         const [date, time] = parts;
-        const timeWithoutSeconds = time.split(':').slice(0, 2).join(':'); // HH:MM만 표시 (한 자리 시간 대응)
+        const timeWithoutSeconds = time.split(':').slice(0, 2).join(':'); // HH:MM만 표시
         return (
             <div className="flex flex-col leading-tight">
                 <span className="text-sm font-medium">{date}</span>
@@ -31,7 +31,7 @@ const formatDateTime = (datetime: string) => {
     return datetime;
 };
 
-export default function AssociationsDashboard() {
+export default function LawsDashboard() {
     const [data, setData] = useState<CrawlingData[]>([]);
     const [filteredData, setFilteredData] = useState<CrawlingData[]>([]);
     const [paginatedData, setPaginatedData] = useState<CrawlingData[]>([]);
@@ -46,11 +46,9 @@ export default function AssociationsDashboard() {
     const [filters, setFilters] = useState<FilterState>({});
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 20;
+
     useEffect(() => {
-        // 통계를 먼저 가져온 후 데이터 로드
         const loadData = async () => {
-            // 통계 API도 sheet 파라미터를 지원해야 하지만, 현재는 전체 통계만 가져옴
-            // 관련협회 전용 통계 API가 필요할 수 있음. 우선은 데이터 로딩에 집중.
             await fetchData();
         };
         loadData();
@@ -86,8 +84,8 @@ export default function AssociationsDashboard() {
             setIsLoading(true);
             setError(null);
 
-            // API에서 실제 데이터 가져오기 (sheet=관련협회)
-            const response = await fetch('/api/sheets?type=data&페이지크기=1000&sheet=관련협회');
+            // API에서 실제 데이터 가져오기 (sheet=관련법령)
+            const response = await fetch('/api/sheets?type=data&페이지크기=1000&sheet=관련법령');
 
             if (!response.ok) {
                 throw new Error(`API 오류: ${response.status} ${response.statusText}`);
@@ -148,14 +146,6 @@ export default function AssociationsDashboard() {
             );
         }
 
-        if (filters.시작일) {
-            result = result.filter((item) => item.작성일 >= filters.시작일!);
-        }
-
-        if (filters.종료일) {
-            result = result.filter((item) => item.작성일 <= filters.종료일!);
-        }
-
         setFilteredData(result);
     };
 
@@ -170,27 +160,27 @@ export default function AssociationsDashboard() {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     const quickFilters = [
-        { label: '공지사항', value: '공지사항' },
-        { label: '행사안내', value: '행사안내' },
-        { label: '경조사', value: '경조사' },
-        { label: '입찰정보', value: '입찰정보' },
+        { label: '(부처)입법예고', value: '(부처)입법예고' },
+        { label: '(부처)행정예고', value: '(부처)행정예고' },
+        { label: '(지방)입법예고', value: '(지방)입법예고' },
     ];
 
     const relatedLinks = [
-        { name: '(사)환경영향평가협회', url: 'https://www.eiaa.or.kr/' },
+        { name: '국민참여입법센터', url: 'https://opinion.lawmaking.go.kr/' },
+        { name: '법제처', url: 'https://www.moleg.go.kr/' },
     ];
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8 animate-fadeIn">
                 <div>
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">관련협회</h1>
-                    <p className="text-gray-600">환경영향평가협회 등 유관기관 공지사항</p>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">관련법령</h1>
+                    <p className="text-gray-600">법제처 입법예고 및 행정예고 정보</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <main className="lg:col-span-3 space-y-6" aria-label="대시보드 메인 컨텐츠">
-                        {/* StatCard 3개 그리드 (실행 시간 제외) */}
+                        {/* StatCard 3개 그리드 */}
                         <section aria-label="통계 요약" className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <StatCard
                                 title="총 게시물"
@@ -199,13 +189,13 @@ export default function AssociationsDashboard() {
                                 color="primary"
                             />
                             <StatCard
-                                title="크롤링 기관"
+                                title="수집 기관"
                                 value={stats.기관수}
                                 icon="🏛️"
                                 color="secondary"
                             />
                             <StatCard
-                                title="신규 게시물"
+                                title="최신 수집"
                                 value={formatDateTime(latestCrawlTime || '-')}
                                 icon="🆕"
                                 color="info"
@@ -237,10 +227,10 @@ export default function AssociationsDashboard() {
                                 <div className="bg-white rounded-lg shadow overflow-hidden">
                                     <div className="p-6 border-b border-gray-200">
                                         <h2 className="text-xl font-semibold text-gray-900">
-                                            게시글 목록 ({filteredData.length}건)
+                                            법령 목록 ({filteredData.length}건)
                                         </h2>
                                     </div>
-                                    <DataTable data={paginatedData} isLoading={isLoading} />
+                                    <LawsTable data={paginatedData} isLoading={isLoading} />
                                     {filteredData.length > 0 && (
                                         <Pagination
                                             currentPage={currentPage}
@@ -258,7 +248,7 @@ export default function AssociationsDashboard() {
                     {/* 사이드바 (관련기관 링크) */}
                     <aside className="lg:col-span-1 space-y-6">
                         <div className="bg-white rounded-lg shadow p-6 sticky top-6">
-                            <h2 className="text-lg font-semibold text-gray-900 mb-4">관련기관 링크</h2>
+                            <h2 className="text-lg font-semibold text-gray-900 mb-4">관련 사이트</h2>
                             <ul className="space-y-3">
                                 {relatedLinks.map((link) => (
                                     <li key={link.name}>

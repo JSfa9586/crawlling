@@ -24,6 +24,7 @@ on:
     paths:
       - 'marine_ministry_crawler_final.py'
       - 'eiaa_crawler.py'
+      - 'moleg_crawler.py'
       - 'upload_to_gsheet.py'
       - 'requirements.txt'
       - '.github/workflows/daily-crawling.yml'
@@ -78,50 +79,58 @@ jobs:
           chmod 600 gen-lang-client-0556505482-e847371ea87e.json
           echo "Credentials file created"
 
-
-
-      - name: Run crawler
-        id: crawler
-        timeout-minutes: 35
+      - name: Run Marine Ministry crawler
+        id: marine_crawler
+        timeout-minutes: 15
         run: |
-          echo "=== Starting Crawler ==="
-          echo "Start time: $(date '+%Y-%m-%d %H:%M:%S')"
-
+          echo "=== Starting Marine Ministry Crawler ==="
           if [ "${{ github.event.inputs.debug_mode }}" == "true" ]; then
-            echo "Debug mode enabled"
             python -u marine_ministry_crawler_final.py
           else
             python marine_ministry_crawler_final.py
           fi
+        continue-on-error: true
 
-          echo "End time: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "Crawler completed"
-        continue-on-error: false
+      - name: Run EIAA crawler
+        id: eiaa_crawler
+        timeout-minutes: 10
+        env:
+          EIAA_USER_ID: ${{ secrets.EIAA_USER_ID }}
+          EIAA_PASSWORD: ${{ secrets.EIAA_PASSWORD }}
+        run: |
+          echo "=== Starting EIAA Crawler ==="
+          python eiaa_crawler.py
+        continue-on-error: true
+
+      - name: Run MOLEG crawler
+        id: moleg_crawler
+        timeout-minutes: 10
+        run: |
+          echo "=== Starting MOLEG Crawler ==="
+          python moleg_crawler.py
+        continue-on-error: true
 
       - name: Check crawling results
         id: check_results
         run: |
           echo "=== Checking Results ==="
-
-          CSV_FILE=$(ls marine_ministry_posts_*.csv 2>/dev/null | head -n 1)
-          if [ -z "$CSV_FILE" ]; then
-            echo "CSV file not found"
-            exit 1
+          
+          # Check Marine Ministry results
+          MARINE_CSV=$(ls marine_ministry_posts_*.csv 2>/dev/null | head -n 1)
+          if [ ! -z "$MARINE_CSV" ]; then
+            echo "Marine CSV: $MARINE_CSV ($(wc -l < $MARINE_CSV) lines)"
           fi
 
-          echo "File name: $CSV_FILE"
-          echo "File size: $(du -h $CSV_FILE | cut -f1)"
+          # Check EIAA results
+          EIAA_CSV=$(ls eiaa_boards_*.csv 2>/dev/null | head -n 1)
+          if [ ! -z "$EIAA_CSV" ]; then
+            echo "EIAA CSV: $EIAA_CSV ($(wc -l < $EIAA_CSV) lines)"
+          fi
 
-          COUNT=$(($(wc -l < $CSV_FILE) - 1))
-          echo "Records collected: $COUNT"
-
-          echo "CRAWLED_COUNT=$COUNT" >> $GITHUB_ENV
-          echo "CSV_FILENAME=$CSV_FILE" >> $GITHUB_ENV
-
-          if [ $COUNT -eq 0 ]; then
-            echo "Warning: No data collected"
-          else
-            echo "Data collection successful"
+          # Check MOLEG results
+          MOLEG_CSV=$(ls moleg_data.csv 2>/dev/null | head -n 1)
+          if [ ! -z "$MOLEG_CSV" ]; then
+            echo "MOLEG CSV: $MOLEG_CSV ($(wc -l < $MOLEG_CSV) lines)"
           fi
 
       - name: Upload to Google Sheets
@@ -131,10 +140,7 @@ jobs:
           SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
         run: |
           echo "=== Uploading to Google Sheets ==="
-          echo "Spreadsheet ID: ${SPREADSHEET_ID:0:10}..."
-
           python upload_to_gsheet.py
-
           echo "Upload completed"
         continue-on-error: false
 
@@ -142,9 +148,7 @@ jobs:
         if: always()
         run: |
           echo "=== Cleaning up credentials ==="
-          rm -f gen-lang-client-0556505482-e847371ea87e.json
           rm -f gen-lang-client-*.json
-          git status --short
           echo "Cleanup completed"
 
       - name: Upload crawling results
@@ -154,9 +158,9 @@ jobs:
           name: crawling-results-${{ github.run_number }}
           path: |
             marine_ministry_posts_*.csv
-            marine_ministry_posts_*.xlsx
-          retention-days: 30
-          if-no-files-found: warn
+            eiaa_boards_*.csv
+            moleg_data.csv
+            *.xlsx
 
       - name: Upload error logs
         if: failure()

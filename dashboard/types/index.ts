@@ -7,6 +7,8 @@ export interface CrawlingData {
   작성일: string;
   링크: string;
   수집일시: string;
+  내용?: string; // 법령분야, 행정규칙, 공고번호 등
+  기간?: string; // 접수기간, 공고일자 등
 }
 
 // 대시보드 통계 타입
