@@ -734,6 +734,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Updated `dashboard/components/LawsTable.tsx` to display the '상태' as a badge (e.g., blue "진행" tag) next to the title.
 - **Files Modified**: `moleg_crawler.py`, `dashboard/types/index.ts`, `dashboard/components/LawsTable.tsx`.
 
+## Phase 25: Crawler Optimization (2025-11-27)
+- **Goal**: Reduce server load and execution time given the frequent schedule (4 times/day).
+- **Change**: Reduced the maximum number of pages crawled per board from 10 pages to 5 pages in `marine_ministry_crawler_final.py`.
+- **Files Modified**: `marine_ministry_crawler_final.py`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

@@ -110,7 +110,7 @@ class MarineMinistryJejCrawler:
         has_recent_posts = True
         collected_count = 0
 
-        while has_recent_posts and page <= 10:
+        while has_recent_posts and page <= 5:
             try:
                 page_url = f"{url}&page={page}"
                 print(f"\n{page}페이지 크롤링 중...")
@@ -212,7 +212,7 @@ class MarineMinistryJejCrawler:
         has_recent_posts = True
         collected_count = 0
 
-        while has_recent_posts and page <= 10:
+        while has_recent_posts and page <= 5:
             try:
                 page_url = f"{url}&curPage={page}"
                 print(f"\n{page}페이지 크롤링 중...")
@@ -308,7 +308,7 @@ class MarineMinistryJejCrawler:
         has_recent_posts = True
         collected_count = 0
 
-        while has_recent_posts and page <= 10:
+        while has_recent_posts and page <= 5:
             try:
                 if 'currentPageNo' in url:
                     page_url = re.sub(r'currentPageNo=\d+', f'currentPageNo={page}', url)
@@ -413,7 +413,7 @@ class MarineMinistryJejCrawler:
         page = 1
         has_recent_posts = True
         collected_count = 0
-        max_pages = 10
+        max_pages = 5
 
         while has_recent_posts and page <= max_pages:
             try:
@@ -529,7 +529,7 @@ class MarineMinistryJejCrawler:
         page = 1
         collected_count = 0
         seen_ids = set()
-        max_pages = 10
+        max_pages = 5
 
         while page <= max_pages:
             try:
@@ -636,7 +636,7 @@ class MarineMinistryJejCrawler:
         page = 1
         collected_count = 0
         seen_ids = set()
-        max_pages = 10
+        max_pages = 5
 
         while page <= max_pages:
             try:
