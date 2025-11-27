@@ -41,6 +41,7 @@ export default function LawsDashboard() {
         최근업데이트: '',
     });
     const [latestCrawlTime, setLatestCrawlTime] = useState<string>('');
+    const [lastExecutionTime, setLastExecutionTime] = useState<string>('');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState<FilterState>({});
@@ -49,7 +50,8 @@ export default function LawsDashboard() {
 
     useEffect(() => {
         const loadData = async () => {
-            await fetchData();
+            const crawlTime = await fetchStats();
+            await fetchData(crawlTime);
         };
         loadData();
     }, []);
@@ -79,7 +81,34 @@ export default function LawsDashboard() {
         setCurrentPage(1);
     }, [filters]);
 
-    const fetchData = async () => {
+    const fetchStats = async (): Promise<string> => {
+        try {
+            // 통계 API에서 최종 크롤링 시간 가져오기 (sheet=관련법령)
+            const response = await fetch('/api/sheets?type=stats&sheet=관련법령');
+
+            if (!response.ok) {
+                return '';
+            }
+
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                const crawlTime = result.data.latestCrawlTime || '';
+                const execTime = result.data.lastExecutionTime || '';
+
+                setLatestCrawlTime(crawlTime);
+                setLastExecutionTime(execTime);
+
+                return crawlTime;
+            }
+            return '';
+        } catch (err) {
+            console.error('통계 페칭 오류:', err);
+            return '';
+        }
+    };
+
+    const fetchData = async (crawlTime?: string) => {
         try {
             setIsLoading(true);
             setError(null);
@@ -104,18 +133,10 @@ export default function LawsDashboard() {
             // 통계 계산
             const uniqueOrganizations = new Set(fetchedData.map((item: CrawlingData) => item.기관명));
 
-            // 최신 수집 일시 계산
-            let latestTime = '';
-            if (fetchedData.length > 0) {
-                const times = fetchedData.map((d: CrawlingData) => d.수집일시).filter(Boolean).sort().reverse();
-                latestTime = times[0] || '';
-            }
-            setLatestCrawlTime(latestTime);
-
             setStats({
                 총게시물수: result.meta?.total || fetchedData.length,
                 기관수: uniqueOrganizations.size,
-                최근업데이트: latestTime || '데이터 로딩 중...',
+                최근업데이트: crawlTime || latestCrawlTime || '데이터 로딩 중...',
             });
         } catch (err) {
             console.error('데이터 페칭 오류:', err);
@@ -180,8 +201,8 @@ export default function LawsDashboard() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <main className="lg:col-span-3 space-y-6" aria-label="대시보드 메인 컨텐츠">
-                        {/* StatCard 3개 그리드 */}
-                        <section aria-label="통계 요약" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* StatCard 4개 그리드 */}
+                        <section aria-label="통계 요약" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <StatCard
                                 title="총 게시물"
                                 value={stats.총게시물수}
@@ -195,7 +216,13 @@ export default function LawsDashboard() {
                                 color="secondary"
                             />
                             <StatCard
-                                title="최신 수집"
+                                title="크롤링 실행"
+                                value={formatDateTime(lastExecutionTime || '-')}
+                                icon="⏰"
+                                color="success"
+                            />
+                            <StatCard
+                                title="신규 게시물"
                                 value={formatDateTime(latestCrawlTime || '-')}
                                 icon="🆕"
                                 color="info"

@@ -752,6 +752,13 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Updated `dashboard/lib/googleSheets.ts` to map '등록일' to '작성일' if '작성일' is not found.
 - **Files Modified**: `dashboard/lib/googleSheets.ts`.
 
+## Phase 28: Related Laws Stats Update (2025-11-27)
+- **Problem**: "Related Laws" section was missing "Crawling Execution Time" and "New Post Time" stats, unlike the main dashboard.
+- **Solution**:
+    - Updated `dashboard/types/index.ts` to include `lastExecutionTime` in `DashboardStats`.
+    - Updated `dashboard/app/dashboard/laws/page.tsx` to fetch stats via API (`/api/sheets?type=stats&sheet=관련법령`) and display 4 stat cards (Total, Organizations, Execution Time, New Post Time).
+- **Files Modified**: `dashboard/types/index.ts`, `dashboard/app/dashboard/laws/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

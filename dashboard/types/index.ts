@@ -17,6 +17,7 @@ export interface DashboardStats {
   총게시물수: number;
   기관수: number;
   최근업데이트: string;
+  lastExecutionTime?: string;
 }
 
 // 필터 옵션 타입
