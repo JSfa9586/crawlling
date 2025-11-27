@@ -746,6 +746,12 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Increased Marine Ministry crawler timeout to 45 minutes (job timeout to 60 minutes).
 - **Files Modified**: `.github/workflows/daily-crawling.yml`.
 
+## Phase 27: Fix EIAA Date Display (2025-11-27)
+- **Problem**: Association (EIAA) posts showed "1970.01.01." as the date.
+- **Cause**: `eiaa_crawler.py` outputs a '등록일' column, but `dashboard/lib/googleSheets.ts` was only looking for '작성일', resulting in null values.
+- **Solution**: Updated `dashboard/lib/googleSheets.ts` to map '등록일' to '작성일' if '작성일' is not found.
+- **Files Modified**: `dashboard/lib/googleSheets.ts`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

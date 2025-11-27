@@ -94,7 +94,7 @@ export function transformRowsToData(rows: string[][], skipHeader = true): any[] 
     기관명: headers.indexOf('기관명') !== -1 ? headers.indexOf('기관명') : headers.indexOf('기관'),
     게시판: headers.indexOf('게시판') !== -1 ? headers.indexOf('게시판') : headers.indexOf('구분'),
     제목: headers.indexOf('제목'),
-    작성일: headers.indexOf('작성일'),
+    작성일: headers.indexOf('작성일') !== -1 ? headers.indexOf('작성일') : headers.indexOf('등록일'),
     링크: headers.indexOf('링크'),
     수집일시: headers.indexOf('수집일시') !== -1 ? headers.indexOf('수집일시') : headers.indexOf('수집일'),
     내용: headers.indexOf('내용'),
