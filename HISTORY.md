@@ -764,6 +764,13 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Modified `dashboard/components/LawsTable.tsx` to display content within parentheses on a new line with a smaller font size, improving readability.
 - **Files Modified**: `dashboard/components/LawsTable.tsx`.
 
+## Phase 30: Dashboard Header Text Update (2025-11-28)
+- **Problem**: User requested specific text changes for the dashboard header.
+- **Solution**:
+    - Changed main title from "대시보드" to "해양수산부".
+    - Changed description from "해양수산부 크롤링 데이터 분석" to "해수부 및 관련기관 게시물 모음".
+- **Files Modified**: `dashboard/app/dashboard/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

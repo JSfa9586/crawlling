@@ -194,8 +194,8 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-8 animate-fadeIn">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">대시보드</h1>
-          <p className="text-gray-600">해양수산부 크롤링 데이터 분석</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">해양수산부</h1>
+          <p className="text-gray-600">해수부 및 관련기관 게시물 모음</p>
         </div>
 
         {/* 2-Column Layout: Desktop에서 3:1 비율, Mobile에서는 세로 쌓기 */}
