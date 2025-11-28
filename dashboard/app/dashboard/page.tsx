@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { RecentPosts } from '@/components/RecentPosts';
-import { CrawlingLinks } from '@/components/CrawlingLinks';
 import type { CrawlingData } from '@/types';
 
 export default function Dashboard() {
@@ -94,10 +93,10 @@ export default function Dashboard() {
         </div>
 
         {/* 메인 컨텐츠 그리드 */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="space-y-6">
 
-          {/* 왼쪽: 최근 게시물 섹션 (3열) */}
-          <div className="lg:col-span-3 space-y-6">
+          {/* 최근 게시물 섹션 */}
+          <div className="space-y-6">
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <RecentPosts
@@ -130,17 +129,11 @@ export default function Dashboard() {
             <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
               <h3 className="text-lg font-semibold text-blue-800 mb-2">💡 이용 팁</h3>
               <p className="text-blue-600 text-sm">
-                각 섹션의 <strong>'더보기'</strong> 버튼을 클릭하면 검색, 필터링, 정렬이 가능한 상세 페이지로 이동합니다.<br />
-                우측의 <strong>'모니터링 중인 게시판'</strong> 목록에서 바로가기 링크를 이용할 수 있습니다.
+                각 섹션의 <strong>'더보기'</strong> 버튼을 클릭하면 검색, 필터링, 정렬이 가능한 상세 페이지로 이동합니다.
               </p>
             </div>
 
           </div>
-
-          {/* 오른쪽: 사이드바 (1열) */}
-          <aside className="lg:col-span-1 space-y-6">
-            <CrawlingLinks />
-          </aside>
 
         </div>
       </div>

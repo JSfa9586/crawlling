@@ -785,6 +785,14 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Updated navigation menu to reflect the new structure.
 - **Files Modified**: `dashboard/app/dashboard/page.tsx`, `dashboard/app/dashboard/ministry/page.tsx`, `dashboard/components/RecentPosts.tsx`, `dashboard/components/Header.tsx`.
 
+## Phase 33: Dashboard Sidebar Removal (2025-11-28)
+- **Problem**: User requested to remove the "Monitoring Boards" sidebar from the unified dashboard home.
+- **Solution**:
+    - Removed `<aside>` element containing `CrawlingLinks` from `dashboard/app/dashboard/page.tsx`.
+    - Adjusted grid layout to full width.
+    - Updated "Tips" section text.
+- **Files Modified**: `dashboard/app/dashboard/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
