@@ -880,6 +880,14 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Client: Updated `FileUploader.tsx` to upload files directly to the session URL using `XMLHttpRequest`, bypassing the Vercel server.
 - **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/actions.ts`, `dashboard/components/FileUploader.tsx`.
 
+## Phase 45: Implement Chunked Upload Proxy (2025-11-29)
+- **Problem**: Direct browser upload to Google Drive failed due to CORS issues with Service Account.
+- **Solution**: Implemented a Chunked Upload Proxy using Server Actions.
+    - Client: Slices large files into 2MB chunks and sends them to the server sequentially.
+    - Server: `uploadChunkAction` receives each chunk and forwards it to Google Drive using the Resumable Upload session.
+    - This bypasses both Vercel's 4.5MB body limit (by sending small chunks) and CORS issues (by proxying through the server).
+- **Files Modified**: `dashboard/app/actions.ts`, `dashboard/components/FileUploader.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

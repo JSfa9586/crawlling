@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { getUploadUrlAction } from '@/app/actions';
+import { getUploadUrlAction, uploadChunkAction } from '@/app/actions';
 
 interface FileUploaderProps {
     folderId: string;
@@ -54,31 +54,33 @@ export function FileUploader({ folderId, onUploadSuccess, acceptedFileTypes }: F
                     throw new Error(urlResult.error || 'Failed to get upload URL');
                 }
 
-                // 2. Upload directly to Google Drive
-                await new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('PUT', urlResult.data.uploadUrl, true);
-                    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+                const uploadUrl = urlResult.data.uploadUrl;
+                const chunkSize = 2 * 1024 * 1024; // 2MB chunk size (safe for Vercel)
+                const totalSize = file.size;
+                let start = 0;
 
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) {
-                            const percentComplete = Math.round((e.loaded / e.total) * 100);
-                            // For multiple files, this is a bit simplistic, but works for the current file
-                            setUploadProgress(percentComplete);
-                        }
-                    };
+                // 2. Upload chunks via Server Action
+                while (start < totalSize) {
+                    const end = Math.min(start + chunkSize, totalSize);
+                    const chunk = file.slice(start, end);
 
-                    xhr.onload = () => {
-                        if (xhr.status === 200 || xhr.status === 201 || xhr.status === 308) {
-                            resolve(xhr.response);
-                        } else {
-                            reject(new Error(`Upload failed with status ${xhr.status}`));
-                        }
-                    };
+                    const formData = new FormData();
+                    formData.append('chunk', chunk);
 
-                    xhr.onerror = () => reject(new Error('Network error during upload'));
-                    xhr.send(file);
-                });
+                    // Content-Range format: bytes start-end/total
+                    // Note: end is inclusive in Content-Range, so end-1
+                    const contentRange = `bytes ${start}-${end - 1}/${totalSize}`;
+
+                    const chunkResult = await uploadChunkAction(uploadUrl, formData, contentRange);
+
+                    if (!chunkResult.success) {
+                        throw new Error(chunkResult.error || 'Failed to upload chunk');
+                    }
+
+                    start = end;
+                    const percentComplete = Math.round((start / totalSize) * 100);
+                    setUploadProgress(percentComplete);
+                }
             }
 
             setUploadProgress(100);
