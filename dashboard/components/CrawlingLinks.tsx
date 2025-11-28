@@ -233,7 +233,7 @@ export function CrawlingLinks() {
 
       <div className="mt-6 pt-4 border-t border-gray-200">
         <p className="text-sm text-gray-600">
-          총 <span className="font-medium text-blue-600">{Object.values(organizations).flat().length}개 기관</span>의 게시판을 크롤링하고 있습니다.
+          총 <span className="font-medium text-blue-600">{Object.values(organizations).flat().length}개 기관</span>의 게시판을 모니터링하고 있습니다.
         </p>
       </div>
     </div>

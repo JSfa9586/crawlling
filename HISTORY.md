@@ -771,6 +771,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Changed description from "해양수산부 크롤링 데이터 분석" to "해수부 및 관련기관 게시물 모음".
 - **Files Modified**: `dashboard/app/dashboard/page.tsx`.
 
+## Phase 31: Sidebar Text Update (2025-11-28)
+- **Problem**: User requested specific text change in the sidebar footer.
+- **Solution**: Changed "게시판을 크롤링하고 있습니다" to "게시판을 모니터링하고 있습니다" in `CrawlingLinks` component.
+- **Files Modified**: `dashboard/components/CrawlingLinks.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
