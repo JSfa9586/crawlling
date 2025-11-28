@@ -216,7 +216,12 @@ class EIAACrawler:
     def save_to_csv(self, data, filename=None):
         """CSV 파일로 저장"""
         if filename is None:
-            filename = f"eiaa_boards_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            # data 디렉토리 생성
+            data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+            if not os.path.exists(data_dir):
+                os.makedirs(data_dir)
+            
+            filename = os.path.join(data_dir, f"eiaa_boards_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         
         # utf-8-sig: 엑셀에서 한글 깨짐 방지
         with open(filename, 'w', newline='', encoding='utf-8-sig') as f:

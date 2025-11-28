@@ -18,6 +18,13 @@ const nextConfig = {
     unoptimized: true,
   },
 
+  // Server Actions 설정 (파일 업로드 용량 증대)
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
+
   // 헤더 설정 (캐시 정책)
   async headers() {
     return [

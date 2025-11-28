@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { uploadFileAction } from '@/app/actions';
 
 interface FileUploaderProps {
     folderId: string;
@@ -57,13 +58,10 @@ export function FileUploader({ folderId, onUploadSuccess, acceptedFileTypes }: F
                 formData.append('file', file);
                 formData.append('folderId', folderId);
 
-                const response = await fetch('/api/drive', {
-                    method: 'POST',
-                    body: formData,
-                });
+                const result = await uploadFileAction(formData);
 
-                if (!response.ok) {
-                    throw new Error('Upload failed');
+                if (!result.success) {
+                    throw new Error(result.error || 'Upload failed');
                 }
             }
 

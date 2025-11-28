@@ -838,6 +838,17 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Updated navigation in `dashboard/components/Header.tsx`.
 - **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/api/drive/route.ts`, `dashboard/components/FileUploader.tsx`, `dashboard/components/DriveFileList.tsx`, `dashboard/components/DrivePhotoGallery.tsx`, `dashboard/app/dashboard/test/**/*`, `dashboard/components/Header.tsx`.
 
+## Phase 40: Fix Upload Limit and CSV Path (2025-11-29)
+- **Problem**:
+    - File upload failed with 413 Payload Too Large error.
+    - `eiaa_boards` CSV files were cluttering the root directory.
+- **Solution**:
+    - Implemented Server Action `uploadFileAction` for file uploads to support larger files.
+    - Configured `experimental.serverActions.bodySizeLimit` to '10mb' in `next.config.js`.
+    - Updated `FileUploader` to use the Server Action.
+    - Modified `eiaa_crawler.py` to save CSV files in a `data` subdirectory.
+- **Files Modified**: `dashboard/app/actions.ts`, `dashboard/next.config.js`, `dashboard/components/FileUploader.tsx`, `eiaa_crawler.py`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
