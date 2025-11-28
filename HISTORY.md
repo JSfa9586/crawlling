@@ -849,6 +849,15 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Modified `eiaa_crawler.py` to save CSV files in a `data` subdirectory.
 - **Files Modified**: `dashboard/app/actions.ts`, `dashboard/next.config.js`, `dashboard/components/FileUploader.tsx`, `eiaa_crawler.py`.
 
+## Phase 41: Increase Upload Limit to 100MB and Cleanup CSVs (2025-11-29)
+- **Problem**:
+    - User requested a higher upload limit (100MB) for larger files.
+    - Existing `eiaa_boards` CSV files in the root directory were messy.
+- **Solution**:
+    - Increased `experimental.serverActions.bodySizeLimit` to '100mb' in `dashboard/next.config.js`.
+    - Moved all existing `eiaa_boards*.csv` files to the `data` directory.
+- **Files Modified**: `dashboard/next.config.js`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

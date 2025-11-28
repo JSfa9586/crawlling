@@ -21,7 +21,7 @@ const nextConfig = {
   // Server Actions 설정 (파일 업로드 용량 증대)
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb',
+      bodySizeLimit: '100mb',
     },
   },
 
