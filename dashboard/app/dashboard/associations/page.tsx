@@ -199,7 +199,7 @@ export default function AssociationsDashboard() {
                                 color="primary"
                             />
                             <StatCard
-                                title="크롤링 기관"
+                                title="모니터링 기관"
                                 value={stats.기관수}
                                 icon="🏛️"
                                 color="secondary"

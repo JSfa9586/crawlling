@@ -216,7 +216,7 @@ export default function LawsDashboard() {
                                 color="secondary"
                             />
                             <StatCard
-                                title="크롤링 실행"
+                                title="모니터링 실행"
                                 value={formatDateTime(lastExecutionTime || '-')}
                                 icon="⏰"
                                 color="success"

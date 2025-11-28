@@ -806,6 +806,13 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Replaced "관련법령 예고" with "법령예고" in `dashboard/app/dashboard/laws/page.tsx` (page title).
 - **Files Modified**: `dashboard/components/Header.tsx`, `dashboard/app/dashboard/page.tsx`, `dashboard/app/dashboard/laws/page.tsx`.
 
+## Phase 36: Rename Crawling to Monitoring (2025-11-28)
+- **Problem**: User requested to rename "Crawling" to "Monitoring" in the UI to sound more professional.
+- **Solution**:
+    - Replaced "크롤링 기관" with "모니터링 기관" in `dashboard/app/dashboard/ministry/page.tsx` and `dashboard/app/dashboard/associations/page.tsx`.
+    - Replaced "크롤링 실행" with "모니터링 실행" in `dashboard/app/dashboard/ministry/page.tsx` and `dashboard/app/dashboard/laws/page.tsx`.
+- **Files Modified**: `dashboard/app/dashboard/ministry/page.tsx`, `dashboard/app/dashboard/laws/page.tsx`, `dashboard/app/dashboard/associations/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

@@ -211,13 +211,13 @@ export default function Dashboard() {
                 color="primary"
               />
               <StatCard
-                title="크롤링 기관"
+                title="모니터링 기관"
                 value={stats.기관수}
                 icon="🏛️"
                 color="secondary"
               />
               <StatCard
-                title="크롤링 실행"
+                title="모니터링 실행"
                 value={formatDateTime(lastExecutionTime || '-')}
                 icon="⏰"
                 color="success"
