@@ -34,7 +34,7 @@ export function Header() {
             </li>
             <li>
               <Link href="/dashboard/laws" className="hover:text-primary-100 transition-colors">
-                관련법령
+                법령예고
               </Link>
             </li>
           </ul>
@@ -96,7 +96,7 @@ export function Header() {
                   className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  관련법령
+                  법령예고
                 </Link>
               </li>
             </ul>

@@ -84,7 +84,7 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">통합 대시보드</h1>
-            <p className="text-gray-600">해양수산부, 관련협회, 관련법령 최신 현황을 한눈에 확인하세요.</p>
+            <p className="text-gray-600">해양수산부, 관련협회, 법령예고 최신 현황을 한눈에 확인하세요.</p>
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-500">최근 업데이트</p>
@@ -116,7 +116,7 @@ export default function Dashboard() {
                 color="secondary"
               />
               <RecentPosts
-                title="관련법령"
+                title="법령예고"
                 data={lawsData}
                 moreLink="/dashboard/laws"
                 isLoading={isLoading}

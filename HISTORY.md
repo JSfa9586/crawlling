@@ -798,6 +798,14 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Changed `h1` title from "관련법령" to "관련법령 예고" in `dashboard/app/dashboard/laws/page.tsx`.
 - **Files Modified**: `dashboard/app/dashboard/laws/page.tsx`.
 
+## Phase 35: Rename Related Laws to Legislative Notice (2025-11-28)
+- **Problem**: User requested to rename "Related Laws" to "Legislative Notice" throughout the web app.
+- **Solution**:
+    - Replaced "관련법령" with "법령예고" in `Header.tsx` (navigation menu).
+    - Replaced "관련법령" with "법령예고" in `dashboard/app/dashboard/page.tsx` (home page description and section title).
+    - Replaced "관련법령 예고" with "법령예고" in `dashboard/app/dashboard/laws/page.tsx` (page title).
+- **Files Modified**: `dashboard/components/Header.tsx`, `dashboard/app/dashboard/page.tsx`, `dashboard/app/dashboard/laws/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
