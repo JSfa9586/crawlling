@@ -210,7 +210,7 @@ export default function LawsDashboard() {
                                 color="primary"
                             />
                             <StatCard
-                                title="수집 기관"
+                                title="모니터링 기관"
                                 value={stats.기관수}
                                 icon="🏛️"
                                 color="secondary"

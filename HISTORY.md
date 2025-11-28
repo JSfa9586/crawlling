@@ -813,6 +813,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Replaced "크롤링 실행" with "모니터링 실행" in `dashboard/app/dashboard/ministry/page.tsx` and `dashboard/app/dashboard/laws/page.tsx`.
 - **Files Modified**: `dashboard/app/dashboard/ministry/page.tsx`, `dashboard/app/dashboard/laws/page.tsx`, `dashboard/app/dashboard/associations/page.tsx`.
 
+## Phase 37: Rename Collection Agency to Monitoring Agency (2025-11-28)
+- **Problem**: User requested to unify terminology by renaming "Collection Agency" to "Monitoring Agency" in the Laws Dashboard.
+- **Solution**: Replaced "수집 기관" with "모니터링 기관" in `dashboard/app/dashboard/laws/page.tsx`.
+- **Files Modified**: `dashboard/app/dashboard/laws/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
