@@ -195,7 +195,7 @@ export default function LawsDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8 animate-fadeIn">
                 <div>
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">관련법령</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">관련법령 예고</h1>
                     <p className="text-gray-600">법제처 입법예고 및 행정예고 정보</p>
                 </div>
 

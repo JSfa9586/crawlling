@@ -793,6 +793,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Updated "Tips" section text.
 - **Files Modified**: `dashboard/app/dashboard/page.tsx`.
 
+## Phase 34: Laws Page Title Update (2025-11-28)
+- **Problem**: User requested to change the title of the "Related Laws" page.
+- **Solution**: Changed `h1` title from "관련법령" to "관련법령 예고" in `dashboard/app/dashboard/laws/page.tsx`.
+- **Files Modified**: `dashboard/app/dashboard/laws/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
