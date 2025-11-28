@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { DriveFile } from '@/lib/googleDrive';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 const FOLDER_ID = '1gTw5DvpUshR0isvelgDWnAPkvE58NwPa';
 
@@ -14,7 +13,6 @@ export default function ReferenceRoomPage() {
     const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
-    const router = useRouter();
 
     const fetchItems = useCallback(async () => {
         try {

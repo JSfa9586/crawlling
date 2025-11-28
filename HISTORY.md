@@ -868,6 +868,11 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Created dynamic routes `[id]/page.tsx` for detail views.
 - **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/api/drive/route.ts`, `dashboard/app/dashboard/test/reference/page.tsx`, `dashboard/app/dashboard/test/reference/[id]/page.tsx`, `dashboard/app/dashboard/test/photos/page.tsx`, `dashboard/app/dashboard/test/photos/[id]/page.tsx`.
 
+## Phase 43: Fix Build Errors (Unused Variables) (2025-11-29)
+- **Problem**: Vercel build failed due to unused `router` variable in `photos/page.tsx` and `reference/page.tsx`.
+- **Solution**: Removed the unused `useRouter` hook and `router` variable from both files.
+- **Files Modified**: `dashboard/app/dashboard/test/reference/page.tsx`, `dashboard/app/dashboard/test/photos/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
