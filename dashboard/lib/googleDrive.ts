@@ -4,9 +4,21 @@ import { Readable } from 'stream';
 
 // Google Drive API 클라이언트 초기화
 export async function getDriveClient() {
+    // 1. OAuth 2.0 (User Account) - Preferred for uploads (Quota belongs to user)
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+
+    if (clientId && clientSecret && refreshToken) {
+        const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+        oauth2Client.setCredentials({ refresh_token: refreshToken });
+        return google.drive({ version: 'v3', auth: oauth2Client });
+    }
+
+    // 2. Service Account (Fallback) - Good for reads, bad for uploads (No quota)
     const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
     if (!credentialsJson) {
-        throw new Error('GOOGLE_CREDENTIALS_JSON environment variable is not set');
+        throw new Error('GOOGLE_CREDENTIALS_JSON or OAuth credentials are not set');
     }
 
     const credentials = JSON.parse(credentialsJson);

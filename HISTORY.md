@@ -888,6 +888,13 @@ SPREADSHEET_ID=<Google Sheets ID>
     - This bypasses both Vercel's 4.5MB body limit (by sending small chunks) and CORS issues (by proxying through the server).
 - **Files Modified**: `dashboard/app/actions.ts`, `dashboard/components/FileUploader.tsx`.
 
+## Phase 46: Switch to OAuth 2.0 for Storage Quota (2025-11-29)
+- **Problem**: Uploads failed with 403 `storageQuotaExceeded` because Service Accounts have 0 bytes of storage quota.
+- **Solution**: Switched authentication method to OAuth 2.0 to use the User's storage quota.
+    - Created `scripts/get_refresh_token.js` to help the user generate a Refresh Token.
+    - Updated `lib/googleDrive.ts` to prioritize OAuth 2.0 credentials (`CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`) over Service Account.
+- **Files Modified**: `dashboard/scripts/get_refresh_token.js`, `dashboard/lib/googleDrive.ts`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
