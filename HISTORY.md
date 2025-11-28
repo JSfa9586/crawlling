@@ -873,6 +873,13 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Removed the unused `useRouter` hook and `router` variable from both files.
 - **Files Modified**: `dashboard/app/dashboard/test/reference/page.tsx`, `dashboard/app/dashboard/test/photos/page.tsx`.
 
+## Phase 44: Implement Resumable Uploads (2025-11-29)
+- **Problem**: Large file uploads failed with 413 error due to Vercel's 4.5MB body limit.
+- **Solution**: Implemented Google Drive Resumable Uploads.
+    - Server: Added `getResumableUploadUrl` to `lib/googleDrive.ts` and `getUploadUrlAction` to `app/actions.ts` to initiate upload and get a session URL.
+    - Client: Updated `FileUploader.tsx` to upload files directly to the session URL using `XMLHttpRequest`, bypassing the Vercel server.
+- **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/actions.ts`, `dashboard/components/FileUploader.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

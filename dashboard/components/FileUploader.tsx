@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { uploadFileAction } from '@/app/actions';
+import { getUploadUrlAction } from '@/app/actions';
 
 interface FileUploaderProps {
     folderId: string;
@@ -12,7 +12,7 @@ interface FileUploaderProps {
 export function FileUploader({ folderId, onUploadSuccess, acceptedFileTypes }: FileUploaderProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0); // Simple progress simulation
+    const [uploadProgress, setUploadProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -43,29 +43,44 @@ export function FileUploader({ folderId, onUploadSuccess, acceptedFileTypes }: F
         setIsUploading(true);
         setUploadProgress(0);
 
-        // Simulate progress
-        const progressInterval = setInterval(() => {
-            setUploadProgress((prev) => {
-                if (prev >= 90) return prev;
-                return prev + 10;
-            });
-        }, 200);
-
         try {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('folderId', folderId);
 
-                const result = await uploadFileAction(formData);
+                // 1. Get Resumable Upload URL
+                const urlResult = await getUploadUrlAction(folderId, file.name, file.type);
 
-                if (!result.success) {
-                    throw new Error(result.error || 'Upload failed');
+                if (!urlResult.success || !urlResult.data?.uploadUrl) {
+                    throw new Error(urlResult.error || 'Failed to get upload URL');
                 }
+
+                // 2. Upload directly to Google Drive
+                await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('PUT', urlResult.data.uploadUrl, true);
+                    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) {
+                            const percentComplete = Math.round((e.loaded / e.total) * 100);
+                            // For multiple files, this is a bit simplistic, but works for the current file
+                            setUploadProgress(percentComplete);
+                        }
+                    };
+
+                    xhr.onload = () => {
+                        if (xhr.status === 200 || xhr.status === 201 || xhr.status === 308) {
+                            resolve(xhr.response);
+                        } else {
+                            reject(new Error(`Upload failed with status ${xhr.status}`));
+                        }
+                    };
+
+                    xhr.onerror = () => reject(new Error('Network error during upload'));
+                    xhr.send(file);
+                });
             }
 
-            clearInterval(progressInterval);
             setUploadProgress(100);
             setTimeout(() => {
                 setIsUploading(false);
@@ -75,7 +90,6 @@ export function FileUploader({ folderId, onUploadSuccess, acceptedFileTypes }: F
 
         } catch (error) {
             console.error('Upload error:', error);
-            clearInterval(progressInterval);
             setIsUploading(false);
             alert('파일 업로드 중 오류가 발생했습니다.');
         }

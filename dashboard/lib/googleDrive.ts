@@ -53,7 +53,7 @@ export async function listFiles(folderId: string): Promise<DriveFile[]> {
     }
 }
 
-// 파일 업로드
+// 파일 업로드 (서버 경유)
 export async function uploadFile(folderId: string, file: File, fileName?: string): Promise<DriveFile> {
     const drive = await getDriveClient();
     const timer = logger.startTimer();
@@ -136,4 +136,37 @@ export async function deleteFile(fileId: string): Promise<void> {
         logger.error('Failed to delete file from Drive', error instanceof Error ? error : new Error(String(error)), { fileId, duration });
         throw error;
     }
+}
+
+// 리저머블 업로드 URL 생성
+export async function getResumableUploadUrl(folderId: string, fileName: string, mimeType: string): Promise<string> {
+    const drive = await getDriveClient();
+    const auth = drive.context._options.auth as any;
+    const token = await auth.getAccessToken();
+
+    const metadata = {
+        name: fileName,
+        parents: [folderId],
+        mimeType: mimeType,
+    };
+
+    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(metadata),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to initiate upload: ${response.statusText}`);
+    }
+
+    const location = response.headers.get('Location');
+    if (!location) {
+        throw new Error('No upload location returned');
+    }
+
+    return location;
 }
