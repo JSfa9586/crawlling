@@ -776,6 +776,15 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Changed "게시판을 크롤링하고 있습니다" to "게시판을 모니터링하고 있습니다" in `CrawlingLinks` component.
 - **Files Modified**: `dashboard/components/CrawlingLinks.tsx`.
 
+## Phase 32: Dashboard Home Restructuring (2025-11-28)
+- **Problem**: User requested a unified view of recent posts from all sections on the home screen.
+- **Solution**:
+    - Moved existing Ministry page to `/dashboard/ministry`.
+    - Created new `/dashboard` home page displaying recent posts from Ministry, Associations, and Laws.
+    - Added `RecentPosts` component for consistent display.
+    - Updated navigation menu to reflect the new structure.
+- **Files Modified**: `dashboard/app/dashboard/page.tsx`, `dashboard/app/dashboard/ministry/page.tsx`, `dashboard/components/RecentPosts.tsx`, `dashboard/components/Header.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

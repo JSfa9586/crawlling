@@ -23,7 +23,7 @@ export function Header() {
               </Link>
             </li>
             <li>
-              <Link href="/dashboard" className="hover:text-primary-100 transition-colors">
+              <Link href="/dashboard/ministry" className="hover:text-primary-100 transition-colors">
                 해양수산부
               </Link>
             </li>
@@ -74,7 +74,7 @@ export function Header() {
               </li>
               <li>
                 <Link
-                  href="/dashboard"
+                  href="/dashboard/ministry"
                   className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
