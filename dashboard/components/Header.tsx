@@ -37,6 +37,11 @@ export function Header() {
                 법령예고
               </Link>
             </li>
+            <li>
+              <Link href="/dashboard/test" className="hover:text-primary-100 transition-colors">
+                테스트
+              </Link>
+            </li>
           </ul>
 
           {/* Mobile Menu Button */}
@@ -97,6 +102,15 @@ export function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   법령예고
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/test"
+                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  테스트
                 </Link>
               </li>
             </ul>

@@ -826,6 +826,18 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Adjusted footer grid layout from 3 columns to 2 columns.
 - **Files Modified**: `dashboard/components/Footer.tsx`.
 
+## Phase 39: Google Drive Integration (Test Section) (2025-11-28)
+- **Problem**: User requested a feature to upload and view files/photos using Google Drive, integrated as a "Test" section.
+- **Solution**:
+    - Implemented Google Drive API integration (`lib/googleDrive.ts`, `app/api/drive/route.ts`).
+    - Created UI components: `FileUploader`, `DriveFileList`, `DrivePhotoGallery`.
+    - Added "Test" section pages:
+        - Main: `dashboard/app/dashboard/test/page.tsx`
+        - Reference Room: `dashboard/app/dashboard/test/reference/page.tsx` (Folder ID: `1gTw...`)
+        - Photo Album: `dashboard/app/dashboard/test/photos/page.tsx` (Folder ID: `1Lj2...`)
+    - Updated navigation in `dashboard/components/Header.tsx`.
+- **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/api/drive/route.ts`, `dashboard/components/FileUploader.tsx`, `dashboard/components/DriveFileList.tsx`, `dashboard/components/DrivePhotoGallery.tsx`, `dashboard/app/dashboard/test/**/*`, `dashboard/components/Header.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27
