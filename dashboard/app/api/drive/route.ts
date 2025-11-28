@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { listFiles, uploadFile, deleteFile } from '@/lib/googleDrive';
+import { listFiles, uploadFile, deleteFile, createFolder } from '@/lib/googleDrive';
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -21,6 +21,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData();
+        const type = formData.get('type');
+
+        // 폴더 생성 처리
+        if (type === 'folder') {
+            const folderName = formData.get('name') as string;
+            const parentId = formData.get('parentId') as string;
+
+            if (!folderName || !parentId) {
+                return NextResponse.json({ success: false, error: 'Folder name and Parent ID are required' }, { status: 400 });
+            }
+
+            const folder = await createFolder(folderName, parentId);
+            return NextResponse.json({ success: true, data: folder });
+        }
+
+        // 파일 업로드 처리
         const file = formData.get('file') as File;
         const folderId = formData.get('folderId') as string;
 
@@ -31,8 +47,8 @@ export async function POST(request: NextRequest) {
         const uploadedFile = await uploadFile(folderId, file);
         return NextResponse.json({ success: true, data: uploadedFile });
     } catch (error) {
-        console.error('Drive Upload Error:', error);
-        return NextResponse.json({ success: false, error: 'Failed to upload file' }, { status: 500 });
+        console.error('Drive API Error:', error);
+        return NextResponse.json({ success: false, error: 'Operation failed' }, { status: 500 });
     }
 }
 

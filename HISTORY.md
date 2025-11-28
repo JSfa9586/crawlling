@@ -858,6 +858,16 @@ SPREADSHEET_ID=<Google Sheets ID>
     - Moved all existing `eiaa_boards*.csv` files to the `data` directory.
 - **Files Modified**: `dashboard/next.config.js`.
 
+## Phase 42: Refactor to Folder-based Posts (Test Section) (2025-11-29)
+- **Problem**: User requested a structure where one post can contain multiple files/photos, rather than a flat list of files.
+- **Solution**:
+    - Implemented folder creation in `lib/googleDrive.ts` and `app/api/drive/route.ts`.
+    - Refactored Test Reference Room and Photo Album to use a 2-level structure:
+        - **Level 1 (List)**: Displays Folders (Posts/Albums). Allows creating new folders.
+        - **Level 2 (Detail)**: Displays Files/Photos within the selected folder. Allows uploading multiple files.
+    - Created dynamic routes `[id]/page.tsx` for detail views.
+- **Files Modified**: `dashboard/lib/googleDrive.ts`, `dashboard/app/api/drive/route.ts`, `dashboard/app/dashboard/test/reference/page.tsx`, `dashboard/app/dashboard/test/reference/[id]/page.tsx`, `dashboard/app/dashboard/test/photos/page.tsx`, `dashboard/app/dashboard/test/photos/[id]/page.tsx`.
+
 ---
 
 **마지막 업데이트**: 2025-11-27

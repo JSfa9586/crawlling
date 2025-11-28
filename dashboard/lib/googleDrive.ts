@@ -91,6 +91,34 @@ export async function uploadFile(folderId: string, file: File, fileName?: string
     }
 }
 
+// 폴더 생성
+export async function createFolder(folderName: string, parentId: string): Promise<DriveFile> {
+    const drive = await getDriveClient();
+    const timer = logger.startTimer();
+
+    try {
+        const fileMetadata = {
+            name: folderName,
+            mimeType: 'application/vnd.google-apps.folder',
+            parents: [parentId],
+        };
+
+        const response = await drive.files.create({
+            requestBody: fileMetadata,
+            fields: 'id, name, mimeType, webViewLink, webContentLink, createdTime',
+        });
+
+        const duration = timer();
+        logger.info('Folder created in Drive', { parentId, folderId: response.data.id, duration });
+
+        return response.data as DriveFile;
+    } catch (error) {
+        const duration = timer();
+        logger.error('Failed to create folder in Drive', error instanceof Error ? error : new Error(String(error)), { parentId, duration });
+        throw error;
+    }
+}
+
 // 파일 삭제
 export async function deleteFile(fileId: string): Promise<void> {
     const drive = await getDriveClient();
