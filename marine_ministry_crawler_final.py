@@ -243,7 +243,16 @@ class MarineMinistryJejCrawler:
                             # 제목 추출
                             title = self.extract_title(title_elem)
                             link = title_elem.get('href', '')
-                            if link and not link.startswith('http'):
+                            onclick = title_elem.get('onclick', '')
+
+                            # href가 없거나 javascript인 경우 onclick에서 ID 추출 시도
+                            if not link or 'javascript' in link or link == '#':
+                                match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
+                                if match:
+                                    bcIdx = match.group(1)
+                                    link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236&bcIdx={bcIdx}"
+                            
+                            if link and not link.startswith('http') and not link.startswith('javascript'):
                                 link = urljoin(url, link)
                             
                             date_str = None
@@ -260,7 +269,16 @@ class MarineMinistryJejCrawler:
                             # title 속성이 있으면 전체 제목 사용, 없으면 텍스트 사용
                             title = title_elem.get('title', '').strip() or title_elem.get_text(strip=True)
                             link = title_elem.get('href', '')
-                            if link and not link.startswith('http'):
+                            onclick = title_elem.get('onclick', '')
+
+                            # href가 없거나 javascript인 경우 onclick에서 ID 추출 시도
+                            if not link or 'javascript' in link or link == '#':
+                                match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
+                                if match:
+                                    bcIdx = match.group(1)
+                                    link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236&bcIdx={bcIdx}"
+
+                            if link and not link.startswith('http') and not link.startswith('javascript'):
                                 link = urljoin(url, link)
                             
                             date_elem = item.select_one('span.date, p.date')

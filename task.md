@@ -26,14 +26,12 @@
     - [x] `filters.ts`의 페이지네이션 로직 확인 (API에서 페이지네이션 수행 확인)
     - [x] `filters.ts`에서 데이터 반환 전 **전체 데이터 정렬** 로직 추가
     - [x] 정렬 기준: `기간` 종료일 내림차순 (기본값)
-- [ ] **정렬 기준 변경 (기간 시작일)**
+- [x] **정렬 기준 변경 (기간 시작일)**
     - [x] `filters.ts`: 서버 사이드 정렬 로직을 시작일 기준으로 변경 (완료)
     - [x] `LawsTable.tsx`: 클라이언트 사이드 정렬 로직을 시작일 기준으로 변경 (완료)
 
-## 2. 수정 및 검증 (Fix & Verify)
-- [x] `dashboard/lib/filters.ts` 수정
-- [x] `dashboard/components/LawsTable.tsx` 수정
-- [ ] 변경 사항 커밋 및 푸시
-
-## 3. 마무리 (Finalization)
-- [ ] 사용자에게 정렬 기준 변경(시작일) 설명
+## 4. 해양환경공단 링크 오류 수정 (Fix KOEM Link Error)
+- [x] **크롤러 스크립트 식별**: `marine_ministry_crawler_final.py` 확인
+- [x] **링크 생성 로직 분석**: `onclick` 이벤트 처리 미흡 확인 (추정)
+- [x] **오류 원인 파악**: 사이트 접근 차단으로 직접 확인 불가하나, `href`가 `#`이거나 JS일 가능성 높음
+- [x] **수정 및 검증**: `onclick`에서 ID 추출하여 URL 재구성 로직 추가 (완료)
