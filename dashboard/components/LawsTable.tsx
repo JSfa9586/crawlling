@@ -14,7 +14,7 @@ export function LawsTable({
     isLoading = false,
     onRowClick,
 }: LawsTableProps) {
-    const [sortField, setSortField] = useState<keyof CrawlingData>('작성일'); // 작성일 대신 기간이나 수집일시 사용 가능
+    const [sortField, setSortField] = useState<keyof CrawlingData>('수집일시'); // 작성일 대신 수집일시 사용
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     const sortedData = [...data].sort((a, b) => {
