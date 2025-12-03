@@ -2,8 +2,38 @@
 
 import Link from 'next/link';
 import { StatCard } from '@/components/StatCard';
+import { useEffect, useState } from 'react';
+import type { DashboardStats } from '@/types';
 
 export default function Home() {
+  const [stats, setStats] = useState<DashboardStats>({
+    총게시물수: 0,
+    기관수: 0,
+    최근업데이트: '-',
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/sheets?type=stats');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            setStats({
+              총게시물수: result.data.totalCount,
+              기관수: result.data.organizationCount,
+              최근업데이트: result.data.latestCrawlTime || '-',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="space-y-12">
       <section className="text-center py-12">
@@ -33,13 +63,13 @@ export default function Home() {
           />
           <StatCard
             title="크롤링 대상"
-            value="20+"
+            value={`${stats.기관수 > 0 ? stats.기관수 : '20+'}`}
             icon="🏛️"
             color="secondary"
           />
           <StatCard
             title="총 게시물"
-            value="10K+"
+            value={`${stats.총게시물수 > 0 ? stats.총게시물수.toLocaleString() : '10K+'}`}
             icon="📊"
             color="success"
           />
