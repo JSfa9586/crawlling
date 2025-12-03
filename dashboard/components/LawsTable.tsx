@@ -14,10 +14,27 @@ export function LawsTable({
     isLoading = false,
     onRowClick,
 }: LawsTableProps) {
-    const [sortField, setSortField] = useState<keyof CrawlingData>('수집일시'); // 작성일 대신 수집일시 사용
+    const [sortField, setSortField] = useState<keyof CrawlingData>('기간'); // 기본 정렬: 기간
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     const sortedData = [...data].sort((a, b) => {
+        // 기간 필드 정렬 시 종료일 기준 처리
+        if (sortField === '기간') {
+            const getEndDate = (period: string) => {
+                if (!period) return '';
+                const parts = period.split('~');
+                // "2025.12.03 ~ 2026.02.11" 형식에서 뒤쪽 날짜 추출
+                return parts.length > 1 ? parts[1].trim() : period;
+            };
+
+            const aVal = getEndDate(a.기간 || '');
+            const bVal = getEndDate(b.기간 || '');
+
+            return sortOrder === 'asc'
+                ? aVal.localeCompare(bVal)
+                : bVal.localeCompare(aVal);
+        }
+
         const aVal = a[sortField] || '';
         const bVal = b[sortField] || '';
 
