@@ -4,7 +4,7 @@ import { filterData } from '@/lib/filters';
 import { logger } from '@/lib/logger';
 
 // ISR 캐싱: 5분마다 자동 재검증
-export const revalidate = 300;
+export const revalidate = 0;
 
 /**
  * GET /api/sheets
