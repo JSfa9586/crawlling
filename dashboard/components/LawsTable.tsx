@@ -18,27 +18,27 @@ export function LawsTable({
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     const sortedData = [...data].sort((a, b) => {
-        // 기간 필드 정렬 시 종료일 기준 처리
+        // 기간 필드 정렬 시 시작일 기준 처리
         if (sortField === '기간') {
-            const getEndDate = (period: string) => {
+            const getStartDate = (period: string) => {
                 if (!period) return '';
                 const parts = period.split('~');
                 // "2025.12.03 ~ 2026.02.11" 또는 "2025. 11. 25. ~ 2026. 1. 7." 형식 처리
-                const endDateStr = parts.length > 1 ? parts[1].trim() : period;
+                const startDateStr = parts[0].trim();
 
                 // 숫자만 추출하여 YYYYMMDD 형식으로 변환
-                const numbers = endDateStr.match(/\d+/g);
+                const numbers = startDateStr.match(/\d+/g);
                 if (numbers && numbers.length >= 3) {
                     const year = numbers[0];
                     const month = numbers[1].padStart(2, '0');
                     const day = numbers[2].padStart(2, '0');
                     return `${year}${month}${day}`;
                 }
-                return endDateStr;
+                return startDateStr;
             };
 
-            const aVal = getEndDate(a.기간 || '');
-            const bVal = getEndDate(b.기간 || '');
+            const aVal = getStartDate(a.기간 || '');
+            const bVal = getStartDate(b.기간 || '');
 
             return sortOrder === 'asc'
                 ? aVal.localeCompare(bVal)

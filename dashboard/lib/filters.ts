@@ -52,28 +52,28 @@ export function filterData(data: CrawlingData[], filters: FilterOptions): Crawli
     );
   }
 
-  // 정렬 (기본: 기간 종료일 내림차순)
+  // 정렬 (기본: 기간 시작일 내림차순)
   filtered.sort((a, b) => {
     try {
-      // 기간 필드에서 종료일 추출 및 비교
-      const getEndDate = (period: string) => {
+      // 기간 필드에서 시작일 추출 및 비교
+      const getStartDate = (period: string) => {
         if (!period) return '';
         const parts = period.split('~');
-        const endDateStr = parts.length > 1 ? parts[1].trim() : period;
-        const numbers = endDateStr.match(/\d+/g);
+        const startDateStr = parts[0].trim(); // 시작일 추출
+        const numbers = startDateStr.match(/\d+/g);
         if (numbers && numbers.length >= 3) {
           const year = numbers[0];
           const month = numbers[1].padStart(2, '0');
           const day = numbers[2].padStart(2, '0');
           return `${year}${month}${day}`;
         }
-        return endDateStr;
+        return startDateStr;
       };
 
-      const dateA = getEndDate(a.기간 || '');
-      const dateB = getEndDate(b.기간 || '');
+      const dateA = getStartDate(a.기간 || '');
+      const dateB = getStartDate(b.기간 || '');
 
-      // 종료일이 같으면 수집일시로 2차 정렬
+      // 시작일이 같으면 수집일시로 2차 정렬
       if (dateA === dateB) {
         return (b.수집일시 || '').localeCompare(a.수집일시 || '');
       }

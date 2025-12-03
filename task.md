@@ -26,10 +26,14 @@
     - [x] `filters.ts`의 페이지네이션 로직 확인 (API에서 페이지네이션 수행 확인)
     - [x] `filters.ts`에서 데이터 반환 전 **전체 데이터 정렬** 로직 추가
     - [x] 정렬 기준: `기간` 종료일 내림차순 (기본값)
+- [ ] **정렬 기준 변경 (기간 시작일)**
+    - [x] `filters.ts`: 서버 사이드 정렬 로직을 시작일 기준으로 변경 (완료)
+    - [x] `LawsTable.tsx`: 클라이언트 사이드 정렬 로직을 시작일 기준으로 변경 (완료)
 
 ## 2. 수정 및 검증 (Fix & Verify)
-- [x] `dashboard/lib/filters.ts` 수정: 페이지네이션 전 정렬 로직 개선
+- [x] `dashboard/lib/filters.ts` 수정
+- [x] `dashboard/components/LawsTable.tsx` 수정
 - [ ] 변경 사항 커밋 및 푸시
 
 ## 3. 마무리 (Finalization)
-- [ ] 사용자에게 서버 사이드 정렬 적용 설명
+- [ ] 사용자에게 정렬 기준 변경(시작일) 설명
