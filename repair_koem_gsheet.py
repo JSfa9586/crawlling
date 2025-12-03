@@ -186,8 +186,7 @@ def repair_koem_links():
         print(f"Header not found: {e}")
         return
 
-    print("Inspecting and fixing KOEM links...")
-    updates = []
+    print("Verifying KOEM links in Sheet...")
     
     for i, row in enumerate(data_rows):
         if len(row) <= idx_link: continue
@@ -197,29 +196,10 @@ def repair_koem_links():
         link = row[idx_link]
         
         if org == '해양환경공단' and board == '공지사항':
-            # Check for .0 in parameters
             if '.0' in link:
-                new_link = re.sub(r'(\d+)\.0', r'\1', link)
-                if new_link != link:
-                    print(f"Fixing row {i+2}:")
-                    print(f"  Old: {link}")
-                    print(f"  New: {new_link}")
-                    
-                    updates.append({
-                        'range': f'{chr(65+idx_link)}{i+2}',
-                        'values': [[new_link]]
-                    })
-
-    if updates:
-        print(f"Updating {len(updates)} rows...")
-        batch_data = []
-        for update in updates:
-            batch_data.append(update)
-        
-        worksheet.batch_update(batch_data)
-        print("Update complete.")
-    else:
-        print("No updates needed.")
+                print(f"[FAIL] Row {i+2} still has .0: {link}")
+            else:
+                print(f"[PASS] Row {i+2}: {link}")
 
 if __name__ == "__main__":
     repair_koem_links()
