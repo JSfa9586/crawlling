@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import re
 
 def debug_koem():
-    url = "https://www.koem.or.kr/site/koem/ex/board/List.do?cbIdx=236"
+    url = "https://www.koem.or.kr/koem/na/ntt/selectNttList.do?mi=1023&bbsId=1003"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
@@ -34,17 +35,28 @@ def debug_koem():
             print(f"  Title: {title}")
 
             raw_href = title_elem.get('href', '')
+            onclick = title_elem.get('onclick', '')
             print(f"  Raw href: {raw_href}")
+            print(f"  Onclick: {onclick}")
             
-            resolved_link = urljoin(url, raw_href)
-            print(f"  Resolved link: {resolved_link}")
+            link = raw_href
+            if not link or 'javascript' in link or link == '#':
+                match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
+                if match:
+                    nttSn = match.group(1)
+                    link = f"https://www.koem.or.kr/koem/na/ntt/selectNttInfo.do?mi=1023&bbsId=1003&nttSn={nttSn}"
+            
+            if link and not link.startswith('http') and not link.startswith('javascript'):
+                link = urljoin(url, link)
+                
+            print(f"  Resolved link: {link}")
             
             # Verify if the link works
             try:
-                link_response = requests.get(resolved_link, headers=headers, timeout=10)
+                link_response = requests.get(link, headers=headers, timeout=10)
                 print(f"  Status Code: {link_response.status_code}")
                 if link_response.status_code != 200:
-                    print(f"  Failed URL: {resolved_link}")
+                    print(f"  Failed URL: {link}")
             except Exception as e:
                 print(f"  Link check failed: {e}")
 

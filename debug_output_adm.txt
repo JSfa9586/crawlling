@@ -1,0 +1,27 @@
+--- Row 1 ---
+Full Text: 진행보훈병원 의료수가 기준 일부개정고시안 행정예고
+HTML: <td class="subject" data-th="행정예고명">
+<a href="/gcom/admpp/45858?announceType=TYPE6&amp;mappingAdmRulSeq=2000000321914" title="보훈병원 의료수가 기준 일부개정고시안 행정예고 이동">
+<span aria-label="입법의견 접수 진행중" class="ogmark_6">진행</span>
+                                                
+                                                보훈병원 의료수가 기준 일부개정고시안 행정예고 
+											</a>
+</td>
+--- Row 2 ---
+Full Text: 진행정책홍보 영상물의 제작·관리 및 개방에 관한 규정(국무총리 훈령) 제정안 행...
+HTML: <td class="subject" data-th="행정예고명">
+<a href="/gcom/admpp/45856?announceType=TYPE6&amp;mappingAdmRulSeq=2000000321912" title="정책홍보 영상물의 제작·관리 및 개방에 관한 규정(국무총리 훈령) 제정안 행... 이동">
+<span aria-label="입법의견 접수 진행중" class="ogmark_6">진행</span>
+                                                
+                                                정책홍보 영상물의 제작·관리 및 개방에 관한 규정(국무총리 훈령) 제정안 행... 
+											</a>
+</td>
+--- Row 3 ---
+Full Text: 진행고용노동관계법 위반자에 대한 과태료 부과·징수 업무에 관한 예규 일부개정...
+HTML: <td class="subject" data-th="행정예고명">
+<a href="/gcom/admpp/45854?announceType=TYPE6&amp;mappingAdmRulSeq=2000000321910" title="고용노동관계법 위반자에 대한 과태료 부과·징수 업무에 관한 예규 일부개정... 이동">
+<span aria-label="입법의견 접수 진행중" class="ogmark_6">진행</span>
+                                                
+                                                고용노동관계법 위반자에 대한 과태료 부과·징수 업무에 관한 예규 일부개정... 
+											</a>
+</td>

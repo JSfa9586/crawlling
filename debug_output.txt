@@ -1,67 +1,18 @@
-Fetching URL: https://www.busanpa.com/kor/Board.do?mCode=MN1259
-Found 11 rows (including header)
-
-Row 1:
-  Is Notice (mark): False
-  Title: 「부산항 우암부두 해양산업클러스터 기반시설공사 사후환경영향조사용역(운영시 2차)」사업수행능력평가(업무여유도) 관련 참여업체 제출자료 공개
-  Link href: ?mode=view&idx=34449&mCode=MN1259
-  Link onclick: 
-  li[0] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic']: IsDate=False, IsNumber=True, Text=1918
-  li[1] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic', 'sm-jcfe']: IsDate=False, IsNumber=False, Text=알림
-  li[2] class=['grid-5', 'df', 'aic', 'sm-grid-12', 'sm-mb2rem', 'sm-mt2rem']: IsDate=False, IsNumber=False, Text=「부산항 우암부두 해양산업클러스터 기반시설공사 사후환경영향조사용역(운영시 2차)」사업수행능력평가(업무여유도) 관련 참여업체 제출자료 공개
-  li[3] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=False, Text=
-  li[4] class=['grid-1', 'sm-grid-0', 'sm-mr2rem']: IsDate=True, IsNumber=False, Text=2025-11-19
-  li[5] class=['grid-2', 'jcc', 'df', 'aic', 'sm-grid-0', 'sm-mr2rem']: IsDate=False, IsNumber=False, Text=이**
-  li[6] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=True, Text=122
-
-Row 2:
-  Is Notice (mark): False
-  Title: 2025년 항만 무탄소화 전환 지원사업 민간사업자 모집 재공고
-  Link href: ?mode=view&idx=34431&mCode=MN1259
-  Link onclick: 
-  li[0] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic']: IsDate=False, IsNumber=True, Text=1917
-  li[1] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic', 'sm-jcfe']: IsDate=False, IsNumber=False, Text=진행중
-  li[2] class=['grid-5', 'df', 'aic', 'sm-grid-12', 'sm-mb2rem', 'sm-mt2rem']: IsDate=False, IsNumber=False, Text=2025년 항만 무탄소화 전환 지원사업 민간사업자 모집 재공고
-  li[3] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=False, Text=
-  li[4] class=['grid-1', 'sm-grid-0', 'sm-mr2rem']: IsDate=True, IsNumber=False, Text=2025-11-17
-  li[5] class=['grid-2', 'jcc', 'df', 'aic', 'sm-grid-0', 'sm-mr2rem']: IsDate=False, IsNumber=False, Text=이**
-  li[6] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=True, Text=197
-
-Row 3:
-  Is Notice (mark): False
-  Title: 「2026년 부산항 건축시설물 유지보수공사 설계용역」설계공모 심사결과 공개
-  Link href: ?mode=view&idx=34418&mCode=MN1259
-  Link onclick: 
-  li[0] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic']: IsDate=False, IsNumber=True, Text=1916
-  li[1] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic', 'sm-jcfe']: IsDate=False, IsNumber=False, Text=알림
-  li[2] class=['grid-5', 'df', 'aic', 'sm-grid-12', 'sm-mb2rem', 'sm-mt2rem']: IsDate=False, IsNumber=False, Text=「2026년 부산항 건축시설물 유지보수공사 설계용역」설계공모 심사결과 공개
-  li[3] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=False, Text=
-  li[4] class=['grid-1', 'sm-grid-0', 'sm-mr2rem']: IsDate=True, IsNumber=False, Text=2025-11-13
-  li[5] class=['grid-2', 'jcc', 'df', 'aic', 'sm-grid-0', 'sm-mr2rem']: IsDate=False, IsNumber=False, Text=박**
-  li[6] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=True, Text=154
-
-Row 4:
-  Is Notice (mark): False
-  Title: 부산항 국제선용품유통센터 사무실·창고 운영 사업자 선정 공고
-  Link href: ?mode=view&idx=34407&mCode=MN1259
-  Link onclick: 
-  li[0] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic']: IsDate=False, IsNumber=True, Text=1915
-  li[1] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic', 'sm-jcfe']: IsDate=False, IsNumber=False, Text=종료
-  li[2] class=['grid-5', 'df', 'aic', 'sm-grid-12', 'sm-mb2rem', 'sm-mt2rem']: IsDate=False, IsNumber=False, Text=부산항 국제선용품유통센터 사무실·창고 운영 사업자 선정 공고
-  li[3] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=False, Text=
-  li[4] class=['grid-1', 'sm-grid-0', 'sm-mr2rem']: IsDate=True, IsNumber=False, Text=2025-11-12
-  li[5] class=['grid-2', 'jcc', 'df', 'aic', 'sm-grid-0', 'sm-mr2rem']: IsDate=False, IsNumber=False, Text=조**
-  li[6] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=True, Text=325
-
-Row 5:
-  Is Notice (mark): False
-  Title: 「부산항 진해신항 항만시설용 부지 조성사업 기본 및 실시설계 용역」 종합기술제안서 평가기준 공고
-  Link href: ?mode=view&idx=34366&mCode=MN1259
-  Link onclick: 
-  li[0] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic']: IsDate=False, IsNumber=True, Text=1914
-  li[1] class=['grid-1', 'sm-grid-6', 'sm-df', 'sm-aic', 'sm-jcfe']: IsDate=False, IsNumber=False, Text=알림
-  li[2] class=['grid-5', 'df', 'aic', 'sm-grid-12', 'sm-mb2rem', 'sm-mt2rem']: IsDate=False, IsNumber=False, Text=「부산항 진해신항 항만시설용 부지 조성사업 기본 및 실시설계 용역」 종합기술제안서 평가기준 공고
-  li[3] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=False, Text=
-  li[4] class=['grid-1', 'sm-grid-0', 'sm-mr2rem']: IsDate=True, IsNumber=False, Text=2025-11-07
-  li[5] class=['grid-2', 'jcc', 'df', 'aic', 'sm-grid-0', 'sm-mr2rem']: IsDate=False, IsNumber=False, Text=신**
-  li[6] class=['grid-1', 'sm-grid-0']: IsDate=False, IsNumber=True, Text=210
+--- Row 1 ---
+Full Text: 해양환경관리법 시행령 일부개정령안 입법예고일부
+HTML: <td class="subject" data-th="법령 제명">
+<a href="/gcom/ogLmPp/84604" title="해양환경관리법 시행령 일부개정령안 입법예고">해양환경관리법 시행령 일부개정령안 입법예고</a>
+<span aria-label="입법예고 제·개정구분 - 일부" class="ogmark_2">일부</span>
+</td>
+--- Row 2 ---
+Full Text: 해양환경관리법 시행규칙 일부개정령안 입법예고일부
+HTML: <td class="subject" data-th="법령 제명">
+<a href="/gcom/ogLmPp/84562" title="해양환경관리법 시행규칙 일부개정령안 입법예고">해양환경관리법 시행규칙 일부개정령안 입법예고</a>
+<span aria-label="입법예고 제·개정구분 - 일부" class="ogmark_2">일부</span>
+</td>
+--- Row 3 ---
+Full Text: 규제일몰 해제 등을 위한 방문판매 등에 관한 법률 시행규칙 일부개정안 입법예고일부
+HTML: <td class="subject" data-th="법령 제명">
+<a href="/gcom/ogLmPp/84560" title="규제일몰 해제 등을 위한 방문판매 등에 관한 법률 시행규칙 일부개정안 입법예고">규제일몰 해제 등을 위한 방문판매 등에 관한 법률 시행규칙 일부개정안 입법예고</a>
+<span aria-label="입법예고 제·개정구분 - 일부" class="ogmark_2">일부</span>
+</td>

@@ -186,20 +186,21 @@ def repair_koem_links():
         print(f"Header not found: {e}")
         return
 
-    print("Verifying KOEM links in Sheet...")
+    print("Extracting KOEM titles for search...")
     
+    count = 0
     for i, row in enumerate(data_rows):
         if len(row) <= idx_link: continue
         
         org = row[idx_org]
         board = row[idx_board]
-        link = row[idx_link]
+        title = row[idx_title]
+        date = row[idx_date]
         
         if org == '해양환경공단' and board == '공지사항':
-            if '.0' in link:
-                print(f"[FAIL] Row {i+2} still has .0: {link}")
-            else:
-                print(f"[PASS] Row {i+2}: {link}")
+            print(f"Title: {title} ({date})")
+            count += 1
+            if count >= 3: break
 
 if __name__ == "__main__":
     repair_koem_links()

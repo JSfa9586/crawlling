@@ -249,8 +249,8 @@ class MarineMinistryJejCrawler:
                             if not link or 'javascript' in link or link == '#':
                                 match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
                                 if match:
-                                    bcIdx = match.group(1)
-                                    link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236&bcIdx={bcIdx}"
+                                    nttSn = match.group(1)
+                                    link = f"https://www.koem.or.kr/koem/na/ntt/selectNttInfo.do?mi=1023&bbsId=1003&nttSn={nttSn}"
                             
                             if link and not link.startswith('http') and not link.startswith('javascript'):
                                 link = urljoin(url, link)
@@ -275,8 +275,8 @@ class MarineMinistryJejCrawler:
                             if not link or 'javascript' in link or link == '#':
                                 match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
                                 if match:
-                                    bcIdx = match.group(1)
-                                    link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236&bcIdx={bcIdx}"
+                                    nttSn = match.group(1)
+                                    link = f"https://www.koem.or.kr/koem/na/ntt/selectNttInfo.do?mi=1023&bbsId=1003&nttSn={nttSn}"
 
                             if link and not link.startswith('http') and not link.startswith('javascript'):
                                 link = urljoin(url, link)
@@ -816,7 +816,7 @@ class MarineMinistryJejCrawler:
                 time.sleep(2)
 
         # 해양환경공단
-        count, status = self.crawl_koem_board("https://www.koem.or.kr/site/koem/ex/board/List.do?cbIdx=236", "공지사항")
+        count, status = self.crawl_koem_board("https://www.koem.or.kr/koem/na/ntt/selectNttList.do?mi=1023&bbsId=1003", "공지사항")
         self.crawl_status.append({"기관구분": "공단", "기관명": "해양환경공단", "게시판": "공지사항", "상태": status})
 
         # 항만공사 - 부산항만공사 (전용 함수)
