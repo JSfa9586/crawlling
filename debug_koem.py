@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import re
 
 def debug_koem():
-    url = "https://www.koem.or.kr/koem/na/ntt/selectNttList.do?mi=1023&bbsId=1003"
+    url = "https://www.koem.or.kr/site/koem/ex/board/List.do?cbIdx=236"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
@@ -36,15 +36,15 @@ def debug_koem():
 
             raw_href = title_elem.get('href', '')
             onclick = title_elem.get('onclick', '')
-            print(f"  Raw href: {raw_href}")
-            print(f"  Onclick: {onclick}")
             
             link = raw_href
+            bcIdx = None
+            
             if not link or 'javascript' in link or link == '#':
                 match = re.search(r"fn_view\('(\d+)'\)", onclick) or re.search(r"view\('(\d+)'\)", onclick)
                 if match:
-                    nttSn = match.group(1)
-                    link = f"https://www.koem.or.kr/koem/na/ntt/selectNttInfo.do?mi=1023&bbsId=1003&nttSn={nttSn}"
+                    bcIdx = match.group(1)
+                    link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236&bcIdx={bcIdx}"
             
             if link and not link.startswith('http') and not link.startswith('javascript'):
                 link = urljoin(url, link)
@@ -53,10 +53,25 @@ def debug_koem():
             
             # Verify if the link works
             try:
+                print(f"  Checking normal link...")
                 link_response = requests.get(link, headers=headers, timeout=10)
                 print(f"  Status Code: {link_response.status_code}")
-                if link_response.status_code != 200:
-                    print(f"  Failed URL: {link}")
+                
+                if bcIdx:
+                    # Test with .0 to reproduce user error
+                    bad_link = f"https://www.koem.or.kr/site/koem/ex/board/View.do?cbIdx=236.0&bcIdx={bcIdx}.0"
+                    print(f"  Checking bad link (with .0): {bad_link}")
+                    bad_response = requests.get(bad_link, headers=headers, timeout=10)
+                    print(f"  Status Code: {bad_response.status_code}")
+                    if bad_response.status_code != 200:
+                        print("  -> Confirmed: .0 causes failure!")
+                    else:
+                        # Check content length or title to see if it's an error page
+                        if len(bad_response.text) < 1000 or "Error" in bad_response.text:
+                             print("  -> Confirmed: .0 causes error page or short content!")
+                        else:
+                             print("  -> Strange: .0 link seems to work?")
+
             except Exception as e:
                 print(f"  Link check failed: {e}")
 
