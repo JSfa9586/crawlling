@@ -23,8 +23,18 @@ export function LawsTable({
             const getEndDate = (period: string) => {
                 if (!period) return '';
                 const parts = period.split('~');
-                // "2025.12.03 ~ 2026.02.11" 형식에서 뒤쪽 날짜 추출
-                return parts.length > 1 ? parts[1].trim() : period;
+                // "2025.12.03 ~ 2026.02.11" 또는 "2025. 11. 25. ~ 2026. 1. 7." 형식 처리
+                const endDateStr = parts.length > 1 ? parts[1].trim() : period;
+
+                // 숫자만 추출하여 YYYYMMDD 형식으로 변환
+                const numbers = endDateStr.match(/\d+/g);
+                if (numbers && numbers.length >= 3) {
+                    const year = numbers[0];
+                    const month = numbers[1].padStart(2, '0');
+                    const day = numbers[2].padStart(2, '0');
+                    return `${year}${month}${day}`;
+                }
+                return endDateStr;
             };
 
             const aVal = getEndDate(a.기간 || '');
