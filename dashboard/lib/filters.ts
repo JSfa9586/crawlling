@@ -53,9 +53,18 @@ export function filterData(data: CrawlingData[], filters: FilterOptions): Crawli
   }
 
   // 정렬 (기본: 기간 시작일 내림차순)
+  // 정렬 (기본: 작성일 내림차순, 없으면 기간 시작일)
   filtered.sort((a, b) => {
     try {
-      // 기간 필드에서 시작일 추출 및 비교
+      // 1. 작성일 비교 (가장 우선)
+      const dateA = a.작성일 ? new Date(a.작성일).getTime() : 0;
+      const dateB = b.작성일 ? new Date(b.작성일).getTime() : 0;
+
+      if (dateA !== dateB) {
+        return dateB - dateA; // 내림차순
+      }
+
+      // 2. 기간 시작일 비교 (작성일이 없거나 같을 경우)
       const getStartDate = (period: string) => {
         if (!period) return '';
         const parts = period.split('~');
@@ -70,15 +79,15 @@ export function filterData(data: CrawlingData[], filters: FilterOptions): Crawli
         return startDateStr;
       };
 
-      const dateA = getStartDate(a.기간 || '');
-      const dateB = getStartDate(b.기간 || '');
+      const periodStartA = getStartDate(a.기간 || '');
+      const periodStartB = getStartDate(b.기간 || '');
 
-      // 시작일이 같으면 수집일시로 2차 정렬
-      if (dateA === dateB) {
-        return (b.수집일시 || '').localeCompare(a.수집일시 || '');
+      if (periodStartA !== periodStartB) {
+        return periodStartB.localeCompare(periodStartA);
       }
 
-      return dateB.localeCompare(dateA);
+      // 3. 수집일시 비교 (마지막 수단)
+      return (b.수집일시 || '').localeCompare(a.수집일시 || '');
     } catch {
       return 0;
     }
