@@ -345,7 +345,7 @@ def main():
             'sheet_name': '크롤링 결과'
         },
         {
-            'pattern': 'eiaa_boards_*.csv',
+            'pattern': 'data/eiaa_boards_*.csv',
             'sheet_name': '관련협회'
         },
         {
