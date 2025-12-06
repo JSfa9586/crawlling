@@ -303,7 +303,7 @@ export default function G2BPage() {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <a
-                                                        href={item.링크}
+                                                        href={item['링크']}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-primary-600 hover:text-primary-800 hover:underline font-medium"
@@ -394,7 +394,7 @@ export default function G2BPage() {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <a
-                                                        href={item.링크}
+                                                        href={item['링크']}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-primary-600 hover:text-primary-800 hover:underline font-medium"
