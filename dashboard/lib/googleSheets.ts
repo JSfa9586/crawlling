@@ -52,7 +52,7 @@ export async function getSpreadsheetData(sheetName: string = '크롤링 결과')
     // 시트 이름에 공백이나 특수문자가 있을 수 있으므로 작은따옴표로 감쌈
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `'${sheetName}'!A:G`,
+      range: `'${sheetName}'!A:Z`,
     });
 
     const duration = timer();
