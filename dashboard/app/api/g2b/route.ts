@@ -37,12 +37,17 @@ export async function GET(request: NextRequest) {
         }
 
         // 헤더와 데이터 분리
-        const headers = rows[0] as string[];
+        const rawHeaders = rows[0] as string[];
+        // 헤더의 공백 제거 (매핑 오류 방지)
+        const headers = rawHeaders.map(h => h ? h.toString().trim() : '');
+
         const data = rows.slice(1).map(row => {
             const item: Record<string, string> = {};
             headers.forEach((header, index) => {
+                if (!header) return; // 빈 헤더는 건너뜀
                 const cellValue = (row as string[])[index];
-                item[header] = cellValue || '';
+                // 데이터도 문자열로 변환 후 공백 정리
+                item[header] = cellValue ? String(cellValue).trim() : '';
             });
             return item;
         });
