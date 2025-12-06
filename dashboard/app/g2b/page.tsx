@@ -76,7 +76,7 @@ export default function G2BPage() {
     const [preSpecs, setPreSpecs] = useState<G2BData[]>([]);
     const [bids, setBids] = useState<G2BData[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('pre_specs'); // 사전규격이 기본
+    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids'); // 입찰공고가 기본
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('전체');
 
@@ -213,15 +213,6 @@ export default function G2BPage() {
             <div className="border-b border-gray-200">
                 <nav className="flex space-x-8">
                     <button
-                        onClick={() => setActiveTab('pre_specs')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs'
-                            ? 'border-primary-600 text-primary-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
-                    >
-                        사전규격 ({preSpecs.length})
-                    </button>
-                    <button
                         onClick={() => setActiveTab('bids')}
                         className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bids'
                             ? 'border-primary-600 text-primary-600'
@@ -229,6 +220,15 @@ export default function G2BPage() {
                             }`}
                     >
                         입찰공고 ({bids.length})
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('pre_specs')}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs'
+                            ? 'border-primary-600 text-primary-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        사전규격 ({preSpecs.length})
                     </button>
                 </nav>
             </div>
