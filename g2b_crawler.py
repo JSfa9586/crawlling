@@ -308,7 +308,7 @@ def normalize_pre_spec(item: Dict, category: str) -> Dict:
         '수요기관': item.get('pchrgDminsttNm', ''),
         '배정예산': item.get('asignBdgtAmt', ''),
         '등록일': item.get('rgstDt', '')[:10] if item.get('rgstDt') else '',
-        '규격공개종료일': item.get('specDocOpenEndDt', '')[:10] if item.get('specDocOpenEndDt') else '',
+        '규격공개종료일': item.get('opninRgstClseDt', '')[:10] if item.get('opninRgstClseDt') else '',
         '상태': '신규',
         '링크': f"https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do?taskClCd=1&bidSearchType=1&bidNo={item.get('bfSpecRgstNo', '')}"
     }
