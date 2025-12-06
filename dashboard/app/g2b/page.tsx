@@ -324,10 +324,10 @@ export default function G2BPage() {
                                                     {formatMoney(item.배정예산)}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {formatDate(item.등록일)}
+                                                    {formatDate(item['등록일'])}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {formatDate(item.규격공개종료일)}
+                                                    {formatDate(item['규격공개종료일'])}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
@@ -415,10 +415,10 @@ export default function G2BPage() {
                                                     {formatMoney(item.추정가격 || item.기초금액)}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {formatDate(item.공고일)}
+                                                    {formatDate(item['공고일'])}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {getBidDate(item)}
+                                                    {item['입찰마감'] ? formatDate(item['입찰마감']) : '추후공고'}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
