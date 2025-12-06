@@ -161,13 +161,7 @@ export default function G2BPage() {
         return { text: '신규', color: 'bg-green-100 text-green-800' };
     };
 
-    // 입찰일 표시
-    const getBidDate = (item: G2BData) => {
-        if (item.입찰마감) {
-            return formatDate(item.입찰마감);
-        }
-        return '추후공고';
-    };
+
 
     return (
         <div className="space-y-6">
