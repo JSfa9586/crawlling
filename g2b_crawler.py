@@ -310,7 +310,7 @@ def normalize_pre_spec(item: Dict, category: str) -> Dict:
         '등록일': item.get('rgstDt', '')[:10] if item.get('rgstDt') else '',
         '규격공개종료일': item.get('opninRgstClseDt', '')[:10] if item.get('opninRgstClseDt') else '',
         '상태': '신규',
-        '링크': f"https://search.naver.com/search.naver?query={item.get('bfSpecRgstNo', '')}"
+        '링크': f"https://search.naver.com/search.naver?query={quote_plus((item.get('prdctClsfcNoNm', '') or item.get('bidNtceNm', '') or item.get('bfSpecRgstNo', '')) + ' 나라장터')}"
     }
 
 
@@ -334,7 +334,7 @@ def normalize_bid(item: Dict, category: str) -> Dict:
         '입찰마감': item.get('bidClseDt', ''),
         '개찰일': item.get('opengDt', ''),
         '상태': '신규',
-        '링크': f"https://search.naver.com/search.naver?query={bid_no.split('-')[0] if '-' in bid_no else bid_no}"
+        '링크': f"https://search.naver.com/search.naver?query={quote_plus((item.get('bidNtceNm', '') or bid_no) + ' 나라장터')}"
     }
 
 
