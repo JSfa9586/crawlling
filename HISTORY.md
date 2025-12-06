@@ -798,6 +798,21 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Changed `h1` title from "관련법령" to "관련법령 예고" in `dashboard/app/dashboard/laws/page.tsx`.
 - **Files Modified**: `dashboard/app/dashboard/laws/page.tsx`.
 
+## Phase 52: 나라장터 API 시스템 구현 및 개선 (2025-12-06)
+- **Goal**: 나라장터 공공데이터 API를 활용하여 회사가 참여 가능한 입찰 공고를 자동 검색
+- **Implementation**:
+    - `g2b_crawler.py` 생성: 사전규격/입찰공고 API 클라이언트, CSV 저장
+    - `dashboard/app/g2b/page.tsx` 생성: 나라장터 대시보드 페이지
+    - `dashboard/app/api/g2b/route.ts` 생성: 구글시트 데이터 조회 API
+    - `Header.tsx`, `run_crawler.bat`, `upload_to_gsheet.py` 수정
+- **Issues & Fixes**:
+    - Issue 1: 전체 6,235건 중 100건만 조회 → PPSSrch 키워드 검색으로 변경
+    - Issue 2: CSV 헤더 순서 무작위 → 고정된 필드 순서 사용
+    - Issue 3: 검색 기간 1일로 제한 → 7일로 확대
+- **Keywords** (10개): 영향평가, 환경영향, 해양환경, 환경성검토, 보전방안, 해양이용, 해역이용, 영향조사, 모니터링, 해상풍력
+- **Final Result**: 사전규격 **31건**, 입찰공고 **78건**, 총 **109건**
+- **Status**: 완료
+
 ## Phase 35: Rename Related Laws to Legislative Notice (2025-11-28)
 - **Problem**: User requested to rename "Related Laws" to "Legislative Notice" throughout the web app.
 - **Solution**:

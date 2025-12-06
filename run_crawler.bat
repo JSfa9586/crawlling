@@ -9,6 +9,7 @@ echo ========================================================
 :: 1. 환경 변수 설정
 set EIAA_USER_ID=seco1229
 set EIAA_PASSWORD=seco9308
+set G2B_API_KEY=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE/mQLxG5XmvzCSqdQ==
 
 if "%EIAA_USER_ID%"=="" set /p EIAA_USER_ID="EIAA 아이디를 입력하세요: "
 if "%EIAA_PASSWORD%"=="" set /p EIAA_PASSWORD="EIAA 비밀번호를 입력하세요: "
@@ -35,7 +36,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 :: 4. AI 뉴스 크롤러 실행
 echo.
-echo [3/4] AI 뉴스/프로모션 크롤러 실행 중...
+echo [3/5] AI 뉴스/프로모션 크롤러 실행 중...
 python ai_news_crawler.py
 if %ERRORLEVEL% NEQ 0 (
     echo [오류] AI 뉴스 크롤링 실패.
@@ -43,9 +44,17 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b %ERRORLEVEL%
 )
 
-:: 5. 업로드 스크립트 실행
+:: 5. 나라장터 크롤러 실행
 echo.
-echo [4/4] 구글 시트 업로드 중...
+echo [4/5] 나라장터 공고 크롤러 실행 중...
+python g2b_crawler.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [경고] 나라장터 크롤링 실패 (API 키 미설정 가능).
+)
+
+:: 6. 업로드 스크립트 실행
+echo.
+echo [5/5] 구글 시트 업로드 중...
 python upload_to_gsheet.py
 if %ERRORLEVEL% NEQ 0 (
     echo [오류] 업로드 실패.

@@ -38,6 +38,11 @@ export function Header() {
               </Link>
             </li>
             <li>
+              <Link href="/g2b" className="hover:text-primary-100 transition-colors">
+                🏛️ 나라장터
+              </Link>
+            </li>
+            <li>
               <Link href="/dashboard/test" className="hover:text-primary-100 transition-colors">
                 테스트
               </Link>
@@ -102,6 +107,15 @@ export function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   법령예고
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/g2b"
+                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  🏛️ 나라장터
                 </Link>
               </li>
               <li>

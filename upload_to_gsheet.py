@@ -355,6 +355,18 @@ def main():
         {
             'pattern': 'ai_news_*.csv',
             'sheet_name': 'AI소식'
+        },
+        {
+            'pattern': 'g2b_combined_*.csv',
+            'sheet_name': '나라장터'
+        },
+        {
+            'pattern': 'g2b_pre_specs_*.csv',
+            'sheet_name': '나라장터_사전규격'
+        },
+        {
+            'pattern': 'g2b_bids_*.csv',
+            'sheet_name': '나라장터_입찰공고'
         }
     ]
 
