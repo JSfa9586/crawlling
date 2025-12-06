@@ -257,21 +257,11 @@ export default function G2BPage() {
             {/* 안내 메시지 */}
             {(preSpecs.length === 0 && bids.length === 0) && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2">설정 안내</h3>
-                    <ol className="list-decimal list-inside text-blue-700 space-y-2">
-                        <li>
-                            <a
-                                href="https://www.data.go.kr/data/15129394/openapi.do"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline hover:text-blue-900"
-                            >
-                                공공데이터포털
-                            </a>에서 API 키를 발급받으세요
-                        </li>
-                        <li>환경변수 <code className="bg-blue-100 px-1 rounded">G2B_API_KEY</code>에 API 키를 설정하세요</li>
-                        <li><code className="bg-blue-100 px-1 rounded">python g2b_crawler.py</code> 명령으로 크롤러를 실행하세요</li>
-                    </ol>
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">데이터 안내</h3>
+                    <p className="text-blue-700">
+                        구글시트에서 나라장터 데이터를 가져오고 있습니다.
+                        데이터가 표시되지 않으면 관리자에게 문의하세요.
+                    </p>
                 </div>
             )}
         </div>

@@ -1,56 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { google } from 'googleapis';
+import { getSpreadsheetData } from '@/lib/googleSheets';
 
-// Google Sheets 인증
-async function getGoogleSheetsClient() {
-    const credentials = JSON.parse(
-        process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || '{}'
-    );
-
-    const auth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-    });
-
-    return google.sheets({ version: 'v4', auth });
-}
-
-// 나라장터 데이터 가져오기
-async function getG2BData(sheetName: string) {
-    try {
-        const sheets = await getGoogleSheetsClient();
-        const spreadsheetId = process.env.SPREADSHEET_ID;
-
-        if (!spreadsheetId) {
-            throw new Error('SPREADSHEET_ID not configured');
-        }
-
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId,
-            range: `${sheetName}!A:Z`,
-        });
-
-        const rows = response.data.values || [];
-
-        if (rows.length < 2) {
-            return [];
-        }
-
-        const headers = rows[0];
-        const data = rows.slice(1).map(row => {
-            const item: Record<string, string> = {};
-            headers.forEach((header: string, index: number) => {
-                item[header] = row[index] || '';
-            });
-            return item;
-        });
-
-        return data;
-    } catch (error) {
-        console.error(`Error fetching ${sheetName}:`, error);
-        return [];
-    }
-}
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -73,7 +24,27 @@ export async function GET(request: NextRequest) {
                 sheetName = '나라장터_입찰공고';
         }
 
-        const data = await getG2BData(sheetName);
+        // 기존 googleSheets 라이브러리 사용
+        const rows = await getSpreadsheetData(sheetName);
+
+        if (rows.length === 0) {
+            return NextResponse.json({
+                success: true,
+                data: [],
+                count: 0,
+                type,
+            });
+        }
+
+        // 헤더와 데이터 분리
+        const headers = rows[0] as string[];
+        const data = rows.slice(1).map(row => {
+            const item: Record<string, string> = {};
+            headers.forEach((header, index) => {
+                item[header] = (row as string[])[index] || '';
+            });
+            return item;
+        });
 
         return NextResponse.json({
             success: true,
