@@ -39,7 +39,7 @@ export function Header() {
             </li>
             <li>
               <Link href="/g2b" className="hover:text-primary-100 transition-colors">
-                🏛️ 나라장터
+                나라장터
               </Link>
             </li>
             <li>
@@ -115,7 +115,7 @@ export function Header() {
                   className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  🏛️ 나라장터
+                  나라장터
                 </Link>
               </li>
               <li>

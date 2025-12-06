@@ -8,10 +8,15 @@ interface G2BData {
     카테고리: string;
     공고명: string;
     발주기관: string;
-    예산: string;
-    마감일: string;
+    배정예산?: string;
+    추정가격?: string;
+    입찰마감?: string;
+    규격공개종료일?: string;
+    등록일?: string;
+    공고일?: string;
     상태: string;
     링크: string;
+    [key: string]: string | undefined;
 }
 
 export default function G2BPage() {
@@ -83,7 +88,7 @@ export default function G2BPage() {
             {/* 헤더 */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">🏛️ 나라장터</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">나라장터</h1>
                     <p className="text-gray-600 mt-1">사전규격 및 입찰공고 검색 결과</p>
                 </div>
                 <Link
@@ -128,7 +133,7 @@ export default function G2BPage() {
                             : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        📢 입찰공고 ({bids.length})
+                        입찰공고 ({bids.length})
                     </button>
                     <button
                         onClick={() => setActiveTab('pre_specs')}
@@ -137,7 +142,7 @@ export default function G2BPage() {
                             : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        📋 사전규격 ({preSpecs.length})
+                        사전규격 ({preSpecs.length})
                     </button>
                 </nav>
             </div>
@@ -224,10 +229,12 @@ export default function G2BPage() {
                                             {item.발주기관 || '-'}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-gray-700">
-                                            {item.예산 ? `${Number(item.예산).toLocaleString()}원` : '-'}
+                                            {(item.배정예산 || item.추정가격)
+                                                ? `${Number(item.배정예산 || item.추정가격).toLocaleString()}원`
+                                                : '-'}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-gray-700">
-                                            {item.마감일 || '-'}
+                                            {item.입찰마감 || item.규격공개종료일 || item.등록일 || item.공고일 || '-'}
                                         </td>
                                         <td className="px-4 py-3 whitespace-nowrap">
                                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.상태 === '신규'
@@ -250,7 +257,7 @@ export default function G2BPage() {
             {/* 안내 메시지 */}
             {(preSpecs.length === 0 && bids.length === 0) && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2">🔧 설정 안내</h3>
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">설정 안내</h3>
                     <ol className="list-decimal list-inside text-blue-700 space-y-2">
                         <li>
                             <a
