@@ -310,7 +310,7 @@ def normalize_pre_spec(item: Dict, category: str) -> Dict:
         '등록일': item.get('rgstDt', '')[:10] if item.get('rgstDt') else '',
         '규격공개종료일': item.get('opninRgstClseDt', '')[:10] if item.get('opninRgstClseDt') else '',
         '상태': '신규',
-        '링크': f"https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do?taskClCd=1&bidSearchType=1&bidNo={item.get('bfSpecRgstNo', '')}"
+        '링크': f"https://search.naver.com/search.naver?query={item.get('bfSpecRgstNo', '')}"
     }
 
 
@@ -334,7 +334,7 @@ def normalize_bid(item: Dict, category: str) -> Dict:
         '입찰마감': item.get('bidClseDt', ''),
         '개찰일': item.get('opengDt', ''),
         '상태': '신규',
-        '링크': f"https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do?bidNo={bid_no}&bidSeq={bid_seq}"
+        '링크': f"https://search.naver.com/search.naver?query={bid_no.split('-')[0] if '-' in bid_no else bid_no}"
     }
 
 
