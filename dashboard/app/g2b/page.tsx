@@ -52,12 +52,24 @@ function formatMoney(amount: string | undefined): string {
     return `${num.toLocaleString()}원`;
 }
 
-// 날짜 포맷 함수
+// 날짜 포맷 함수 (요일 포함)
 function formatDate(dateStr: string | undefined): string {
     if (!dateStr) return '-';
-    // YYYY-MM-DD 또는 YYYY-MM-DD HH:MM:SS 형식에서 날짜만 추출
-    const dateOnly = dateStr.split(' ')[0];
-    return dateOnly;
+    try {
+        // YYYY-MM-DD 또는 YYYY-MM-DD HH:MM:SS 형식에서 날짜만 추출
+        const dateOnly = dateStr.split(' ')[0];
+        const date = new Date(dateOnly);
+        if (isNaN(date.getTime())) return dateOnly;
+
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const dayOfWeek = days[date.getDay()];
+
+        return `${month}/${day}(${dayOfWeek})`;
+    } catch {
+        return dateStr.split(' ')[0];
+    }
 }
 
 export default function G2BPage() {
@@ -137,8 +149,14 @@ export default function G2BPage() {
         const status = item.상태 || '신규';
         if (status.includes('취소')) {
             return { text: status, color: 'bg-red-100 text-red-800' };
-        } else if (status.includes('변경') || item.공고차수 !== '000') {
-            return { text: item.공고차수 !== '000' ? `변경(${item.공고차수})` : status, color: 'bg-yellow-100 text-yellow-800' };
+        } else if (status.includes('변경')) {
+            return { text: status, color: 'bg-yellow-100 text-yellow-800' };
+        }
+        // 공고차수가 '000'이 아닌 경우 (변경공고)
+        const bidSeq = item.공고차수;
+        if (bidSeq && bidSeq !== '000' && bidSeq !== '') {
+            const seqNum = parseInt(bidSeq, 10);
+            return { text: `변경(${seqNum}차)`, color: 'bg-yellow-100 text-yellow-800' };
         }
         return { text: '신규', color: 'bg-green-100 text-green-800' };
     };
@@ -258,7 +276,7 @@ export default function G2BPage() {
                                         등록일
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        접수기간
+                                        접수마감
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         상태
@@ -309,9 +327,7 @@ export default function G2BPage() {
                                                     {formatDate(item.등록일)}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {item.등록일 && item.규격공개종료일
-                                                        ? `${formatDate(item.등록일)} ~ ${formatDate(item.규격공개종료일)}`
-                                                        : formatDate(item.규격공개종료일) || '-'}
+                                                    {formatDate(item.규격공개종료일)}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
