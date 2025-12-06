@@ -351,8 +351,13 @@ def main():
         {
             'pattern': 'moleg_data.csv',
             'sheet_name': '관련법령'
+        },
+        {
+            'pattern': 'ai_news_*.csv',
+            'sheet_name': 'AI소식'
         }
     ]
+
 
     import glob
 
