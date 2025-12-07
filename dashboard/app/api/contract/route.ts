@@ -79,7 +79,9 @@ export async function GET(request: NextRequest) {
             cntrctAmt: item.presmptPrce,
             orderInsttNm: item.ntceInsttNm,
             cntrctCnclsDt: item.bidNtceDt ? item.bidNtceDt.substring(0, 10) : '',
-            link: item.bidNtceUrl
+            // Link to Bid Result (개찰결과) which shows proper contract status/progress
+            // Structure: http://www.g2b.go.kr:8081/ep/co/open/bidResultDtl.do?bidno=...&bidseq=...
+            link: `http://www.g2b.go.kr:8081/ep/co/open/bidResultDtl.do?bidno=${item.bidNtceNo}&bidseq=${item.bidNtceOrd || '00'}&releaseYn=Y&taskClCd=1`
         }));
 
         if (data.response?.body?.items) {

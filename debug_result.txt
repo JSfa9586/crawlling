@@ -1,6 +1,6 @@
 
 [Test D] Standard API, inqryDiv='6', 5 Day Range, prdctNm
-URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=6&inqryBgnDt=202512020000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=6&inqryBgnDt=202511070000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
 Status: 200
 Raw Body: {"nkoneps.com.response.ResponseError": {
   "header": {
@@ -10,7 +10,7 @@ Raw Body: {"nkoneps.com.response.ResponseError": {
 }}
 
 [Test E] PPSSrch API, inqryDiv='1', YYYYMMDDHHMM, cntrctNm
-URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&cntrctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202511070000&inqryEndDt=202512072359&cntrctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
 Status: 200
 Raw Body: {"nkoneps.com.response.ResponseError": {
   "header": {
@@ -20,25 +20,123 @@ Raw Body: {"nkoneps.com.response.ResponseError": {
 }}
 
 [Test G] Bid Search API, inqryDiv='1', Bid Name Search
-URL: http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
-Status: 200
-Raw Body: {"response": {
-  "header": {
-    "resultCode": "00",
-    "resultMsg": "정상"
-  },
-  "body": {
-    "items": [
-      {
-        "bidNtceNo": "R25BK01200712",
-        "bidNtceOrd": "000",
-        "reNtceYn"
-Result: 00 - 정상
-Items Found: 37
-Parse/Logic Error: 'list' object has no attribute 'get'
+URL: http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202511070000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+
+[First Bid Item Keys & Values]:
+  bidNtceNo: R25BK01141905
+  bidNtceOrd: 000
+  reNtceYn: N
+  rgstTyNm: 조달청 또는 나라장터 자체 공고건
+  ntceKindNm: 등록공고
+  intrbidYn: N
+  bidNtceDt: 2025-11-10 08:47:20
+  refNo: 2025-240
+  bidNtceNm: 정보시스템 대상 업무연속성영향평가 및 업무연속성계획(BCP) 구축 컨설팅 위탁용역
+  ntceInsttCd: Z021937
+  ntceInsttNm: 오송첨단의료산업진흥재단
+  dminsttCd: Z021937
+  dminsttNm: 오송첨단의료산업진흥재단
+  bidMethdNm: 전자입찰
+  cntrctCnclsMthdNm: 제한경쟁
+  ntceInsttOfclNm: 최재혁
+  ntceInsttOfclTelNo: 043-200-9132
+  ntceInsttOfclEmailAdrs: 
+  exctvNm: 최재혁
+  bidQlfctRgstDt: 2025-11-17 12:00
+  cmmnSpldmdAgrmntRcptdocMethd: 없음
+  cmmnSpldmdAgrmntClseDt: 
+  cmmnSpldmdCorpRgnLmtYn: 
+  bidBeginDt: 2025-11-13 14:00:00
+  bidClseDt: 2025-11-17 14:00:00
+  opengDt: 2025-11-17 15:00:00
+  ntceSpecDocUrl1: https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01141905&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=03
+  ntceSpecDocUrl2: https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01141905&bidPbancOrd=000&fileType=&fileSeq=2&prcmBsneSeCd=03
+  ntceSpecDocUrl3: https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01141905&bidPbancOrd=000&fileType=&fileSeq=3&prcmBsneSeCd=03
+  ntceSpecDocUrl4: 
+  ntceSpecDocUrl5: 
+  ntceSpecDocUrl6: 
+  ntceSpecDocUrl7: 
+  ntceSpecDocUrl8: 
+  ntceSpecDocUrl9: 
+  ntceSpecDocUrl10: 
+  ntceSpecFileNm1: 1. 공고문(2025-240).hwp
+  ntceSpecFileNm2: 2. 과업지시서(공고).hwp
+  ntceSpecFileNm3: 3. 긴급입찰 사유서.hwp
+  ntceSpecFileNm4: 
+  ntceSpecFileNm5: 
+  ntceSpecFileNm6: 
+  ntceSpecFileNm7: 
+  ntceSpecFileNm8: 
+  ntceSpecFileNm9: 
+  ntceSpecFileNm10: 
+  rbidPermsnYn: Y
+  pqApplDocRcptMthdNm: 
+  pqApplDocRcptDt: 
+  tpEvalApplMthdNm: 
+  tpEvalApplClseDt: 
+  jntcontrctDutyRgnNm1: 
+  jntcontrctDutyRgnNm2: 
+  jntcontrctDutyRgnNm3: 
+  rgnDutyJntcontrctRt: 
+  dtlsBidYn: 
+  bidPrtcptLmtYn: N
+  prearngPrceDcsnMthdNm: 복수예가
+  totPrdprcNum: 15
+  drwtPrdprcNum: 4
+  asignBdgtAmt: 44000000
+  presmptPrce: 40000000
+  opengPlce: 국가종합전자조달시스템(나라장터)
+  dcmtgOprtnDt: 
+  dcmtgOprtnPlce: 
+  bidNtceDtlUrl: https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R25BK01141905&bidPbancOrd=000
+  bidNtceUrl: https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R25BK01141905&bidPbancOrd=000
+  bidPrtcptFeePaymntYn: 
+  bidPrtcptFee: 0
+  bidGrntymnyPaymntYn: 
+  crdtrNm: 오송첨단의료산업진흥재단 이사장
+  ppswGnrlSrvceYn: N
+  srvceDivNm: 일반용역
+  prdctClsfcLmtYn: 
+  mnfctYn: 
+  purchsObjPrdctList: 
+  untyNtceNo: R25BM00468401
+  cmmnSpldmdMethdCd: 
+  cmmnSpldmdMethdNm: (없음)공동수급불허
+  stdNtceDocUrl: https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK01141905&bidPbancOrd=000&fileType=&fileSeq=1&prcmBsneSeCd=03
+  brffcBidprcPermsnYn: 
+  dsgntCmptYn: N
+  arsltCmptYn: N
+  pqEvalYn: 
+  tpEvalYn: N
+  ntceDscrptYn: 
+  rsrvtnPrceReMkngMthdNm: 재입찰시 예비가격을 다시 생성하여 예정가격이 산정됩니다.
+  arsltApplDocRcptMthdNm: 
+  arsltReqstdocRcptDt: 
+  orderPlanUntyNo: R25DD20425382
+  sucsfbidLwltRate: 84.245
+  rgstDt: 2025-11-10 08:47:20
+  bfSpecRgstNo: R25BD00132928
+  infoBizYn: 
+  sucsfbidMthdCd: 낙030001
+  sucsfbidMthdNm: 적격심사제-학술연구용역 적격심사 추정가격 고시금액 미만
+  chgDt: 
+  dminsttOfclEmailAdrs: 
+  indstrytyLmtYn: Y
+  chgNtceRsn: 
+  rbidOpengDt: 2025-11-17 15:00:00
+  VAT: 4000000
+  indutyVAT: 
+  rgnLmtBidLocplcJdgmBssCd: 
+  rgnLmtBidLocplcJdgmBssNm: 
+  pubPrcrmntLrgClsfcNm: 연구조사서비스
+  pubPrcrmntMidClsfcNm: 학술연구서비스
+  pubPrcrmntClsfcNo: 80909012
+  pubPrcrmntClsfcNm: 정보통신연구조사서비스
+  techAbltEvlRt: 
+  bidPrceEvlRt: 
 
 [Test I] Contract PPSSrch API, inqryDiv='1', bidNtceNm
-URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202511070000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
 Status: 200
 Raw Body: {"nkoneps.com.response.ResponseError": {
   "header": {
@@ -58,7 +156,66 @@ Raw Body: {"nkoneps.com.response.ResponseError": {
 }}
 
 [Test K] Contract PPSSrch API, inqryDiv='1', prdctNm
-URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202511070000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "08",
+    "resultMsg": "필수값 입력 에러"
+  }
+}}
+
+[Test L] Bridge Test: Find '신평농공단지' Bid -> Query Contract API with BidNo
+Found BidNo: R25BK01144022
+Querying Standard Contract API (Div=2) with BidNo: R25BK01144022
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=2&bidNtceNo=R25BK01144022
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "08",
+    "resultMsg": "필수값 입력 에러"
+  }
+}}
+Querying Standard Contract API (Div=3) with BidNo: R25BK01144022
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=3&bidNtceNo=R25BK01144022
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "07",
+    "resultMsg": "입력범위값 초과 에러"
+  }
+}}
+
+[Test M] Standard Contract API with Keyword '신평농공단지'
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202511070000&inqryEndDt=202512072359&cntrctNm=%EC%8B%A0%ED%8F%89%EB%86%8D%EA%B3%B5%EB%8B%A8%EC%A7%80
+Status: 200
+Raw Body: {"response": {
+  "header": {
+    "resultCode": "00",
+    "resultMsg": "정상"
+  },
+  "body": {
+    "items": [
+      {
+        "untyCntrctNo": "R25TE08872909",
+        "bsnsDivNm": "일반용역",
+        "dcsnCn
+Result: 00 - 정상
+Items Found: 154637
+Parse/Logic Error: 'list' object has no attribute 'get'
+
+[Test N] Standard Contract API with BidNo + Date
+Querying Div=3 with Date...
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=3&inqryBgnDt=202511070000&inqryEndDt=202512072359&bidNtceNo=R25BK01144022
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "07",
+    "resultMsg": "입력범위값 초과 에러"
+  }
+}}
+Querying Div=2 with Date...
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=2&inqryBgnDt=202511070000&inqryEndDt=202512072359&bidNtceNo=R25BK01144022
 Status: 200
 Raw Body: {"nkoneps.com.response.ResponseError": {
   "header": {

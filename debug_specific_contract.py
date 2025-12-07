@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # Dates
     end_dt = datetime.now()
-    start_dt_short = end_dt - timedelta(days=5) # 5 Days (Very short)
+    start_dt_short = end_dt - timedelta(days=30) # 30 Days (Extended)
     
     # Formats: YYYYMMDD and YYYYMMDDHHMM
     s_date_short_hm = start_dt_short.strftime('%Y%m%d') + "0000"
@@ -174,7 +174,36 @@ if __name__ == "__main__":
         'inqryEndDt': e_date_short_hm,
         'bidNtceNm': "영향평가" # Bid Name
     })
-    run_request(url_bid, params)
+    
+    try:
+        response = requests.get(url_bid, params=params)
+        log(f"URL: {response.url}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            body = data.get('response', {}).get('body', {})
+            items = body.get('items')
+            
+            final_list = []
+            if isinstance(items, list):
+                final_list = items
+            elif isinstance(items, dict):
+                item_val = items.get('item')
+                if isinstance(item_val, list):
+                    final_list = item_val
+                elif item_val:
+                    final_list = [item_val]
+            
+            if len(final_list) > 0:
+                first_item = final_list[0]
+                log("\n[First Bid Item Keys & Values]:")
+                for k, v in first_item.items():
+                    log(f"  {k}: {v}")
+            else:
+                log("No items found.")
+                
+    except Exception as e:
+        log(f"Error in Test G: {e}")
     
     # Test I: Contract PPSSrch API, inqryDiv='1', bidNtceNm params (Maybe it uses Bid Name?)
     log(f"\n[Test I] Contract PPSSrch API, inqryDiv='1', bidNtceNm")
@@ -211,6 +240,99 @@ if __name__ == "__main__":
         'prdctNm': "영향평가" 
     })
     run_request(url_pps, params)
+
+    # Test L: Bridge Test (Bid Search -> Contract Search by BidNo)
+    log(f"\n[Test L] Bridge Test: Find '신평농공단지' Bid -> Query Contract API with BidNo")
+    # 1. Search Bid
+    url_bid = "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch"
+    params = common_params.copy()
+    params.update({
+        'inqryDiv': '1',
+        'inqryBgnDt': s_date_short_hm,
+        'inqryEndDt': e_date_short_hm,
+        'bidNtceNm': "신평농공단지"
+    })
+    
+    bid_no = None
+    try:
+        resp = requests.get(url_bid, params=params)
+        if resp.status_code == 200:
+            data = resp.json()
+            items = data.get('response', {}).get('body', {}).get('items')
+            if items:
+                # Handle items being dict or list
+                item_list = []
+                if isinstance(items, list): 
+                    item_list = items
+                elif isinstance(items, dict):
+                     val = items.get('item')
+                     if isinstance(val, list): item_list = val
+                     elif val: item_list = [val]
+                
+                if len(item_list) > 0:
+                    bid_no = item_list[0].get('bidNtceNo')
+                    log(f"Found BidNo: {bid_no}")
+    except Exception as e:
+        log(f"Bid Search Failed: {e}")
+
+    # 2. Query Contract API (Standard)
+    if bid_no:
+        url_contract_std = "http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc"
+        # Try inqryDiv = '2' (Bid Notice No based?) - Checking docs or standard usage
+        # Actually standard API params:
+        # inqryDiv: 1(Date), 2(Contract No), 3(Bid Notice No), ... check docs or assumption
+        # Let's try 3 for Bid Notice No, or 2.
+        
+        # Trial 1: inqryDiv=2, bidNtceNo
+        log(f"Querying Standard Contract API (Div=2) with BidNo: {bid_no}")
+        params_c = common_params.copy()
+        params_c.update({
+            'inqryDiv': '2',
+            'bidNtceNo': bid_no
+        })
+        run_request(url_contract_std, params_c)
+        
+        # Trial 2: inqryDiv=3, bidNtceNo
+        log(f"Querying Standard Contract API (Div=3) with BidNo: {bid_no}")
+        params_c['inqryDiv'] = '3'
+        run_request(url_contract_std, params_c)
+        
+    else:
+        log("Could not find BidNo for testing Contract Bridge.")
+
+    # Test M: Standard Contract API with Keyword and Date
+    log(f"\n[Test M] Standard Contract API with Keyword '신평농공단지'")
+    url_standard = "http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc"
+    params_m = common_params.copy()
+    params_m.update({
+        'inqryDiv': '1',
+        'inqryBgnDt': s_date_short_hm, # 30 days
+        'inqryEndDt': e_date_short_hm,
+        'cntrctNm': "신평농공단지"
+    })
+    run_request(url_standard, params_m)
+
+    # Test N: Standard Contract API with BidNo + Date (Fixing Test L)
+    if bid_no:
+        log(f"\n[Test N] Standard Contract API with BidNo + Date")
+        url_standard = "http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc"
+        params_n = common_params.copy()
+        params_n.update({
+            'inqryDiv': '2', # Try 2 (Contract No) or 3 (Bid No)? Let's try 3 first as logical guess
+            'inqryBgnDt': s_date_short_hm,
+            'inqryEndDt': e_date_short_hm,
+            'bidNtceNo': bid_no
+        })
+        
+        # Trial 1: Div=3 (BidNo?)
+        params_n['inqryDiv'] = '3'
+        log(f"Querying Div=3 with Date...")
+        run_request(url_standard, params_n)
+        
+        # Trial 2: Div=2 (ContractNo? maybe map?)
+        params_n['inqryDiv'] = '2' 
+        log(f"Querying Div=2 with Date...")
+        run_request(url_standard, params_n)
 
 
 
