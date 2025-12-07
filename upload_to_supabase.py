@@ -91,14 +91,18 @@ def upload_bids(csv_file: str, client: Client):
             if notice_date and len(str(notice_date)) == 10:
                  notice_date += " 00:00:00+09"
             
-            # 날짜 필드 처리 (빈 문자열 -> None)
+            # 날짜 필드 처리 (빈 문자열 -> None) 및 KST 타임존 처리
             bid_end = row.get('입찰마감', '')
             if not bid_end or bid_end == '' or str(bid_end).lower() == 'nan':
                  bid_end = None
+            elif len(str(bid_end)) > 10 and '+' not in str(bid_end):
+                 bid_end = str(bid_end).strip() + "+09"
             
             open_date = row.get('개찰일', '')
             if not open_date or open_date == '' or str(open_date).lower() == 'nan':
                  open_date = None
+            elif len(str(open_date)) > 10 and '+' not in str(open_date):
+                 open_date = str(open_date).strip() + "+09"
 
             record = {
                 'bid_no': str(row.get('공고번호', '')),
