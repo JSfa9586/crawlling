@@ -10,41 +10,38 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     const pageNo = searchParams.get('pageNo') || '1';
 
-    // Log for debugging
     console.log('[API Debug] Env Key Present:', !!G2B_API_KEY);
 
     if (!keyword || !startDate || !endDate) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // G2B Standard Contract Search API URL
+    // G2B Standard Contract API URL
+    // Using getCntrctInfoListServc + bsnsDivCd=5 for Service contracts only
+    // API keyword search (prdctNm/cntrctNm) is unreliable, so we filter client-side
     const apiUrl = `http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc`;
-    // Note: Standard API uses 'prdctNm' for keyword search in many cases, or 'cntrctNm'.
-    // Debug showed 'prdctNm' works well.
 
-    // Use fallback key if env var is missing (Encoded Key) typically used in Korean Open APIs
     const effectiveKey = G2B_API_KEY || "YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D";
 
-    // Construct params WITHOUT serviceKey to avoid double encoding if key is already encoded
+    // Fetch more results to filter client-side (100 per page, filter to ~20)
     const queryParams = new URLSearchParams({
-        numOfRows: '20',
+        numOfRows: '100', // Fetch more for client-side filtering
         pageNo: pageNo,
         type: 'json',
-        inqryDiv: '1', // Date
+        inqryDiv: '1', // Date-based (most reliable)
         inqryBgnDt: startDate.replace(/-/g, '') + '0000',
         inqryEndDt: endDate.replace(/-/g, '') + '2359',
-        prdctNm: keyword // Keyword (Product Name Search)
+        bsnsDivCd: '5' // Service contracts only
     });
 
     try {
-        // Manually append encoded serviceKey
         const fullUrl = `${apiUrl}?${queryParams.toString()}&serviceKey=${effectiveKey}`;
-        console.log(`[API Call] Fetching: ${fullUrl}`);
+        console.log(`[API Call] Fetching: ${fullUrl.substring(0, 200)}...`);
 
         const response = await fetch(fullUrl);
         const textData = await response.text();
 
-        console.log(`[API Response] Status: ${response.status}, Body Preview: ${textData.substring(0, 500)}`);
+        console.log(`[API Response] Status: ${response.status}, Body Preview: ${textData.substring(0, 300)}`);
 
         if (!response.ok) {
             console.error(`[API Error] HTTP Status: ${response.status}`);
@@ -55,18 +52,16 @@ export async function GET(request: NextRequest) {
         try {
             data = JSON.parse(textData);
         } catch (e) {
-            console.error('[API Error] JSON Parse Failed. Response might be XML.', textData);
-            return NextResponse.json({ error: 'External API returned invalid JSON (likely XML Error)' }, { status: 502 });
+            console.error('[API Error] JSON Parse Failed.', textData);
+            return NextResponse.json({ error: 'External API returned invalid JSON' }, { status: 502 });
         }
 
-        // Check for logical API error
         if (data.response?.header?.resultCode !== '00') {
             const errorMsg = data.response?.header?.resultMsg;
             console.warn(`[API Logic Error] ResultCode: ${data.response?.header?.resultCode}, Msg: ${errorMsg}`);
-            // If No Results, data might be empty or specific code.
         }
 
-        // Transform Data to match frontend "Contract" interface
+        // Extract items from API response
         const rawItems = data.response?.body?.items;
         let items: any[] = [];
 
@@ -76,27 +71,35 @@ export async function GET(request: NextRequest) {
             items = Array.isArray(rawItems.item) ? rawItems.item : [rawItems.item];
         }
 
-        // Map Standard Contract API fields to Frontend fields
-        const transformedItems = items.map((item: any) => ({
+        // CLIENT-SIDE KEYWORD FILTERING
+        // Filter items where cntrctNm or prdctNm includes the search keyword
+        const keywordLower = keyword.toLowerCase();
+        const filteredItems = items.filter((item: any) => {
+            const contractName = (item.cntrctNm || '').toLowerCase();
+            const productName = (item.prdctNm || '').toLowerCase();
+            return contractName.includes(keywordLower) || productName.includes(keywordLower);
+        });
+
+        console.log(`[Filter] Total API items: ${items.length}, After keyword filter: ${filteredItems.length}`);
+
+        // Map to frontend fields
+        const transformedItems = filteredItems.slice(0, 20).map((item: any) => ({ // Limit to 20
             cntrctNm: item.cntrctNm || item.prdctNm || '계약명 없음',
             cntrctAmt: item.thtmCntrctAmt || item.cntrctAmt,
             orderInsttNm: item.cntrctInsttNm || item.ntceInsttNm,
             cntrctCnclsDt: item.cntrctCnclsDate ? item.cntrctCnclsDate : (item.cntrctDate || ''),
-            // Use the native URL provided by the API which matches user request format
-            // e.g., https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=...
             link: item.cntrctDtlInfoUrl
         }));
 
-        // Wrap response structure
         const finalData = {
             response: {
                 body: {
                     items: {
                         item: transformedItems
                     },
-                    totalCount: data.response?.body?.totalCount,
+                    totalCount: filteredItems.length, // Filtered count
                     pageNo: data.response?.body?.pageNo,
-                    numOfRows: data.response?.body?.numOfRows
+                    numOfRows: transformedItems.length
                 }
             }
         };
@@ -108,3 +111,4 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to fetch contract data' }, { status: 500 });
     }
 }
+
