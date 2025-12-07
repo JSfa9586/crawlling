@@ -79,9 +79,10 @@ export async function GET(request: NextRequest) {
             cntrctAmt: item.presmptPrce,
             orderInsttNm: item.ntceInsttNm,
             cntrctCnclsDt: item.bidNtceDt ? item.bidNtceDt.substring(0, 10) : '',
-            // Link to Bid Result (개찰결과) which shows proper contract status/progress
-            // Structure: http://www.g2b.go.kr:8081/ep/co/open/bidResultDtl.do?bidno=...&bidseq=...
-            link: `http://www.g2b.go.kr:8081/ep/co/open/bidResultDtl.do?bidno=${item.bidNtceNo}&bidseq=${item.bidNtceOrd || '00'}&releaseYn=Y&taskClCd=1`
+            // Link to Bid Result (개찰결과)
+            // taskClCd: 1(Goods), 3(Construction), 5(Service/Yong-yeok)
+            // Using 5 as default for 'Service' contract search.
+            link: `http://www.g2b.go.kr:8081/ep/co/open/bidResultDtl.do?bidno=${item.bidNtceNo}&bidseq=${item.bidNtceOrd || '00'}&releaseYn=Y&taskClCd=5`
         }));
 
         if (data.response?.body?.items) {
