@@ -990,3 +990,7 @@ oute.ts to prevent mapping errors.
     - **Backfill**: Executed 30-day data backfill.
         - **Result**: ~9,600 Pre-Specs and ~17,800 Bids uploaded to Supabase.
 
+
+### Phase 48: UI Polish - Search Layout (2025-12-07)
+- **Goal**: Optimize filter layout based on user feedback.
+- **Action**: Renamed 'Recommended Search' to 'Announcement Title' and moved 'Favorites 1' button next to the input label for better accessibility.

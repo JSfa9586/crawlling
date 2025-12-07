@@ -214,7 +214,15 @@ export default function G2BPage() {
             <div className="space-y-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                 {/* 1. 검색 입력창 (최상단 배치) */}
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-bold text-gray-900">검색어 입력</label>
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-bold text-gray-900">검색어 입력</label>
+                        <button
+                            onClick={() => setSearchTerm(KEYWORD_PRESETS.join(','))}
+                            className="px-2 py-0.5 text-xs rounded border bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-50 font-bold"
+                        >
+                            즐겨찾기 1
+                        </button>
+                    </div>
                     <div className="flex gap-2">
                         <input
                             type="text"
@@ -249,15 +257,9 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
-                {/* 키워드 (추천검색) + 즐겨찾기 1 */}
+                {/* 키워드 (추천검색) -> "공고명" */}
                 <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm font-medium text-gray-700 w-16">추천검색</span>
-                    <button
-                        onClick={() => setSearchTerm(KEYWORD_PRESETS.join(','))}
-                        className="px-3 py-1 text-xs rounded-full border bg-pink-100 text-pink-700 border-pink-300 hover:bg-pink-50 font-bold"
-                    >
-                        즐겨찾기 1
-                    </button>
+                    <span className="text-sm font-medium text-gray-700 w-16">공고명</span>
                     <button onClick={() => setSearchTerm('')} className={`px-3 py-1 text-xs rounded-full border ${searchTerm === '' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>초기화</button>
                     {KEYWORD_PRESETS.map((keyword) => (
                         <button
