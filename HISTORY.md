@@ -923,3 +923,31 @@ SPREADSHEET_ID=<Google Sheets ID>
   - 대시보드(LawsTable.tsx) 분석 결과, 정렬 기준이 크롤러 데이터에 존재하지 않는 작성일로 설정되어 있어 신규 데이터가 리스트 끝으로 밀리는 현상 파악.
   - LawsTable.tsx의 기본 정렬 기준을 수집일시로 변경하여 해결.
   - task.md 업데이트 및 변경 사항 커밋/푸시.
+
+### Phase 35: G2B Dashboard Fixes (2025-12-07)
+- **Problem**: Data mapping issues (missing dates) and user preference for tab order.
+- **Solution**:
+    - Prioritized 'Pre-specs' tab in page.tsx.
+    - Fixed data mapping in page.tsx by using explicit Korean keys (e.g., ['등록일']) to match API response.
+    - Applied Trim to CSV headers in oute.ts to prevent mapping errors.
+    - Forced update of Google Sheets data using orce_update_gsheet.py.
+- **Files Modified**: dashboard/app/g2b/page.tsx, dashboard/app/api/g2b/route.ts, orce_update_gsheet.py.
+
+
+### Phase 36: G2B Data Range Fix (2025-12-07)
+- **Problem**: Missing fields (등록일, 입찰마감 etc.) in dashboard despite correct header mapping.
+- **Root Cause**: getSpreadsheetData function in lib/googleSheets.ts was hardcoded to fetch A:G range, truncating columns from H onwards.
+- **Solution**: Extended fetch range to A:Z.
+- **Verification**: Verified via local API inspection script (debug_api_deep.py).
+
+
+### Phase 38: G2B Link Strategy Change (2025-12-07)
+- **Problem**: Direct G2B links (port 8101/frames) blocked by security policy ('잘못된 접근').
+- **Solution**: Changed link generation strategy to use Naver Search URL (search.naver.com?query={BidNo}).
+- **Action**: Modified g2b_crawler.py, re-ran crawling & upload (orce_update_gsheet.py).
+- **Verification**: Confirmed local API returns functional search links.
+
+- **Refinement (2025-12-07)**: Naver search with only 'BidNo' returned no results. Changed query to 'BidTitle + 나라장터'.
+- **UX Improvements (2025-12-07)**: Added default date sorting (DESC), Quick Filter Presets (Date/Keyword), and Mobile Card View.
+- **Logic Refinement (2025-12-07)**: Implemented whitespace-agnostic keyword matching (e.g., '환 경영 향 평가' matches '환경영향평가').
+- **Data Persistence (2025-12-07)**: Disabled sheet clearing in update script to allow data accumulation (deduplication logic preserved).
