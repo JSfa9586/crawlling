@@ -10,6 +10,9 @@ interface G2BItem {
     등록일?: string;
     공고일?: string;
     링크: string;
+    등록번호?: string;
+    공고번호?: string;
+    공고차수?: string;
 }
 
 interface RecentG2BPostsProps {
@@ -18,6 +21,20 @@ interface RecentG2BPostsProps {
 }
 
 export function RecentG2BPosts({ data, isLoading = false }: RecentG2BPostsProps) {
+    const getG2BLink = (item: G2BItem) => {
+        if (item.구분 === '사전규격') {
+            if (item.등록번호) {
+                return `https://www.g2b.go.kr:8101/ep/preparation/prestd/preStdDtl.do?preStdRegNo=${item.등록번호}`;
+            }
+        } else {
+            if (item.공고번호) {
+                const seq = item.공고차수 || '00';
+                return `http://www.g2b.go.kr:8081/ep/invitation/publish/bidInfoDtl.do?bidno=${item.공고번호}&bidseq=${seq}&releaseYn=Y&taskClCd=1`;
+            }
+        }
+        return item.링크 || '#';
+    };
+
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 h-full flex flex-col">
             <div className="px-6 py-4 border-b flex justify-between items-center bg-purple-50 text-purple-700 border-purple-200">
@@ -48,7 +65,7 @@ export function RecentG2BPosts({ data, isLoading = false }: RecentG2BPostsProps)
                         {data.slice(0, 5).map((item, index) => (
                             <li key={index} className="hover:bg-gray-50 transition-colors">
                                 <a
-                                    href={item.링크}
+                                    href={getG2BLink(item)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block px-6 py-3"
