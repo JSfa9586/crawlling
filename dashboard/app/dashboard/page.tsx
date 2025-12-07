@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { RecentPosts } from '@/components/RecentPosts';
+import { RecentG2BPosts } from '@/components/RecentG2BPosts';
 import type { CrawlingData } from '@/types';
 
 export default function Dashboard() {
   const [ministryData, setMinistryData] = useState<CrawlingData[]>([]);
   const [associationData, setAssociationData] = useState<CrawlingData[]>([]);
   const [lawsData, setLawsData] = useState<CrawlingData[]>([]);
+  const [g2bData, setG2bData] = useState<any[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -20,20 +22,23 @@ export default function Dashboard() {
     const loadAllData = async () => {
       setIsLoading(true);
       try {
-        // 3개 섹션 데이터 병렬 요청
-        const [ministryRes, associationRes, lawsRes] = await Promise.all([
+        // 4개 섹션 데이터 병렬 요청
+        const [ministryRes, associationRes, lawsRes, g2bRes] = await Promise.all([
           fetch('/api/sheets?type=data&페이지크기=5&sheet=크롤링 결과'),
           fetch('/api/sheets?type=data&페이지크기=5&sheet=관련협회'),
-          fetch('/api/sheets?type=data&페이지크기=5&sheet=관련법령')
+          fetch('/api/sheets?type=data&페이지크기=5&sheet=관련법령'),
+          fetch('/api/g2b?limit=5')
         ]);
 
         const ministryJson = await ministryRes.json();
         const associationJson = await associationRes.json();
         const lawsJson = await lawsRes.json();
+        const g2bJson = await g2bRes.json();
 
         if (ministryJson.success) setMinistryData(ministryJson.data || []);
         if (associationJson.success) setAssociationData(associationJson.data || []);
         if (lawsJson.success) setLawsData(lawsJson.data || []);
+        if (g2bJson.success) setG2bData(g2bJson.data || []);
 
         // 간단한 통계 계산
         const allData = [
@@ -50,7 +55,7 @@ export default function Dashboard() {
         }
 
         setStats({
-          totalPosts: (ministryJson.meta?.total || 0) + (associationJson.meta?.total || 0) + (lawsJson.meta?.total || 0),
+          totalPosts: (ministryJson.meta?.total || 0) + (associationJson.meta?.total || 0) + (lawsJson.meta?.total || 0) + (g2bJson.count || 0),
           todayPosts: 0,
           lastUpdate: latestTime
         });
@@ -84,7 +89,7 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">통합 대시보드</h1>
-            <p className="text-gray-600">해양수산부, 관련협회, 법령예고 최신 현황을 한눈에 확인하세요.</p>
+            <p className="text-gray-600">해양수산부, 관련협회, 법령예고 그리고 나라장터 최신 현황을 한눈에 확인하세요.</p>
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-500">최근 업데이트</p>
@@ -98,7 +103,11 @@ export default function Dashboard() {
           {/* 최근 게시물 섹션 */}
           <div className="space-y-6">
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <RecentG2BPosts
+                data={g2bData}
+                isLoading={isLoading}
+              />
               <RecentPosts
                 title="해양수산부"
                 data={ministryData}

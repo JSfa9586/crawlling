@@ -998,3 +998,10 @@ oute.ts to prevent mapping errors.
 ### Phase 49: UI Polish - Data Clarity (2025-12-07)
 - **Goal**: Explicitly distinguish between Estimated Price and Basic Price.
 - **Action**: Updated data table to prefix amounts with 'Estimated' or 'Basic' depending on the source field.
+
+### Phase 50: Dashboard Integration (2025-12-07)
+- **Goal**: Integrate G2B announcements into the main dashboard.
+- **Implementation**:
+    - **New Component**: Created RecentG2BPosts to display latest 5 G2B items.
+    - **Dashboard Layout**: Updated dashboard/page.tsx to use a 2x2 grid layout, including the new G2B section.
+    - **Data Fetching**: Added parallel fetching for G2B data in the main dashboard.
