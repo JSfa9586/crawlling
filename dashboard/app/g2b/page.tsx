@@ -195,16 +195,28 @@ export default function G2BPage() {
                 <nav className="flex space-x-8">
                     <button
                         onClick={() => setActiveTab('pre_specs')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                     >
                         사전규격
                     </button>
                     <button
                         onClick={() => setActiveTab('bids')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bids' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bids' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                     >
                         입찰공고
                     </button>
+                    <Link
+                        href="/local-contracts"
+                        className="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700"
+                    >
+                        계약검색
+                    </Link>
+                    <Link
+                        href="/company-analysis"
+                        className="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700"
+                    >
+                        업체분석
+                    </Link>
                 </nav>
             </div>
             {/* 필터 영역 */}

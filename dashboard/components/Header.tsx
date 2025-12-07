@@ -42,20 +42,6 @@ export function Header() {
                 나라장터
               </Link>
             </li>
-            <li>
-              <Link href="/local-contracts" className="hover:text-primary-100 transition-colors">
-                계약검색
-              </Link>
-            </li>
-            <li>
-              <Link href="/company-analysis" className="hover:text-primary-100 transition-colors">
-                업체분석
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard/test" className="hover:text-primary-100 transition-colors">
-              </Link>
-            </li>
 
           </ul>
 
@@ -126,33 +112,6 @@ export function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   나라장터
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/local-contracts"
-                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  계약검색
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/company-analysis"
-                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  업체분석
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard/test"
-                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  테스트
                 </Link>
               </li>
 
