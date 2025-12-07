@@ -1005,3 +1005,15 @@ oute.ts to prevent mapping errors.
     - **New Component**: Created RecentG2BPosts to display latest 5 G2B items.
     - **Dashboard Layout**: Updated dashboard/page.tsx to use a 2x2 grid layout, including the new G2B section.
     - **Data Fetching**: Added parallel fetching for G2B data in the main dashboard.
+
+# 2025-12-07
+
+## 작업 내용
+1. **G2B 페이지 빌드 오류 수정**:
+   - dashboard/app/g2b/page.tsx 파일 끝부분의 불필요한 구문 삭제.
+
+2. **용역 계약 조회 기능 라우팅 수정**:
+   - Header.tsx의 용역계약 링크를 /contract 로 수정.
+   - page.tsx의 API 호출 경로를 /api/contract 로 수정.
+   - page.tsx의 미사용 Link import 제거.
+
