@@ -170,7 +170,8 @@ export default function G2BPage() {
             // 입찰공고: 공고번호(bidNtceNo), 차수(bidNtceOrd) 필요
             if (item.공고번호) {
                 const seq = item.공고차수 || '00';
-                return `http://www.g2b.go.kr:8081/ep/invitation/publish/bidInfoDtl.do?bidno=${item.공고번호}&bidseq=${seq}&releaseYn=Y&taskClCd=1`;
+                // User-provided "Important" Link Format
+                return `https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=${item.공고번호}&bidPbancOrd=${seq}`;
             }
         }
         // ID가 없으면 기존 링크(네이버 검색 등) 사용
