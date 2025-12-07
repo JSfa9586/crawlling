@@ -951,3 +951,11 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **UX Improvements (2025-12-07)**: Added default date sorting (DESC), Quick Filter Presets (Date/Keyword), and Mobile Card View.
 - **Logic Refinement (2025-12-07)**: Implemented whitespace-agnostic keyword matching (e.g., '환 경영 향 평가' matches '환경영향평가').
 - **Data Persistence (2025-12-07)**: Disabled sheet clearing in update script to allow data accumulation (deduplication logic preserved).
+
+### Phase 39: G2B Price Filter (2025-12-07)
+- **Goal**: Add price range filters to G2B dashboard results.
+- **Implementation**:
+    - Added Price Range UI (Under 230M, 500M, 1B, Over 1B).
+    - Implemented logic to parse Korean currency strings from '배정예산'/'추정가격'.
+    - Added 'priceRange' state and 'PRICE_PRESETS' constant.
+- **Files Modified**: dashboard/app/g2b/page.tsx.

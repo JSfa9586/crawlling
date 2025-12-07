@@ -82,6 +82,7 @@ export default function G2BPage() {
     const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('pre_specs');
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('전체');
+    const [priceRange, setPriceRange] = useState('all');
     const [dateRange, setDateRange] = useState<number>(30); // 기본 30일
 
     const DATE_PRESETS = [
@@ -95,6 +96,13 @@ export default function G2BPage() {
     const KEYWORD_PRESETS = [
         '영향평가', '해양환경', '환경성검토', '해양이용', '해역이용',
         '영향조사', '모니터링', '해상풍력'
+    ];
+
+    const PRICE_PRESETS = [
+        { label: '고시금액 미만', value: 'under_2.3' },
+        { label: '5억미만', value: 'under_5' },
+        { label: '10억미만', value: 'under_10' },
+        { label: '10억이상', value: 'over_10' }
     ];
 
     useEffect(() => {
@@ -139,7 +147,42 @@ export default function G2BPage() {
                 item.공고명?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.발주기관?.toLowerCase().includes(searchTerm.toLowerCase());
 
+
             const matchesCategory = categoryFilter === '전체' || item.카테고리 === categoryFilter;
+
+            // 금액 필터링
+            let matchesPrice = true;
+            if (priceRange !== 'all') {
+                const rawPrice = activeTab === 'pre_specs'
+                    ? item.배정예산
+                    : (item.추정가격 || item.기초금액);
+
+                if (!rawPrice || rawPrice === '0') {
+                    matchesPrice = false;
+                } else {
+                    const price = parseInt(rawPrice.replace(/[^0-9]/g, ''), 10);
+                    if (isNaN(price)) {
+                        matchesPrice = false;
+                    } else {
+                        switch (priceRange) {
+                            case 'under_2.3': // 2.3억 미만
+                                matchesPrice = price < 230000000;
+                                break;
+                            case 'under_5': // 5억 미만
+                                matchesPrice = price < 500000000;
+                                break;
+                            case 'under_10': // 10억 미만
+                                matchesPrice = price < 1000000000;
+                                break;
+                            case 'over_10': // 10억 이상
+                                matchesPrice = price >= 1000000000;
+                                break;
+                            default:
+                                matchesPrice = true;
+                        }
+                    }
+                }
+            }
 
             // 날짜 필터링
             if (dateRange !== 999) {
@@ -159,7 +202,7 @@ export default function G2BPage() {
                 }
             }
 
-            return matchesSearch && matchesCategory;
+            return matchesSearch && matchesCategory && matchesPrice;
         });
 
         // 날짜 내림차순 정렬 (최신순)
@@ -168,7 +211,7 @@ export default function G2BPage() {
             const dateB = (activeTab === 'pre_specs' ? b.등록일 : b.공고일) || '';
             return dateB.localeCompare(dateA);
         });
-    }, [currentData, searchTerm, categoryFilter, dateRange, activeTab]);
+    }, [currentData, searchTerm, categoryFilter, dateRange, priceRange, activeTab]);
 
     if (loading) {
         return (
@@ -279,8 +322,8 @@ export default function G2BPage() {
                             key={preset.label}
                             onClick={() => setDateRange(preset.days)}
                             className={`px-3 py-1 text-sm rounded-full transition-colors ${dateRange === preset.days
-                                    ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
+                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
                                 }`}
                         >
                             {preset.label}
@@ -294,8 +337,8 @@ export default function G2BPage() {
                     <button
                         onClick={() => setSearchTerm('')}
                         className={`px-3 py-1 text-sm rounded-full transition-colors ${searchTerm === ''
-                                ? 'bg-gray-800 text-white'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-gray-800 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         전체
@@ -305,11 +348,37 @@ export default function G2BPage() {
                             key={keyword}
                             onClick={() => setSearchTerm(keyword)}
                             className={`px-3 py-1 text-sm rounded-full transition-colors ${searchTerm === keyword
-                                    ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
+                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
                                 }`}
                         >
                             {keyword}
+                        </button>
+                    ))}
+                </div>
+
+                {/* 금액 프리셋 */}
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-sm font-medium text-gray-700 mr-2">금액:</span>
+                    <button
+                        onClick={() => setPriceRange('all')}
+                        className={`px-3 py-1 text-sm rounded-full transition-colors ${priceRange === 'all'
+                            ? 'bg-gray-800 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        전체
+                    </button>
+                    {PRICE_PRESETS.map((preset) => (
+                        <button
+                            key={preset.value}
+                            onClick={() => setPriceRange(preset.value)}
+                            className={`px-3 py-1 text-sm rounded-full transition-colors ${priceRange === preset.value
+                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
+                                }`}
+                        >
+                            {preset.label}
                         </button>
                     ))}
                 </div>
@@ -347,7 +416,7 @@ export default function G2BPage() {
                                 <div key={index} className="bg-white rounded-lg shadow p-4 space-y-3 border border-gray-100">
                                     <div className="flex justify-between items-start">
                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
+                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
                                             }`}>
                                             {item.카테고리}
                                         </span>
@@ -409,7 +478,7 @@ export default function G2BPage() {
                                                 <tr key={index} className="hover:bg-gray-50">
                                                     <td className="px-4 py-3 whitespace-nowrap">
                                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                                item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
+                                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
                                                             }`}>
                                                             {item.카테고리}
                                                         </span>
@@ -450,7 +519,7 @@ export default function G2BPage() {
                                 <div key={index} className="bg-white rounded-lg shadow p-4 space-y-3 border border-gray-100">
                                     <div className="flex justify-between items-start">
                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
+                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
                                             }`}>
                                             {item.카테고리}
                                         </span>
@@ -512,7 +581,7 @@ export default function G2BPage() {
                                                 <tr key={index} className="hover:bg-gray-50">
                                                     <td className="px-4 py-3 whitespace-nowrap">
                                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                                item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
+                                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
                                                             }`}>
                                                             {item.카테고리}
                                                         </span>
