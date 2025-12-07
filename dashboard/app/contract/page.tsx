@@ -48,7 +48,7 @@ export default function ContractSearchPage() {
                 pageNo: '1'
             });
 
-            const res = await fetch(`/dashboard/api/contract?${query.toString()}`);
+            const res = await fetch(`/api/contract?${query.toString()}`);
 
             if (!res.ok) {
                 throw new Error('검색 중 오류가 발생했습니다.');
