@@ -24,12 +24,13 @@ export function RecentG2BPosts({ data, isLoading = false }: RecentG2BPostsProps)
     const getG2BLink = (item: G2BItem) => {
         if (item.구분 === '사전규격') {
             if (item.등록번호) {
-                return `https://www.g2b.go.kr:8101/ep/preparation/prestd/preStdDtl.do?preStdRegNo=${item.등록번호}`;
+                return `https://www.g2b.go.kr/link/PRCA001_04/single/?srch=${item.등록번호}&flag=cnrtSl`;
             }
         } else {
             if (item.공고번호) {
-                const seq = item.공고차수 || '00';
-                return `http://www.g2b.go.kr:8081/ep/invitation/publish/bidInfoDtl.do?bidno=${item.공고번호}&bidseq=${seq}&releaseYn=Y&taskClCd=1`;
+                const rawSeq = item.공고차수 || '0';
+                const seq = rawSeq.toString().padStart(3, '0');
+                return `https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=${item.공고번호}&bidPbancOrd=${seq}`;
             }
         }
         return item.링크 || '#';

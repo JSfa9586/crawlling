@@ -161,10 +161,9 @@ export default function G2BPage() {
         // DB에 저장된 링크가 있으면 우선 사용 (크롤러가 업데이트된 경우)
         // 하지만 사용자가 '직접 연결'을 원하므로 ID 기반 생성 우선
         if (activeTab === 'pre_specs') {
-            // 사전규격: 등록번호(bfSpecRgstNo) 필요
-            // API에서 '등록번호' 필드로 넘어옴
+            // 사전규격: 등록번호(bfSpecRgstNo) 필요 - PRCA001_04 형식
             if (item.등록번호) {
-                return `https://www.g2b.go.kr:8101/ep/preparation/prestd/preStdDtl.do?preStdRegNo=${item.등록번호}`;
+                return `https://www.g2b.go.kr/link/PRCA001_04/single/?srch=${item.등록번호}&flag=cnrtSl`;
             }
         } else {
             // 입찰공고: 공고번호(bidNtceNo), 차수(bidNtceOrd) 필요
