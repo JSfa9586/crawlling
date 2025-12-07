@@ -223,11 +223,19 @@ class G2BAPIClient:
 # ==================== 필터링 ====================
 
 def matches_keywords(text: str, keywords: List[str]) -> bool:
-    """텍스트가 키워드 중 하나라도 포함하는지 확인"""
+    """텍스트가 키워드 중 하나라도 포함하는지 확인 (공백 무시)"""
     if not text:
         return False
-    text_lower = text.lower()
-    return any(keyword.lower() in text_lower for keyword in keywords)
+    
+    # 공백 제거 및 소문자 변환
+    text_normalized = text.replace(' ', '').lower()
+    
+    for keyword in keywords:
+        key_norm = keyword.replace(' ', '').lower()
+        if key_norm in text_normalized:
+            return True
+            
+    return False
 
 
 def is_within_budget(amount_str: str) -> bool:
