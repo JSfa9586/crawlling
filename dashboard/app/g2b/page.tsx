@@ -386,5 +386,3 @@ export default function G2BPage() {
         </div>
     );
 }
-);
-}
