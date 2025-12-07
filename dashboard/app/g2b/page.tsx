@@ -51,17 +51,24 @@ function formatMoney(amount: string | undefined): string {
     return `${num.toLocaleString()}원`;
 }
 
-function formatDate(dateStr: string | undefined): string {
+function formatDateTime(dateStr: string | undefined): string {
     if (!dateStr) return '-';
     try {
-        const dateOnly = dateStr.split(' ')[0];
-        const date = new Date(dateOnly);
-        if (isNaN(date.getTime())) return dateOnly;
+        // Supabase often returns "YYYY-MM-DDTHH:MM:SS" (ISO) or "YYYY-MM-DD HH:MM:SS"
+        // Replace space with T to ensure consistent parsing if needed, but Date() handles most.
+        // If it's just "YYYY-MM-DD", time defaults to 09:00 KST (if parsed as UTC).
+        // Safest: parse as new Date(dateStr).
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return dateStr.split(' ')[0];
+
         const days = ['일', '월', '화', '수', '목', '금', '토'];
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const dayOfWeek = days[date.getDay()];
-        return `${month}/${day}(${dayOfWeek})`;
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+        return `${month}/${day}(${dayOfWeek}) ${hours}:${minutes}`;
     } catch {
         return dateStr.split(' ')[0];
     }
@@ -70,7 +77,7 @@ function formatDate(dateStr: string | undefined): string {
 export default function G2BPage() {
     const [data, setData] = useState<G2BData[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids'); // 기본값을 입찰공고로 변경 (더 중요하므로)
+    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids');
     const [totalCount, setTotalCount] = useState(0);
 
     // 필터 상태
@@ -119,7 +126,7 @@ export default function G2BPage() {
         return () => clearTimeout(timer);
     }, [searchTerm]);
 
-    // 데이터 로딩 (필터 변경 시 실행)
+    // 데이터 로딩
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
@@ -131,11 +138,9 @@ export default function G2BPage() {
             if (categoryFilter !== '전체') params.append('category', categoryFilter);
 
             if (agencyFilter.label !== '전체') {
-                // 키워드를 콤마로 연결해서 전송
                 params.append('agency', agencyFilter.keywords.join(','));
             }
 
-            // 가격 필터 Mapping
             if (priceRange !== 'all') {
                 const preset = PRICE_PRESETS.find(p => p.value === priceRange);
                 if (preset) {
@@ -144,7 +149,6 @@ export default function G2BPage() {
                 }
             }
 
-            // Limit increase for filtered search
             params.append('limit', '2000');
 
             const res = await fetch(`/api/g2b?${params.toString()}`);
@@ -152,7 +156,7 @@ export default function G2BPage() {
                 const json = await res.json();
                 if (json.success) {
                     setData(json.data || []);
-                    setTotalCount(json.count || 0); // 서버에서 받은 전체 정밀 카운트
+                    setTotalCount(json.count || 0);
                 }
             }
         } catch (error) {
@@ -160,18 +164,14 @@ export default function G2BPage() {
         } finally {
             setLoading(false);
         }
-    }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange]); // priceRange 추가
+    }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange]);
 
-    // 의존성 변경 시 fetch 호출
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    // 카테고리 목록 (현재 로드된 데이터 기준이 아닌, 고정값으로 변경하는 것이 좋으나 우선 데이터 기반)
-    // 서버 필터링이므로 '전체', '용역', '물품', '공사' 정도 고정해도 됨.
     const categories = ['전체', '용역', '물품', '공사', '기타'];
 
-    // 상태 표시 헬퍼
     const getPreSpecStatus = (item: G2BData) => {
         if (isExpired(item.규격공개종료일)) return { text: '마감', color: 'bg-gray-100 text-gray-600' };
         return { text: '진행중', color: 'bg-green-100 text-green-800' };
@@ -215,7 +215,31 @@ export default function G2BPage() {
             </div>
 
             {/* 필터 영역 */}
-            <div className="space-y-3 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <div className="space-y-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                {/* 1. 검색 입력창 (최상단 배치) */}
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm font-bold text-gray-900">공고명 검색</label>
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            placeholder="찾으시는 공고명을 입력하세요 (예: 해양환경)"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="w-32 px-3 py-2 text-sm border border-gray-300 rounded-md"
+                        >
+                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="h-px bg-gray-100 my-2"></div>
+
+                {/* 2. 필터 옵션들 */}
                 {/* 날짜 */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">기간</span>
@@ -229,7 +253,7 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
-                {/* 키워드 */}
+                {/* 키워드 (추천검색) */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">추천검색</span>
                     <button onClick={() => setSearchTerm('')} className={`px-3 py-1 text-xs rounded-full border ${searchTerm === '' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>초기화</button>
@@ -270,24 +294,6 @@ export default function G2BPage() {
                             {preset.label}
                         </button>
                     ))}
-                </div>
-
-                {/* 검색 입력창 */}
-                <div className="flex gap-2 pt-2 border-t border-gray-100 mt-2">
-                    <input
-                        type="text"
-                        placeholder="공고명, 발주기관 등 검색어 입력 (예: 해양)"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="w-32 px-3 py-2 text-sm border border-gray-300 rounded-md"
-                    >
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
                 </div>
             </div>
 
@@ -335,8 +341,8 @@ export default function G2BPage() {
                                             <td className="px-4 py-3 text-sm font-medium text-gray-900">
                                                 {formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}
                                             </td>
-                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDate(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDate(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</td>
                                             <td className="px-4 py-3 whitespace-nowrap">
                                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>{status.text}</span>
                                             </td>
@@ -365,7 +371,7 @@ export default function G2BPage() {
                                             <div className="font-bold text-blue-600">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs text-gray-400">마감: {formatDate(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</div>
+                                            <div className="text-xs text-gray-400">마감: {formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</div>
                                         </div>
                                     </div>
                                 </div>
