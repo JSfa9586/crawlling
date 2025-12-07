@@ -40,7 +40,6 @@ function isExpired(dateStr: string | undefined): boolean {
 }
 
 // 금액 포맷 함수
-// 금액 포맷 함수
 function formatMoney(amount: string | undefined): string {
     if (!amount || amount === '0') return '-';
     // 숫자 이외의 문자 제거
@@ -100,8 +99,8 @@ export default function G2BPage() {
 
     const PRICE_PRESETS = [
         { label: '고시금액 미만', value: 'under_2.3' },
-        { label: '5억미만', value: 'under_5' },
-        { label: '10억미만', value: 'under_10' },
+        { label: '2.3억~5억', value: 'under_5' },
+        { label: '5억~10억', value: 'under_10' },
         { label: '10억이상', value: 'over_10' }
     ];
 
@@ -168,11 +167,11 @@ export default function G2BPage() {
                             case 'under_2.3': // 2.3억 미만
                                 matchesPrice = price < 230000000;
                                 break;
-                            case 'under_5': // 5억 미만
-                                matchesPrice = price < 500000000;
+                            case 'under_5': // 2.3억 이상 ~ 5억 미만
+                                matchesPrice = price >= 230000000 && price < 500000000;
                                 break;
-                            case 'under_10': // 10억 미만
-                                matchesPrice = price < 1000000000;
+                            case 'under_10': // 5억 이상 ~ 10억 미만
+                                matchesPrice = price >= 500000000 && price < 1000000000;
                                 break;
                             case 'over_10': // 10억 이상
                                 matchesPrice = price >= 1000000000;
@@ -245,8 +244,6 @@ export default function G2BPage() {
         }
         return { text: '신규', color: 'bg-green-100 text-green-800' };
     };
-
-
 
     return (
         <div className="space-y-6">

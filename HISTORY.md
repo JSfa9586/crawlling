@@ -929,7 +929,8 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**:
     - Prioritized 'Pre-specs' tab in page.tsx.
     - Fixed data mapping in page.tsx by using explicit Korean keys (e.g., ['등록일']) to match API response.
-    - Applied Trim to CSV headers in oute.ts to prevent mapping errors.
+    - Applied Trim to CSV headers in 
+oute.ts to prevent mapping errors.
     - Forced update of Google Sheets data using orce_update_gsheet.py.
 - **Files Modified**: dashboard/app/g2b/page.tsx, dashboard/app/api/g2b/route.ts, orce_update_gsheet.py.
 
@@ -955,7 +956,7 @@ SPREADSHEET_ID=<Google Sheets ID>
 ### Phase 39: G2B Price Filter (2025-12-07)
 - **Goal**: Add price range filters to G2B dashboard results.
 - **Implementation**:
-    - Added Price Range UI (Under 230M, 500M, 1B, Over 1B).
-    - Implemented logic to parse Korean currency strings from '배정예산'/'추정가격'.
+    - Added Price Range UI (Under 230M, 230M~500M, 500M~1B, Over 1B).
+    - Implemented **mutually exclusive** filtering logic to parse Korean currency strings from '배정예산'/'추정가격'.
     - Added 'priceRange' state and 'PRICE_PRESETS' constant.
 - **Files Modified**: dashboard/app/g2b/page.tsx.
