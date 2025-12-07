@@ -1,0 +1,68 @@
+
+[Test D] Standard API, inqryDiv='6', 5 Day Range, prdctNm
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=6&inqryBgnDt=202512020000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "07",
+    "resultMsg": "입력범위값 초과 에러"
+  }
+}}
+
+[Test E] PPSSrch API, inqryDiv='1', YYYYMMDDHHMM, cntrctNm
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&cntrctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "08",
+    "resultMsg": "필수값 입력 에러"
+  }
+}}
+
+[Test G] Bid Search API, inqryDiv='1', Bid Name Search
+URL: http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"response": {
+  "header": {
+    "resultCode": "00",
+    "resultMsg": "정상"
+  },
+  "body": {
+    "items": [
+      {
+        "bidNtceNo": "R25BK01200712",
+        "bidNtceOrd": "000",
+        "reNtceYn"
+Result: 00 - 정상
+Items Found: 37
+Parse/Logic Error: 'list' object has no attribute 'get'
+
+[Test I] Contract PPSSrch API, inqryDiv='1', bidNtceNm
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&bidNtceNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "08",
+    "resultMsg": "필수값 입력 에러"
+  }
+}}
+
+[Test J] Standard Contract API, inqryDiv='6', 1 Day Range
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=6&inqryBgnDt=202512060000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "07",
+    "resultMsg": "입력범위값 초과 에러"
+  }
+}}
+
+[Test K] Contract PPSSrch API, inqryDiv='1', prdctNm
+URL: http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServcPPSSrch?serviceKey=YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D&numOfRows=5&pageNo=1&type=json&inqryDiv=1&inqryBgnDt=202512020000&inqryEndDt=202512072359&prdctNm=%EC%98%81%ED%96%A5%ED%8F%89%EA%B0%80
+Status: 200
+Raw Body: {"nkoneps.com.response.ResponseError": {
+  "header": {
+    "resultCode": "08",
+    "resultMsg": "필수값 입력 에러"
+  }
+}}

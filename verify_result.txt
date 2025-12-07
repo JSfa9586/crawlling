@@ -1,0 +1,12 @@
+=== Verifying Bid Search API (as Contract Search Proxy) ===
+Fetching: http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch
+Params: {'serviceKey': 'YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE/mQLxG5XmvzCSqdQ==', 'numOfRows': '10', 'pageNo': '1', 'type': 'json', 'inqryDiv': '1', 'inqryBgnDt': '202511070000', 'inqryEndDt': '202512072359', 'bidNtceNm': '영향평가'}
+Status: 200
+Result Code: 00
+Items Raw Type: <class 'list'>
+Found 10 items.
+
+--- Transformed Data Preview ---
+[1] 2025-11-10 | 정보시스템 대상 업무연속성영향평가 및 업무연속성계획(BCP) 구축 컨설팅 위탁용역 | 오송첨단의료산업진흥재단 | 40000000
+[2] 2025-11-11 | 제주대학교병원 대표 홈페이지 재구축사업 개인정보 영향평가 용역 | 제주대학교병원 | 27000000
+[3] 2025-11-11 | 스페디스 시스템 개인정보 영향평가 | 한국생명존중희망재단 | 38363636

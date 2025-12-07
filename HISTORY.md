@@ -1017,3 +1017,9 @@ oute.ts to prevent mapping errors.
    - page.tsx의 API 호출 경로를 /api/contract 로 수정.
    - page.tsx의 미사용 Link import 제거.
 
+
+## 2025-12-07 (용역 계약 검색 API 수정)
+- **작업 내용**: 용역 계약 검색 기능이 특정 키워드('신평농공단지', '환경영향평가') 검색 시 결과를 반환하지 않는 문제 해결.
+- **원인 분석**: '계약 정보 조회 API'가 키워드 검색을 제대로 지원하지 않음(필수값 에러 등 발생). 반면 '입찰 공고 조회 API'는 해당 키워드로 정상적인 결과를 반환함을 확인.
+- **조치 사항**: 백엔드 API 라우트(oute.ts)를 수정하여 '계약 정보 조회 API' 대신 '입찰 공고 조회 API'(getBidPblancListInfoServcPPSSrch)를 사용하도록 변경. 프론트엔드 호환성을 위해 입찰 공고 데이터 필드(idNtceNm, presmptPrce 등)를 계약 정보 필드(cntrctNm, cntrctAmt 등)로 매핑하여 반환.
+- **결과**: '영향평가' 등의 키워드로 검색 시 정상적으로 목록이 조회됨을 검증 스크립트(erify_api_fix.py)를 통해 확인.

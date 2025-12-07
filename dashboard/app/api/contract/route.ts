@@ -18,24 +18,27 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // G2B API URL construction
-    const apiUrl = `http://apis.data.go.kr/1230000/ao/CntrcInfoService/getCntrctInfoListServcPPSSrch`;
+    // G2B Bid Search API URL (Using Bid API as proxy for Contract Search due to API limitations)
+    const apiUrl = `http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch`;
 
     // Construct params
-    // 'inqryDiv' = 1 (Contract Date based)
-    // 'cntrctNm' (Contract Name based search)
+    // 'inqryDiv' = 1 (Date based)
+    // 'bidNtceNm' = keyword (Bid Name search)
     const queryParams = new URLSearchParams({
         serviceKey: G2B_API_KEY,
-        numOfRows: '10',
+        numOfRows: '20', // Increased row count
         pageNo: pageNo,
         type: 'json',
         inqryDiv: '1',
-        inqryBgnDt: startDate.replace(/-/g, ''),
-        inqryEndDt: endDate.replace(/-/g, ''),
-        cntrctNm: keyword
+        inqryBgnDt: startDate.replace(/-/g, '') + '0000', // Add HHMM
+        inqryEndDt: endDate.replace(/-/g, '') + '2359',   // Add HHMM
+        bidNtceNm: keyword
     });
 
     try {
+        // Log the actual URL for debugging (server-side only)
+        // console.log(`Fetching: ${apiUrl}?${queryParams.toString()}`);
+
         const response = await fetch(`${apiUrl}?${queryParams.toString()}`);
 
         if (!response.ok) {
@@ -44,12 +47,40 @@ export async function GET(request: NextRequest) {
 
         const data = await response.json();
 
-        // Check for logical API error (G2B returns 200 even for errors sometimes)
+        // Check for logical API error
         if (data.response?.header?.resultCode !== '00') {
             const errorMsg = data.response?.header?.resultMsg;
             if (data.response?.header?.resultCode) {
                 console.warn(`G2B API Logic Error: ${errorMsg}`, data.response.header);
             }
+        }
+
+        // Transform Data to match frontend "Contract" interface
+        // Frontend expects: cntrctNm, cntrctAmt, orderInsttNm, cntrctCnclsDt
+        // Bid API provides: bidNtceNm, presmptPrce, ntceInsttNm, bidNtceDt
+
+        const rawItems = data.response?.body?.items;
+        let items: any[] = [];
+
+        if (Array.isArray(rawItems)) {
+            items = rawItems;
+        } else if (rawItems?.item) {
+            items = Array.isArray(rawItems.item) ? rawItems.item : [rawItems.item];
+        }
+
+        const transformedItems = items.map((item: any) => ({
+            cntrctNm: item.bidNtceNm,
+            cntrctAmt: item.presmptPrce,
+            orderInsttNm: item.ntceInsttNm,
+            cntrctCnclsDt: item.bidNtceDt ? item.bidNtceDt.substring(0, 10) : '', // YYYY-MM-DD HH:MM... -> YYYY-MM-DD roughly
+            link: item.bidNtceUrl // Optional extra
+        }));
+
+        // Replace original items with transformed items in the response structure
+        // We do this to keep the "body.totalCount" and structure intact for the frontend
+        if (data.response?.body?.items) {
+            // Force structure to { item: [...] } to match frontend expectation
+            data.response.body.items = { item: transformedItems };
         }
 
         return NextResponse.json(data);
