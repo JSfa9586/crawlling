@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
 interface G2BData {
@@ -24,11 +24,10 @@ interface G2BData {
     [key: string]: string | undefined;
 }
 
-// 날짜 비교 함수: 마감 여부 확인
+// 유틸리티 함수들
 function isExpired(dateStr: string | undefined): boolean {
     if (!dateStr) return false;
     try {
-        // 날짜만 추출 (시간 제외)
         const dateOnly = dateStr.split(' ')[0];
         const endDate = new Date(dateOnly);
         const today = new Date();
@@ -39,10 +38,8 @@ function isExpired(dateStr: string | undefined): boolean {
     }
 }
 
-// 금액 포맷 함수
 function formatMoney(amount: string | undefined): string {
     if (!amount || amount === '0') return '-';
-    // 숫자 이외의 문자 제거
     const cleanAmount = amount.replace(/[^0-9]/g, '');
     const num = parseInt(cleanAmount, 10);
     if (isNaN(num)) return '-';
@@ -54,20 +51,16 @@ function formatMoney(amount: string | undefined): string {
     return `${num.toLocaleString()}원`;
 }
 
-// 날짜 포맷 함수 (요일 포함)
 function formatDate(dateStr: string | undefined): string {
     if (!dateStr) return '-';
     try {
-        // YYYY-MM-DD 또는 YYYY-MM-DD HH:MM:SS 형식에서 날짜만 추출
         const dateOnly = dateStr.split(' ')[0];
         const date = new Date(dateOnly);
         if (isNaN(date.getTime())) return dateOnly;
-
         const days = ['일', '월', '화', '수', '목', '금', '토'];
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const dayOfWeek = days[date.getDay()];
-
         return `${month}/${day}(${dayOfWeek})`;
     } catch {
         return dateStr.split(' ')[0];
@@ -75,15 +68,18 @@ function formatDate(dateStr: string | undefined): string {
 }
 
 export default function G2BPage() {
-    const [preSpecs, setPreSpecs] = useState<G2BData[]>([]);
-    const [bids, setBids] = useState<G2BData[]>([]);
+    const [data, setData] = useState<G2BData[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('pre_specs');
+    const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids'); // 기본값을 입찰공고로 변경 (더 중요하므로)
+    const [totalCount, setTotalCount] = useState(0);
+
+    // 필터 상태
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('전체');
     const [priceRange, setPriceRange] = useState('all');
-    const [agencyFilter, setAgencyFilter] = useState('전체'); // 발주기관 필터 추가
-    const [dateRange, setDateRange] = useState<number>(30); // 기본 30일
+    const [agencyFilter, setAgencyFilter] = useState({ label: '전체', keywords: [] as string[] });
+    const [dateRange, setDateRange] = useState<number>(30);
 
     const DATE_PRESETS = [
         { label: '오늘', days: 0 },
@@ -99,10 +95,10 @@ export default function G2BPage() {
     ];
 
     const PRICE_PRESETS = [
-        { label: '고시금액 미만', value: 'under_2.3' },
-        { label: '2.3억~5억', value: 'under_5' },
-        { label: '5억~10억', value: 'under_10' },
-        { label: '10억이상', value: 'over_10' }
+        { label: '고시금액 미만', value: 'under_2.3', min: 0, max: 230000000 },
+        { label: '2.3억~5억', value: 'under_5', min: 230000000, max: 500000000 },
+        { label: '5억~10억', value: 'under_10', min: 500000000, max: 1000000000 },
+        { label: '10억이상', value: 'over_10', min: 1000000000, max: 0 }
     ];
 
     const AGENCY_PRESETS = [
@@ -115,558 +111,268 @@ export default function G2BPage() {
         { label: '주택공사', keywords: ['주택공사', 'LH', '토지주택'] }
     ];
 
+    // 검색어 디바운싱
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // 사전규격 데이터
-                const preSpecRes = await fetch('/api/g2b?type=pre_specs');
-                if (preSpecRes.ok) {
-                    const data = await preSpecRes.json();
-                    if (data.success) {
-                        setPreSpecs(data.data || []);
-                    }
-                }
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
-                // 입찰공고 데이터
-                const bidRes = await fetch('/api/g2b?type=bids');
-                if (bidRes.ok) {
-                    const data = await bidRes.json();
-                    if (data.success) {
-                        setBids(data.data || []);
-                    }
-                }
-            } catch (error) {
-                console.error('데이터 로딩 실패:', error);
-            } finally {
-                setLoading(false);
+    // 데이터 로딩 (필터 변경 시 실행)
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
+            params.append('type', activeTab);
+            params.append('days', dateRange.toString());
+
+            if (debouncedSearch) params.append('term', debouncedSearch);
+            if (categoryFilter !== '전체') params.append('category', categoryFilter);
+
+            if (agencyFilter.label !== '전체') {
+                // 키워드를 콤마로 연결해서 전송
+                params.append('agency', agencyFilter.keywords.join(','));
             }
-        };
 
-        fetchData();
-    }, []);
-
-    const currentData = activeTab === 'pre_specs' ? preSpecs : bids;
-    const categories = useMemo(() => {
-        const cats = new Set(currentData.map(item => item.카테고리));
-        return ['전체', ...Array.from(cats)];
-    }, [currentData]);
-
-    const filteredData = useMemo(() => {
-        let data = currentData.filter(item => {
-            const matchesSearch = searchTerm === '' ||
-                item.공고명?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.발주기관?.toLowerCase().includes(searchTerm.toLowerCase());
-
-
-            const matchesCategory = categoryFilter === '전체' || item.카테고리 === categoryFilter;
-
-            // 금액 필터링
-            let matchesPrice = true;
+            // 가격 필터 Mapping
             if (priceRange !== 'all') {
-                const rawPrice = activeTab === 'pre_specs'
-                    ? item.배정예산
-                    : (item.추정가격 || item.기초금액);
-
-                if (!rawPrice || rawPrice === '0') {
-                    matchesPrice = false;
-                } else {
-                    const price = parseInt(rawPrice.replace(/[^0-9]/g, ''), 10);
-                    if (isNaN(price)) {
-                        matchesPrice = false;
-                    } else {
-                        switch (priceRange) {
-                            case 'under_2.3': // 2.3억 미만
-                                matchesPrice = price < 230000000;
-                                break;
-                            case 'under_5': // 2.3억 이상 ~ 5억 미만
-                                matchesPrice = price >= 230000000 && price < 500000000;
-                                break;
-                            case 'under_10': // 5억 이상 ~ 10억 미만
-                                matchesPrice = price >= 500000000 && price < 1000000000;
-                                break;
-                            case 'over_10': // 10억 이상
-                                matchesPrice = price >= 1000000000;
-                                break;
-                            default:
-                                matchesPrice = true;
-                        }
-                    }
+                const preset = PRICE_PRESETS.find(p => p.value === priceRange);
+                if (preset) {
+                    if (preset.min > 0) params.append('price_min', preset.min.toString());
+                    if (preset.max > 0) params.append('price_max', preset.max.toString());
                 }
             }
 
-            // 발주기관 필터링
-            let matchesAgency = true;
-            if (agencyFilter !== '전체') {
-                const selectedAgency = AGENCY_PRESETS.find(p => p.label === agencyFilter);
-                if (selectedAgency) {
-                    matchesAgency = selectedAgency.keywords.some(keyword =>
-                        item.발주기관?.includes(keyword)
-                    );
+            // Limit increase for filtered search
+            params.append('limit', '2000');
+
+            const res = await fetch(`/api/g2b?${params.toString()}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (json.success) {
+                    setData(json.data || []);
+                    setTotalCount(json.count || 0); // 서버에서 받은 전체 정밀 카운트
                 }
             }
-
-            // 날짜 필터링
-            if (dateRange !== 999) {
-                const dateStr = activeTab === 'pre_specs' ? item.등록일 : item.공고일;
-                if (!dateStr) return false;
-
-                try {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const targetDate = new Date(today);
-                    targetDate.setDate(today.getDate() - dateRange);
-
-                    const itemDate = new Date(dateStr.split(' ')[0]);
-                    if (itemDate < targetDate) return false;
-                } catch {
-                    return true;
-                }
-            }
-
-            return matchesSearch && matchesCategory && matchesPrice && matchesAgency;
-        });
-
-        // 날짜 내림차순 정렬 (최신순)
-        return data.sort((a, b) => {
-            const dateA = (activeTab === 'pre_specs' ? a.등록일 : a.공고일) || '';
-            const dateB = (activeTab === 'pre_specs' ? b.등록일 : b.공고일) || '';
-            return dateB.localeCompare(dateA);
-        });
-    }, [currentData, searchTerm, categoryFilter, dateRange, priceRange, activeTab]);
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
-            </div>
-        );
-    }
-
-    // 사전규격 상태 계산
-    const getPreSpecStatus = (item: G2BData) => {
-        if (isExpired(item.규격공개종료일)) {
-            return { text: '마감', color: 'bg-gray-100 text-gray-600' };
+        } catch (error) {
+            console.error('Fetch error:', error);
+        } finally {
+            setLoading(false);
         }
+    }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange]); // priceRange 추가
+
+    // 의존성 변경 시 fetch 호출
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    // 카테고리 목록 (현재 로드된 데이터 기준이 아닌, 고정값으로 변경하는 것이 좋으나 우선 데이터 기반)
+    // 서버 필터링이므로 '전체', '용역', '물품', '공사' 정도 고정해도 됨.
+    const categories = ['전체', '용역', '물품', '공사', '기타'];
+
+    // 상태 표시 헬퍼
+    const getPreSpecStatus = (item: G2BData) => {
+        if (isExpired(item.규격공개종료일)) return { text: '마감', color: 'bg-gray-100 text-gray-600' };
         return { text: '진행중', color: 'bg-green-100 text-green-800' };
     };
 
-    // 입찰공고 상태 표시
     const getBidStatus = (item: G2BData) => {
         const status = item.상태 || '신규';
-        if (status.includes('취소')) {
-            return { text: status, color: 'bg-red-100 text-red-800' };
-        } else if (status.includes('변경')) {
-            return { text: status, color: 'bg-yellow-100 text-yellow-800' };
-        }
-        // 공고차수가 '000'이 아니고 0보다 큰 경우 (변경공고)
-        const bidSeq = item.공고차수;
-        if (bidSeq && bidSeq !== '000' && bidSeq !== '') {
-            const seqNum = parseInt(bidSeq, 10);
-            if (seqNum > 0) {
-                return { text: `변경(${seqNum}차)`, color: 'bg-yellow-100 text-yellow-800' };
-            }
-        }
+        if (status.includes('취소')) return { text: status, color: 'bg-red-100 text-red-800' };
+        if (status.includes('변경')) return { text: `변경(${item.공고차수}차)`, color: 'bg-yellow-100 text-yellow-800' };
         return { text: '신규', color: 'bg-green-100 text-green-800' };
     };
 
     return (
         <div className="space-y-6">
-            {/* 헤더 */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900">나라장터</h1>
-                    <p className="text-gray-600 mt-1">사전규격 및 입찰공고 검색 결과</p>
+                    <p className="text-gray-600 mt-1">
+                        전체 데이터베이스 검색 (최대 2000건 표시 / 총 {totalCount.toLocaleString()}건)
+                    </p>
                 </div>
-                <Link
-                    href="/dashboard"
-                    className="text-primary-600 hover:text-primary-700 font-medium"
-                >
-                    ← 대시보드로 돌아가기
-                </Link>
+                <Link href="/dashboard" className="text-primary-600 hover:text-primary-700 font-medium">← 대시보드로 돌아가기</Link>
             </div>
 
-            {/* 통계 카드 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-lg shadow p-4">
-                    <div className="text-sm text-gray-500">사전규격</div>
-                    <div className="text-2xl font-bold text-blue-600">{preSpecs.length}</div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-4">
-                    <div className="text-sm text-gray-500">입찰공고</div>
-                    <div className="text-2xl font-bold text-green-600">{bids.length}</div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-4">
-                    <div className="text-sm text-gray-500">용역</div>
-                    <div className="text-2xl font-bold text-purple-600">
-                        {currentData.filter(d => d.카테고리 === '용역').length}
-                    </div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-4">
-                    <div className="text-sm text-gray-500">물품</div>
-                    <div className="text-2xl font-bold text-orange-600">
-                        {currentData.filter(d => d.카테고리 === '물품').length}
-                    </div>
-                </div>
-            </div>
-
-            {/* 탭 - 사전규격이 먼저 */}
+            {/* 탭 네비게이션 */}
             <div className="border-b border-gray-200">
                 <nav className="flex space-x-8">
                     <button
                         onClick={() => setActiveTab('pre_specs')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs'
-                            ? 'border-primary-600 text-primary-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'pre_specs' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
                     >
-                        사전규격 ({preSpecs.length})
+                        사전규격
                     </button>
                     <button
                         onClick={() => setActiveTab('bids')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bids'
-                            ? 'border-primary-600 text-primary-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bids' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
                     >
-                        입찰공고 ({bids.length})
+                        입찰공고
                     </button>
                 </nav>
             </div>
 
-            {/* 필터 프리셋 */}
-            <div className="space-y-3">
-                {/* 날짜 프리셋 */}
+            {/* 필터 영역 */}
+            <div className="space-y-3 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                {/* 날짜 */}
                 <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm font-medium text-gray-700 mr-2">기간:</span>
+                    <span className="text-sm font-medium text-gray-700 w-16">기간</span>
                     {DATE_PRESETS.map((preset) => (
                         <button
                             key={preset.label}
                             onClick={() => setDateRange(preset.days)}
-                            className={`px-3 py-1 text-sm rounded-full transition-colors ${dateRange === preset.days
-                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
-                                }`}
+                            className={`px-3 py-1 text-xs rounded-full border transition-colors ${dateRange === preset.days ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                         >
                             {preset.label}
                         </button>
                     ))}
                 </div>
-
-                {/* 키워드 프리셋 */}
+                {/* 키워드 */}
                 <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm font-medium text-gray-700 mr-2">키워드:</span>
-                    <button
-                        onClick={() => setSearchTerm('')}
-                        className={`px-3 py-1 text-sm rounded-full transition-colors ${searchTerm === ''
-                            ? 'bg-gray-800 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                    >
-                        전체
-                    </button>
+                    <span className="text-sm font-medium text-gray-700 w-16">추천검색</span>
+                    <button onClick={() => setSearchTerm('')} className={`px-3 py-1 text-xs rounded-full border ${searchTerm === '' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>초기화</button>
                     {KEYWORD_PRESETS.map((keyword) => (
                         <button
                             key={keyword}
                             onClick={() => setSearchTerm(keyword)}
-                            className={`px-3 py-1 text-sm rounded-full transition-colors ${searchTerm === keyword
-                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
-                                }`}
+                            className={`px-3 py-1 text-xs rounded-full border ${searchTerm === keyword ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                         >
                             {keyword}
                         </button>
                     ))}
                 </div>
-
-                {/* 금액 프리셋 */}
+                {/* 발주기관 */}
                 <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm font-medium text-gray-700 mr-2">금액:</span>
-                    <button
-                        onClick={() => setPriceRange('all')}
-                        className={`px-3 py-1 text-sm rounded-full transition-colors ${priceRange === 'all'
-                            ? 'bg-gray-800 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                    >
-                        전체
-                    </button>
+                    <span className="text-sm font-medium text-gray-700 w-16">발주기관</span>
+                    <button onClick={() => setAgencyFilter({ label: '전체', keywords: [] })} className={`px-3 py-1 text-xs rounded-full border ${agencyFilter.label === '전체' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>전체</button>
+                    {AGENCY_PRESETS.map((preset) => (
+                        <button
+                            key={preset.label}
+                            onClick={() => setAgencyFilter(preset)}
+                            className={`px-3 py-1 text-xs rounded-full border ${agencyFilter.label === preset.label ? 'bg-purple-100 text-purple-700 border-purple-300' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
+                        >
+                            {preset.label}
+                        </button>
+                    ))}
+                </div>
+                {/* 금액 */}
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-sm font-medium text-gray-700 w-16">금액</span>
+                    <button onClick={() => setPriceRange('all')} className={`px-3 py-1 text-xs rounded-full border ${priceRange === 'all' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>전체</button>
                     {PRICE_PRESETS.map((preset) => (
                         <button
                             key={preset.value}
                             onClick={() => setPriceRange(preset.value)}
-                            className={`px-3 py-1 text-sm rounded-full transition-colors ${priceRange === preset.value
-                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
-                                }`}
+                            className={`px-3 py-1 text-xs rounded-full border ${priceRange === preset.value ? 'bg-green-100 text-green-700 border-green-300' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'}`}
                         >
                             {preset.label}
                         </button>
                     ))}
                 </div>
 
-                {/* 발주기관 프리셋 */}
-                <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm font-medium text-gray-700 mr-2">발주기관:</span>
-                    <button
-                        onClick={() => setAgencyFilter('전체')}
-                        className={`px-3 py-1 text-sm rounded-full transition-colors ${agencyFilter === '전체'
-                            ? 'bg-gray-800 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
+                {/* 검색 입력창 */}
+                <div className="flex gap-2 pt-2 border-t border-gray-100 mt-2">
+                    <input
+                        type="text"
+                        placeholder="공고명, 발주기관 등 검색어 입력 (예: 해양)"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="w-32 px-3 py-2 text-sm border border-gray-300 rounded-md"
                     >
-                        전체
-                    </button>
-                    {AGENCY_PRESETS.map((preset) => (
-                        <button
-                            key={preset.label}
-                            onClick={() => setAgencyFilter(preset.label)}
-                            className={`px-3 py-1 text-sm rounded-full transition-colors ${agencyFilter === preset.label
-                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
-                                }`}
-                        >
-                            {preset.label}
-                        </button>
-                    ))}
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                 </div>
             </div>
 
-            {/* 검색 및 필터 */}
-            <div className="flex flex-col md:flex-row gap-4">
-                <input
-                    type="text"
-                    placeholder="공고명 또는 발주기관 검색..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-                <select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
-            </div>
-
-            {/* 데이터 테이블 - 사전규격용 */}
-            {/* 데이터 표시 영역 */}
-            {activeTab === 'pre_specs' && (
+            {/* 로딩 인디케이터 */}
+            {loading ? (
+                <div className="flex justify-center items-center py-20">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                </div>
+            ) : (
                 <>
-                    {/* 모바일 뷰 (카드) */}
+                    {/* 데이터 테이블 (Desktop) */}
+                    <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">카테고리</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">공고명</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">발주기관</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        {activeTab === 'pre_specs' ? '배정예산' : '추정/기초금액'}
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        {activeTab === 'pre_specs' ? '등록일' : '공고일'}
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        {activeTab === 'pre_specs' ? '공개종료' : '입찰마감'}
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {data.length === 0 ? (
+                                    <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500">검색 결과가 없습니다.</td></tr>
+                                ) : data.map((item, idx) => {
+                                    const status = activeTab === 'pre_specs' ? getPreSpecStatus(item) : getBidStatus(item);
+                                    return (
+                                        <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>{item.카테고리}</span>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <a href={item.링크} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline font-medium block truncate max-w-md">{item.공고명}</a>
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-gray-600">{item.발주기관}</td>
+                                            <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                                                {formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDate(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-500">{formatDate(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>{status.text}</span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* 모바일 뷰 */}
                     <div className="md:hidden space-y-4">
-                        {filteredData.map((item, index) => {
-                            const status = getPreSpecStatus(item);
+                        {data.map((item, idx) => {
+                            const status = activeTab === 'pre_specs' ? getPreSpecStatus(item) : getBidStatus(item);
                             return (
-                                <div key={index} className="bg-white rounded-lg shadow p-4 space-y-3 border border-gray-100">
-                                    <div className="flex justify-between items-start">
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {item.카테고리}
-                                        </span>
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
-                                            {status.text}
-                                        </span>
+                                <div key={idx} className="bg-white rounded-lg shadow p-4 border border-gray-100">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className="text-xs font-bold text-gray-500">{item.카테고리}</span>
+                                        <span className={`px-2 py-0.5 text-xs rounded-full ${status.color}`}>{status.text}</span>
                                     </div>
-                                    <a
-                                        href={item['링크']}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block text-lg font-bold text-gray-900 hover:text-primary-600 leading-snug"
-                                    >
-                                        {item.공고명 || '-'}
-                                    </a>
-                                    <div className="text-sm text-gray-600">
-                                        <span className="font-medium mr-2">{item.발주기관}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-50">
-                                        <div className="text-gray-500">
-                                            배정예산 <span className="text-gray-900 font-medium ml-1">{formatMoney(item.배정예산)}</span>
+                                    <a href={item.링크} className="text-lg font-bold text-gray-900 mb-1 block leading-tight">{item.공고명}</a>
+                                    <div className="text-sm text-gray-600 mb-2">{item.발주기관}</div>
+                                    <div className="flex justify-between items-end border-t border-gray-50 pt-2">
+                                        <div>
+                                            <div className="text-xs text-gray-400">{activeTab === 'pre_specs' ? '예산' : '금액'}</div>
+                                            <div className="font-bold text-blue-600">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs text-gray-400">등록일 {formatDate(item['등록일'])}</div>
-                                            <div className="text-xs text-red-500 font-medium">마감 {formatDate(item['규격공개종료일'])}</div>
+                                            <div className="text-xs text-gray-400">마감: {formatDate(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</div>
                                         </div>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
-
-                    {/* 데스크탑 뷰 (테이블) */}
-                    <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">카테고리</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">공고명</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">발주기관</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">배정예산</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">등록일</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">접수마감</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredData.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
-                                                {currentData.length === 0 ? '데이터가 없습니다.' : '검색 결과가 없습니다.'}
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        filteredData.map((item, index) => {
-                                            const status = getPreSpecStatus(item);
-                                            return (
-                                                <tr key={index} className="hover:bg-gray-50">
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
-                                                            }`}>
-                                                            {item.카테고리}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <a href={item['링크']} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 hover:underline font-medium">
-                                                            {item.공고명 || '-'}
-                                                        </a>
-                                                    </td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{item.발주기관 || '-'}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{formatMoney(item.배정예산)}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{formatDate(item['등록일'])}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{formatDate(item['규격공개종료일'])}</td>
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
-                                                            {status.text}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </>
-            )}
-
-            {/* 데이터 표시 영역 - 입찰공고 */}
-            {activeTab === 'bids' && (
-                <>
-                    {/* 모바일 뷰 (카드) */}
-                    <div className="md:hidden space-y-4">
-                        {filteredData.map((item, index) => {
-                            const status = getBidStatus(item);
-                            return (
-                                <div key={index} className="bg-white rounded-lg shadow p-4 space-y-3 border border-gray-100">
-                                    <div className="flex justify-between items-start">
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {item.카테고리}
-                                        </span>
-                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
-                                            {status.text}
-                                        </span>
-                                    </div>
-                                    <a
-                                        href={item['링크']}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block text-lg font-bold text-gray-900 hover:text-primary-600 leading-snug"
-                                    >
-                                        {item.공고명 || '-'}
-                                    </a>
-                                    <div className="text-sm text-gray-600">
-                                        <span className="font-medium mr-2">{item.발주기관}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-50">
-                                        <div className="text-gray-500">
-                                            추정가격 <span className="text-gray-900 font-medium ml-1">{formatMoney(item.추정가격 || item.기초금액)}</span>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-xs text-gray-400">공고일 {formatDate(item['공고일'])}</div>
-                                            <div className="text-xs text-red-500 font-medium">마감 {item['입찰마감'] ? formatDate(item['입찰마감']) : '추후공고'}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* 데스크탑 뷰 (테이블) */}
-                    <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">카테고리</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">공고명</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">발주기관</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">추정가격</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">공고일</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입찰마감</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredData.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
-                                                {currentData.length === 0 ? '데이터가 없습니다.' : '검색 결과가 없습니다.'}
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        filteredData.map((item, index) => {
-                                            const status = getBidStatus(item);
-                                            return (
-                                                <tr key={index} className="hover:bg-gray-50">
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.카테고리 === '용역' ? 'bg-purple-100 text-purple-800' :
-                                                            item.카테고리 === '물품' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'
-                                                            }`}>
-                                                            {item.카테고리}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <a href={item['링크']} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 hover:underline font-medium">
-                                                            {item.공고명 || '-'}
-                                                        </a>
-                                                    </td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{item.발주기관 || '-'}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700 font-medium">{formatMoney(item.추정가격 || item.기초금액)}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{formatDate(item['공고일'])}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-700">{item['입찰마감'] ? formatDate(item['입찰마감']) : '추후공고'}</td>
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.color}`}>
-                                                            {status.text}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {/* 안내 메시지 */}
-            {(preSpecs.length === 0 && bids.length === 0) && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2">데이터 안내</h3>
-                    <p className="text-blue-700">
-                        구글시트에서 나라장터 데이터를 가져오고 있습니다.
-                        데이터가 표시되지 않으면 관리자에게 문의하세요.
-                    </p>
-                </div>
             )}
         </div>
     );
