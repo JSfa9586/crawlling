@@ -236,11 +236,13 @@ export default function G2BPage() {
         } else if (status.includes('변경')) {
             return { text: status, color: 'bg-yellow-100 text-yellow-800' };
         }
-        // 공고차수가 '000'이 아닌 경우 (변경공고)
+        // 공고차수가 '000'이 아니고 0보다 큰 경우 (변경공고)
         const bidSeq = item.공고차수;
         if (bidSeq && bidSeq !== '000' && bidSeq !== '') {
             const seqNum = parseInt(bidSeq, 10);
-            return { text: `변경(${seqNum}차)`, color: 'bg-yellow-100 text-yellow-800' };
+            if (seqNum > 0) {
+                return { text: `변경(${seqNum}차)`, color: 'bg-yellow-100 text-yellow-800' };
+            }
         }
         return { text: '신규', color: 'bg-green-100 text-green-800' };
     };
