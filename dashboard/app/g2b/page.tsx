@@ -54,10 +54,6 @@ function formatMoney(amount: string | undefined): string {
 function formatDateTime(dateStr: string | undefined): string {
     if (!dateStr) return '-';
     try {
-        // Supabase often returns "YYYY-MM-DDTHH:MM:SS" (ISO) or "YYYY-MM-DD HH:MM:SS"
-        // Replace space with T to ensure consistent parsing if needed, but Date() handles most.
-        // If it's just "YYYY-MM-DD", time defaults to 09:00 KST (if parsed as UTC).
-        // Safest: parse as new Date(dateStr).
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return dateStr.split(' ')[0];
 
@@ -97,7 +93,7 @@ export default function G2BPage() {
     ];
 
     const KEYWORD_PRESETS = [
-        '영향평가', '해양환경', '환경성검토', '해양이용', '해역이용',
+        '영향평가', '해양환경', '환경보전방안', '해양이용', '해역이용',
         '영향조사', '모니터링', '해상풍력'
     ];
 
@@ -218,7 +214,7 @@ export default function G2BPage() {
             <div className="space-y-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                 {/* 1. 검색 입력창 (최상단 배치) */}
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-bold text-gray-900">공고명 검색</label>
+                    <label className="text-sm font-bold text-gray-900">검색어 입력</label>
                     <div className="flex gap-2">
                         <input
                             type="text"
@@ -253,9 +249,15 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
-                {/* 키워드 (추천검색) */}
+                {/* 키워드 (추천검색) + 즐겨찾기 1 */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">추천검색</span>
+                    <button
+                        onClick={() => setSearchTerm(KEYWORD_PRESETS.join(','))}
+                        className="px-3 py-1 text-xs rounded-full border bg-pink-100 text-pink-700 border-pink-300 hover:bg-pink-50 font-bold"
+                    >
+                        즐겨찾기 1
+                    </button>
                     <button onClick={() => setSearchTerm('')} className={`px-3 py-1 text-xs rounded-full border ${searchTerm === '' ? 'bg-gray-800 text-white' : 'bg-white text-gray-600'}`}>초기화</button>
                     {KEYWORD_PRESETS.map((keyword) => (
                         <button

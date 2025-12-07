@@ -47,9 +47,14 @@ export async function GET(request: NextRequest) {
 
         // 2. 검색어 필터 (공고명 or 발주기관)
         if (term) {
-            // Supabase .or() syntax: "column1.ilike.%term%,column2.ilike.%term%"
-            // URL encoding usually handled by client, but here we construct raw string
-            query = query.or(`title.ilike.%${term}%,publisher.ilike.%${term}%`);
+            // 다중 검색어 지원 (comma separated) -> OR 조건
+            const keywords = term.split(',').map(t => t.trim()).filter(t => t);
+            if (keywords.length > 0) {
+                // 각 키워드에 대해 title 또는 publisher가 일치하는 조건 생성
+                // 예: term="A,B" -> "title.ilike.%A%,publisher.ilike.%A%,title.ilike.%B%,publisher.ilike.%B%"
+                const conditions = keywords.map(k => `title.ilike.%${k}%,publisher.ilike.%${k}%`).join(',');
+                query = query.or(conditions);
+            }
         }
 
         // 3. 발주기관 필터
