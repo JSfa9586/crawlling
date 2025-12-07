@@ -12,8 +12,7 @@ interface ContractItem {
     cntrctCnclsDt: string; // 계약일자
     cntrctAmt: string; // 계약금액
     cntrctMthdNm: string; // 계약방법 (수의계약 등)
-    // Add other fields as necessary
-    detailLink?: string; // URL to detail if available
+    link?: string; // G2B Detail URL
 }
 
 export default function ContractSearchPage() {
@@ -172,7 +171,20 @@ export default function ContractSearchPage() {
                                 {results.map((item, index) => (
                                     <tr key={`${item.cntrctNo}-${index}`} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900">{item.cntrctNm}</div>
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {item.link ? (
+                                                    <a
+                                                        href={item.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="hover:text-primary-600 hover:underline"
+                                                    >
+                                                        {item.cntrctNm}
+                                                    </a>
+                                                ) : (
+                                                    item.cntrctNm
+                                                )}
+                                            </div>
                                             <div className="text-xs text-gray-500">{item.cntrctNo}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
