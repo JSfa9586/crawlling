@@ -17,11 +17,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // G2B Bid Search API URL
-    const apiUrl = `http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServcPPSSrch`;
+    // G2B Standard Contract Search API URL
+    const apiUrl = `http://apis.data.go.kr/1230000/ao/CntrctInfoService/getCntrctInfoListServc`;
+    // Note: Standard API uses 'prdctNm' for keyword search in many cases, or 'cntrctNm'.
+    // Debug showed 'prdctNm' works well.
 
     // Use fallback key if env var is missing (Encoded Key) typically used in Korean Open APIs
-    // Using the key found in verify_api_fix.py which worked.
     const effectiveKey = G2B_API_KEY || "YFo89aWj6GcQ681F1E2wVyCGfASK4n0v4IMcaBpOrad0H6vkZsVqq2teDBi0umOLnKoMpE%2FmQLxG5XmvzCSqdQ%3D%3D";
 
     // Construct params WITHOUT serviceKey to avoid double encoding if key is already encoded
@@ -29,10 +30,10 @@ export async function GET(request: NextRequest) {
         numOfRows: '20',
         pageNo: pageNo,
         type: 'json',
-        inqryDiv: '1',
+        inqryDiv: '1', // Date
         inqryBgnDt: startDate.replace(/-/g, '') + '0000',
         inqryEndDt: endDate.replace(/-/g, '') + '2359',
-        bidNtceNm: keyword
+        prdctNm: keyword // Keyword (Product Name Search)
     });
 
     try {
@@ -62,6 +63,7 @@ export async function GET(request: NextRequest) {
         if (data.response?.header?.resultCode !== '00') {
             const errorMsg = data.response?.header?.resultMsg;
             console.warn(`[API Logic Error] ResultCode: ${data.response?.header?.resultCode}, Msg: ${errorMsg}`);
+            // If No Results, data might be empty or specific code.
         }
 
         // Transform Data to match frontend "Contract" interface
@@ -74,22 +76,32 @@ export async function GET(request: NextRequest) {
             items = Array.isArray(rawItems.item) ? rawItems.item : [rawItems.item];
         }
 
+        // Map Standard Contract API fields to Frontend fields
         const transformedItems = items.map((item: any) => ({
-            cntrctNm: item.bidNtceNm,
-            cntrctAmt: item.presmptPrce,
-            orderInsttNm: item.ntceInsttNm,
-            cntrctCnclsDt: item.bidNtceDt ? item.bidNtceDt.substring(0, 10) : '',
-            // Link to Bid Result (개찰결과)
-            // Using 5 as default for 'Service' contract search.
-            // Verified: Port 8081 is often blocked. Use standard HTTPS (443).
-            link: `https://www.g2b.go.kr/ep/co/open/bidResultDtl.do?bidno=${item.bidNtceNo}&bidseq=${(item.bidNtceOrd || '0').toString().padStart(3, '0')}&releaseYn=Y&taskClCd=5`
+            cntrctNm: item.cntrctNm || item.prdctNm || '계약명 없음',
+            cntrctAmt: item.thtmCntrctAmt || item.cntrctAmt,
+            orderInsttNm: item.cntrctInsttNm || item.ntceInsttNm,
+            cntrctCnclsDt: item.cntrctCnclsDate ? item.cntrctCnclsDate : (item.cntrctDate || ''),
+            // Use the native URL provided by the API which matches user request format
+            // e.g., https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=...
+            link: item.cntrctDtlInfoUrl
         }));
 
-        if (data.response?.body?.items) {
-            data.response.body.items = { item: transformedItems };
-        }
+        // Wrap response structure
+        const finalData = {
+            response: {
+                body: {
+                    items: {
+                        item: transformedItems
+                    },
+                    totalCount: data.response?.body?.totalCount,
+                    pageNo: data.response?.body?.pageNo,
+                    numOfRows: data.response?.body?.numOfRows
+                }
+            }
+        };
 
-        return NextResponse.json(data);
+        return NextResponse.json(finalData);
 
     } catch (error) {
         console.error('Error fetching from G2B:', error);

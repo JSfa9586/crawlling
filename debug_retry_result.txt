@@ -1,0 +1,53 @@
+=== Retrying Contract Search API to find ctrtNo ===
+Test 1: PPSSrch with Div=1, Date, Keyword='영향평가'
+Status: 200
+❌ No items found (Response 200 but empty items)
+Raw: {'nkoneps.com.response.ResponseError': {'header': {'resultCode': '08', 'resultMsg': '필수값 입력 에러'}}}
+
+Test 2: Standard API with Div=1, Date, prdctNm='영향평가'
+Status: 200
+✅ FOUND ITEMS! (Count: 10)
+
+[Item Keys Dump]:
+  untyCntrctNo: R25TE07201337
+  bsnsDivNm: 일반용역
+  dcsnCntrctNo: R25TA0060472300
+  cntrctRefNo: R25TA0060472300
+  cntrctNm: 2025년 반려동물사료 안전관리 위탁검정
+  cmmnCntrctYn: Y
+  lngtrmCtnuDivNm: 신규
+  cntrctCnclsDate: 2025-06-10
+  cntrctPrd: 2025/12/15
+  baseLawNm: 국가계약법 (027조 003항 000호 000목)
+  totCntrctAmt: 0
+  thtmCntrctAmt: 344600000
+  grntymnyRate: 5
+  cntrctInfoUrl: http://www.g2b.go.kr
+  payDivNm: 직불
+  reqNo: R25DC00046878
+  ntceNo: R25BK00867498
+  cntrctInsttCd: 1230000
+  cntrctInsttNm: 조달청
+  cntrctInsttJrsdctnDivNm: 국가기관
+  cntrctInsttChrgDeptNm: 운영지원과
+  cntrctInsttOfclNm: 노정명
+  cntrctInsttOfclTelNo: 042-724-6133
+  cntrctInsttOfclFaxNo: 050-5480-1786
+  dminsttList: [1^1543145^농림축산식품부 국립농산물품질관리원^국가기관^운영지원과^유혜림^0544297712]
+  corpList: [1^도급업체^공동^주식회사 피켐코리아^최성민^대한민국^48.79^주식회사 피켐코리아^^3148609904],[2^주계약업체^공동^주식회사 오에이티씨^방상구^대한민국^51.21^주식회사 오에이티씨^^1368133639]
+  cntrctDtlInfoUrl: https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00604723&ctrtChgOrd=00&prcmBsneSeCd=조070002&srchName=ctrtCrst&openUrl=Y
+  crdtrNm: 조달청장
+  baseDtls: 경쟁입찰을 실시했으나 입찰자가 1인뿐인 경우 수의계약(기재부장관 고시기간)
+  cntrctCnclsMthdNm: 수의계약
+  rgstDt: 2025-09-08 07:47:47
+  chgDt: 
+  dfrcmpnstRt: 0.125
+  wbgnDate: 
+  thtmScmpltDate: 
+  ttalScmpltDate: 
+  pubPrcrmntClsfcNo: 81141599
+  pubPrcrmntClsfcNm: 기술검사분석서비스
+  pubPrcrmntMidClsfcNm: 기술시험,검사 및 분석
+  pubPrcrmntLrgClsfcNm: 교육 및 전문직종/기술서비스
+  cntrctDate: 2025-06-10
+  infoBizYn: N
