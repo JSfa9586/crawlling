@@ -343,7 +343,14 @@ export default function G2BPage() {
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-600">{item.발주기관}</td>
                                             <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                                {formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}
+                                                {activeTab === 'pre_specs' ? (
+                                                    formatMoney(item.배정예산)
+                                                ) : (
+                                                    <div className="flex items-center">
+                                                        <span className="text-xs text-gray-500 mr-1 min-w-[30px]">{item.추정가격 && item.추정가격 !== '0' ? '추정' : '기초'}</span>
+                                                        <span>{formatMoney(item.추정가격 && item.추정가격 !== '0' ? item.추정가격 : item.기초금액)}</span>
+                                                    </div>
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}</td>
                                             <td className="px-4 py-3 text-sm text-gray-500">{formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</td>
@@ -371,8 +378,8 @@ export default function G2BPage() {
                                     <div className="text-sm text-gray-600 mb-2">{item.발주기관}</div>
                                     <div className="flex justify-between items-end border-t border-gray-50 pt-2">
                                         <div>
-                                            <div className="text-xs text-gray-400">{activeTab === 'pre_specs' ? '예산' : '금액'}</div>
-                                            <div className="font-bold text-blue-600">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 || item.기초금액))}</div>
+                                            <div className="text-xs text-gray-400">{activeTab === 'pre_specs' ? '예산' : (item.추정가격 && item.추정가격 !== '0' ? '추정가격' : '기초금액')}</div>
+                                            <div className="font-bold text-blue-600">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 && item.추정가격 !== '0' ? item.추정가격 : item.기초금액))}</div>
                                         </div>
                                         <div className="text-right">
                                             <div className="text-xs text-gray-400">마감: {formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</div>

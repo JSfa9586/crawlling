@@ -994,3 +994,7 @@ oute.ts to prevent mapping errors.
 ### Phase 48: UI Polish - Search Layout (2025-12-07)
 - **Goal**: Optimize filter layout based on user feedback.
 - **Action**: Renamed 'Recommended Search' to 'Announcement Title' and moved 'Favorites 1' button next to the input label for better accessibility.
+
+### Phase 49: UI Polish - Data Clarity (2025-12-07)
+- **Goal**: Explicitly distinguish between Estimated Price and Basic Price.
+- **Action**: Updated data table to prefix amounts with 'Estimated' or 'Basic' depending on the source field.
