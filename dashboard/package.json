@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.0.3",
+    "@types/pg": "^8.15.6",
     "autoprefixer": "^10.4.22",
     "cssnano": "^7.1.2",
     "postcss": "^8.5.6",
