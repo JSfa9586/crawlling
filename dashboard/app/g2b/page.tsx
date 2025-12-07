@@ -186,7 +186,9 @@ export default function G2BPage() {
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900">나라장터</h1>
                     <p className="text-gray-600 mt-1">
-                        전체 데이터베이스 검색 (최대 2000건 표시 / 총 {totalCount.toLocaleString()}건)
+                        {totalCount > 2000
+                            ? `전체 데이터베이스 검색 (총 ${totalCount.toLocaleString()}건 중 2000건 표시)`
+                            : `전체 데이터베이스 검색 (총 ${totalCount.toLocaleString()}건)`}
                     </p>
                 </div>
                 <Link href="/dashboard" className="text-primary-600 hover:text-primary-700 font-medium">← 대시보드로 돌아가기</Link>
