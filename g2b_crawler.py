@@ -372,7 +372,6 @@ def crawl_g2b(days_back: int = 1, output_dir: str = '.') -> Dict[str, List[Dict]
     end_str = end_date.strftime('%Y%m%d') + '2359'
     
     logger.info(f"검색 기간: {start_date.strftime('%Y-%m-%d')} ~ {end_date.strftime('%Y-%m-%d')}")
-    logger.info(f"검색 키워드 ({len(SEARCH_KEYWORDS)}개): {', '.join(SEARCH_KEYWORDS)}")
     
     # 중복 제거를 위한 딕셔너리
     pre_spec_dict = {}  # key: 등록번호
@@ -380,25 +379,66 @@ def crawl_g2b(days_back: int = 1, output_dir: str = '.') -> Dict[str, List[Dict]
     
     cat_code = 'Servc'  # 용역만 검색
     
-    # 키워드별로 검색
-    for keyword in SEARCH_KEYWORDS:
-        logger.info(f"[키워드: {keyword}] 검색 중...")
-        
-        # 사전규격 검색
-        pre_specs = client.search_pre_specs_by_keyword(cat_code, keyword, start_str, end_str)
-        for item in pre_specs:
-            reg_no = item.get('bfSpecRgstNo', '')
-            if reg_no and reg_no not in pre_spec_dict:
-                pre_spec_dict[reg_no] = normalize_pre_spec(item, cat_code)
-        logger.info(f"  - 사전규격: {len(pre_specs)}건 (누적 고유: {len(pre_spec_dict)}건)")
-        
-        # 입찰공고 검색
-        bids = client.search_bids_by_keyword(cat_code, keyword, start_str, end_str)
-        for item in bids:
-            bid_no = item.get('bidNtceNo', '')
-            if bid_no and bid_no not in bid_dict:
-                bid_dict[bid_no] = normalize_bid(item, cat_code)
-        logger.info(f"  - 입찰공고: {len(bids)}건 (누적 고유: {len(bid_dict)}건)")
+    # ==========================================
+    # 1. 사전규격 수집 (전체 - 페이지네이션)
+    # ==========================================
+    logger.info("[사전규격] 전체 수집 시작...")
+    page = 1
+    while True:
+        try:
+            items = client.get_pre_specs(cat_code, start_str, end_str, page=page, num_rows=100)
+            if not items:
+                break
+            
+            new_count = 0
+            for item in items:
+                reg_no = item.get('bfSpecRgstNo', '')
+                if reg_no and reg_no not in pre_spec_dict:
+                    pre_spec_dict[reg_no] = normalize_pre_spec(item, cat_code)
+                    new_count += 1
+            
+            logger.info(f"  - {page}페이지: {len(items)}건 조회, {new_count}건 신규 (누적: {len(pre_spec_dict)}건)")
+            
+            # 다음 페이지
+            page += 1
+            
+            # 안전장치: 너무 많은 페이지 방지 (일일 수집이므로 100페이지=10000건 정도면 충분할 듯)
+            if page > 200: 
+                logger.warning("페이지 제한 도달 (200페이지)")
+                break
+                
+        except Exception as e:
+            logger.error(f"사전규격 {page}페이지 수집 중 오류: {e}")
+            break
+
+    # ==========================================
+    # 2. 입찰공고 수집 (전체 - 페이지네이션)
+    # ==========================================
+    logger.info("[입찰공고] 전체 수집 시작...")
+    page = 1
+    while True:
+        try:
+            items = client.get_bid_announcements(cat_code, start_str, end_str, page=page, num_rows=100)
+            if not items:
+                break
+            
+            new_count = 0
+            for item in items:
+                bid_no = item.get('bidNtceNo', '')
+                if bid_no and bid_no not in bid_dict:
+                    bid_dict[bid_no] = normalize_bid(item, cat_code)
+                    new_count += 1
+            
+            logger.info(f"  - {page}페이지: {len(items)}건 조회, {new_count}건 신규 (누적: {len(bid_dict)}건)")
+            
+            page += 1
+            if page > 200:
+                logger.warning("페이지 제한 도달 (200페이지)")
+                break
+                
+        except Exception as e:
+            logger.error(f"입찰공고 {page}페이지 수집 중 오류: {e}")
+            break
     
     # 딕셔너리에서 리스트로 변환
     all_pre_specs = list(pre_spec_dict.values())
@@ -464,14 +504,22 @@ def save_to_csv(data: List[Dict], filepath: str):
         writer.writerows(data)
 
 
+
+import argparse
+
 def main():
     """메인 함수"""
+    parser = argparse.ArgumentParser(description='G2B Crawler')
+    parser.add_argument('--days', type=int, default=1, help='Number of days to look back')
+    parser.add_argument('--debug', action='store_true', help='Enable debug logging')
+    args = parser.parse_args()
+
     logger.info("=" * 60)
-    logger.info("나라장터 공고 크롤러 시작")
+    logger.info(f"나라장터 공고 크롤러 시작 (기간: {args.days}일)")
     logger.info("=" * 60)
     
     try:
-        result = crawl_g2b(days_back=7)
+        result = crawl_g2b(days_back=args.days)
         
         logger.info("=" * 60)
         logger.info("크롤링 완료")
@@ -482,7 +530,6 @@ def main():
     except Exception as e:
         logger.error(f"크롤링 실패: {e}")
         raise
-
 
 if __name__ == '__main__':
     main()

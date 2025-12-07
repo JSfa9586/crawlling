@@ -82,6 +82,7 @@ export default function G2BPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('전체');
     const [priceRange, setPriceRange] = useState('all');
+    const [agencyFilter, setAgencyFilter] = useState('전체'); // 발주기관 필터 추가
     const [dateRange, setDateRange] = useState<number>(30); // 기본 30일
 
     const DATE_PRESETS = [
@@ -102,6 +103,16 @@ export default function G2BPage() {
         { label: '2.3억~5억', value: 'under_5' },
         { label: '5억~10억', value: 'under_10' },
         { label: '10억이상', value: 'over_10' }
+    ];
+
+    const AGENCY_PRESETS = [
+        { label: '해양수산부', keywords: ['해양수산부', '해수부'] },
+        { label: '항만공사', keywords: ['항만공사'] },
+        { label: '제주', keywords: ['제주'] },
+        { label: '광역시', keywords: ['광역시'] },
+        { label: '수자원공사', keywords: ['수자원공사', 'K-water'] },
+        { label: '전력공사', keywords: ['전력공사', '한전', '한국전력'] },
+        { label: '주택공사', keywords: ['주택공사', 'LH', '토지주택'] }
     ];
 
     useEffect(() => {
@@ -183,6 +194,17 @@ export default function G2BPage() {
                 }
             }
 
+            // 발주기관 필터링
+            let matchesAgency = true;
+            if (agencyFilter !== '전체') {
+                const selectedAgency = AGENCY_PRESETS.find(p => p.label === agencyFilter);
+                if (selectedAgency) {
+                    matchesAgency = selectedAgency.keywords.some(keyword =>
+                        item.발주기관?.includes(keyword)
+                    );
+                }
+            }
+
             // 날짜 필터링
             if (dateRange !== 999) {
                 const dateStr = activeTab === 'pre_specs' ? item.등록일 : item.공고일;
@@ -201,7 +223,7 @@ export default function G2BPage() {
                 }
             }
 
-            return matchesSearch && matchesCategory && matchesPrice;
+            return matchesSearch && matchesCategory && matchesPrice && matchesAgency;
         });
 
         // 날짜 내림차순 정렬 (최신순)
@@ -373,6 +395,32 @@ export default function G2BPage() {
                             key={preset.value}
                             onClick={() => setPriceRange(preset.value)}
                             className={`px-3 py-1 text-sm rounded-full transition-colors ${priceRange === preset.value
+                                ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
+                                }`}
+                        >
+                            {preset.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* 발주기관 프리셋 */}
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-sm font-medium text-gray-700 mr-2">발주기관:</span>
+                    <button
+                        onClick={() => setAgencyFilter('전체')}
+                        className={`px-3 py-1 text-sm rounded-full transition-colors ${agencyFilter === '전체'
+                            ? 'bg-gray-800 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        전체
+                    </button>
+                    {AGENCY_PRESETS.map((preset) => (
+                        <button
+                            key={preset.label}
+                            onClick={() => setAgencyFilter(preset.label)}
+                            className={`px-3 py-1 text-sm rounded-full transition-colors ${agencyFilter === preset.label
                                 ? 'bg-primary-100 text-primary-700 border border-primary-300 font-medium'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-transparent'
                                 }`}

@@ -960,3 +960,33 @@ oute.ts to prevent mapping errors.
     - Implemented **mutually exclusive** filtering logic to parse Korean currency strings from '배정예산'/'추정가격'.
     - Added 'priceRange' state and 'PRICE_PRESETS' constant.
 - **Files Modified**: dashboard/app/g2b/page.tsx.
+
+### Phase 40: System Documentation (2025-12-07)
+- **Goal**: Analyze system architecture and visualize with sequence diagram.
+- **Implementation**:
+    - Analyzed GitHub Actions workflows, Python crawlers, and Next.js API.
+    - Created Mermaid sequence diagram (`system_sequence_diagram.md`) illustrating data flow from crawling to dashboard display.
+    - Generated high-resolution image (`system_sequence_diagram.png`) using Playwright.
+- **Artifacts**: `system_sequence_diagram.png`.
+
+### Phase 41: Bug Fixes (2025-12-07)
+- **Bid Status**: Fixed issue where initial bids (Seq 0) were incorrectly labeled as "Changed". Now only Seq > 0 shows as "Changed(Nth)".
+
+### Phase 42: Publisher Filter Implementation (2025-12-07)
+- **Goal**: Add filtering presets for specific publishers (Agencies).
+- **Implementation**:
+    - Added `agencyFilter` state and `AGENCY_PRESETS` (Marine Ministry, Port Authority, K-Water, KEPCO, LH, etc.) to `page.tsx`.
+    - Implemented filtering logic to match `item.발주기관` against preset keywords.
+    - Updated UI to include a new row of filter buttons for Agencies.
+
+### Phase 43: Supabase Migration (2025-12-07)
+- **Goal**: Transition G2B data storage to Supabase (PostgreSQL) for scalability.
+- **Implementation**:
+    - **Database**: Designed schema (`supabase_schema.sql`) for `g2b_pre_specs` and `g2b_bids`.
+    - **Backend**: Created `upload_to_supabase.py` for efficient upserting of CSV data.
+    - **Dashboard**: Updated `/api/g2b` to fetch data from Supabase instead of Google Sheets.
+    - **Crawler**: Modified `g2b_crawler.py` to collect ALL 'Service' category items (removed keyword restrictions).
+    - **Workflow**: Updated `daily-crawling.yml` to include G2B crawling and Supabase upload steps.
+    - **Backfill**: Executed 30-day data backfill.
+        - **Result**: ~9,600 Pre-Specs and ~17,800 Bids uploaded to Supabase.
+

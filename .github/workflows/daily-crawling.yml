@@ -95,6 +95,17 @@ jobs:
 
 
 
+
+      - name: Run G2B crawler (Full Service)
+        id: g2b_crawler
+        timeout-minutes: 60
+        env:
+          G2B_API_KEY: ${{ secrets.G2B_API_KEY }}
+        run: |
+          echo "=== Starting G2B Crawler ==="
+          python g2b_crawler.py
+        continue-on-error: true
+
       - name: Run MOLEG crawler
         id: moleg_crawler
         timeout-minutes: 10
@@ -127,6 +138,12 @@ jobs:
 
 
 
+          # Check G2B results
+          G2B_FILE=$(ls g2b_combined_*.csv 2>/dev/null | head -n 1)
+          if [ ! -z "$G2B_FILE" ]; then
+             echo "G2B CSV: $G2B_FILE ($(wc -l < $G2B_FILE) lines)"
+          fi
+
           # Check MOLEG results
           MOLEG_CSV=$(ls moleg_data.csv 2>/dev/null | head -n 1)
           if [ ! -z "$MOLEG_CSV" ]; then
@@ -148,6 +165,18 @@ jobs:
           echo "=== Uploading to Google Sheets ==="
           python upload_to_gsheet.py
           echo "Upload completed"
+        continue-on-error: false
+
+      - name: Upload to Supabase
+        id: upload_supabase
+        timeout-minutes: 20
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "=== Uploading to Supabase ==="
+          python upload_to_supabase.py
+          echo "Supabase Upload completed"
         continue-on-error: false
 
       - name: Cleanup credentials

@@ -23,3 +23,6 @@ google-auth-httplib2==0.2.1
 # OpenAI API (for GPT verification)
 openai>=1.0.0
 
+
+# Supabase
+supabase==2.3.0
