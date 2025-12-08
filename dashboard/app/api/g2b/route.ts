@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get('page') || '1', 10);
         const perPage = parseInt(searchParams.get('per_page') || '20', 10);
 
-        const { data, error, count } = await query
+        const { data, error } = await query
             .order(dateColumn, { ascending: false })
             .limit(searchLimit);
 
