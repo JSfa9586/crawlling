@@ -25,7 +25,6 @@ on:
       - 'marine_ministry_crawler_final.py'
       - 'eiaa_crawler.py'
       - 'moleg_crawler.py'
-      - 'ai_news_crawler.py'
       - 'upload_to_gsheet.py'
       - 'requirements.txt'
       - '.github/workflows/daily-crawling.yml'
@@ -114,17 +113,6 @@ jobs:
           python moleg_crawler.py
         continue-on-error: true
 
-      - name: Run AI News crawler
-        id: ai_news_crawler
-        timeout-minutes: 10
-        env:
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-        run: |
-          echo "=== Starting AI News Crawler ==="
-          python ai_news_crawler.py
-        continue-on-error: true
-
       - name: Check crawling results
         id: check_results
         run: |
@@ -148,12 +136,6 @@ jobs:
           MOLEG_CSV=$(ls moleg_data.csv 2>/dev/null | head -n 1)
           if [ ! -z "$MOLEG_CSV" ]; then
             echo "MOLEG CSV: $MOLEG_CSV ($(wc -l < $MOLEG_CSV) lines)"
-          fi
-
-          # Check AI News results
-          AI_NEWS_CSV=$(ls ai_news_*.csv 2>/dev/null | head -n 1)
-          if [ ! -z "$AI_NEWS_CSV" ]; then
-            echo "AI News CSV: $AI_NEWS_CSV ($(wc -l < $AI_NEWS_CSV) lines)"
           fi
 
       - name: Upload to Google Sheets
@@ -193,7 +175,6 @@ jobs:
           name: crawling-results-${{ github.run_number }}
           path: |
             marine_ministry_posts_*.csv
-            ai_news_*.csv
             moleg_data.csv
             *.xlsx
 

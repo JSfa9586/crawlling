@@ -353,10 +353,6 @@ def main():
             'sheet_name': '관련법령'
         },
         {
-            'pattern': 'ai_news_*.csv',
-            'sheet_name': 'AI소식'
-        },
-        {
             'pattern': 'g2b_combined_*.csv',
             'sheet_name': '나라장터'
         },
