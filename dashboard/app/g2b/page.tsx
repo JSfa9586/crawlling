@@ -497,14 +497,16 @@ export default function G2BPage() {
                                         <div className="flex-1">
                                             <div className="text-xs text-gray-400">{activeTab === 'pre_specs' ? '예산' : (item.추정가격 && item.추정가격 !== '0' ? '추정가격' : '기초금액')}</div>
                                             <div className="font-bold text-blue-600 mb-1">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 && item.추정가격 !== '0' ? item.추정가격 : item.기초금액))}</div>
-                                            <div className="text-xs text-gray-500">
-                                                {activeTab === 'pre_specs' ? '등록: ' : '공고: '}
-                                                {formatDateTime(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}
-                                            </div>
                                         </div>
                                         <div className="text-right">
+                                            <div className="text-xs text-gray-500 mb-1">
+                                                <span className="text-gray-400 mr-1">{activeTab === 'pre_specs' ? '등록' : '공고'}</span>
+                                                <span className="text-blue-600 font-medium">
+                                                    {formatDateTime(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}
+                                                </span>
+                                            </div>
                                             <div className="text-xs text-gray-500 font-medium">
-                                                {activeTab === 'pre_specs' ? '공개종료: ' : '입찰마감: '}
+                                                <span className="text-gray-400 mr-1">{activeTab === 'pre_specs' ? '마감' : '입찰'}</span>
                                                 <span className={isExpired(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감) ? 'text-red-500' : 'text-gray-900'}>
                                                     {formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}
                                                 </span>

@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get('page') || '1', 10);
         const perPage = parseInt(searchParams.get('per_page') || '20', 10);
 
-        const { data, error } = await query
+        const { data, error, count } = await query
             .order(dateColumn, { ascending: false })
             .limit(searchLimit);
 
@@ -190,9 +190,14 @@ export async function GET(request: NextRequest) {
         const endIdx = startIdx + perPage;
         const paginatedData = formattedData.slice(startIdx, endIdx);
 
+        // API 응답: count는 DB 전체 개수(DB 필터 적용 시)를 우선 사용하고, 
+        // 메모리 필터(가격)가 적용된 경우에는 어쩔 수 없이 totalItems(limit 내 개수) 사용.
+        // 하지만 사용자는 "전체 DB 검색" 느낌을 원하므로, 가격 필터가 없을 땐 count를 그대로 보냄.
+        const effectiveTotalCount = (priceMin > 0 || priceMax > 0) ? totalItems : (count || totalItems);
+
         return NextResponse.json({
             success: true,
-            count: totalItems, // 필터링된 전체 개수 (페이지네이션 계산용)
+            count: effectiveTotalCount,
             data: paginatedData,
             type
         });
