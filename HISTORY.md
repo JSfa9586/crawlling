@@ -1051,3 +1051,17 @@ oute.ts to prevent mapping errors.
 - `check_supabase_data.py`: Supabase 데이터 확인
 - `check_local_db.py`: 로컬 DB 확인
 - `check_overlap.py`: 중복 확인
+
+### Bug Fix: G2B Dashboard Timezone Display
+**일시**: 2025-12-08
+
+**수정 내용**:
+1. '모니터링 실행' 및 '신규 게시물' 시간이 UTC로 표시되어 9시간 차이가 발생하는 문제 해결.
+2. dashboard/app/g2b/page.tsx의 ormatStatDateTime 함수를 수정하여 Date 객체를 사용, 브라우저 로컬 시간대(KST)로 자동 변환되도록 개선.
+3. 이전 수정 중 손상된 g2b/page.tsx 파일 복구.
+
+**수정 파일**:
+- dashboard/app/g2b/page.tsx
+
+---
+

@@ -21,10 +21,11 @@ interface G2BData {
     입찰방식?: string;
     상태?: string;
     링크: string;
-    등록번호?: string; // Added for pre_specs direct link
-    공고번호?: string; // Added for bids direct link
+    등록번호?: string;
+    공고번호?: string;
     [key: string]: string | undefined;
 }
+
 // 유틸리티 함수들
 function isExpired(dateStr: string | undefined): boolean {
     if (!dateStr) return false;
@@ -38,6 +39,7 @@ function isExpired(dateStr: string | undefined): boolean {
         return false;
     }
 }
+
 function formatMoney(amount: string | undefined): string {
     if (!amount || amount === '0') return '-';
     const cleanAmount = amount.replace(/[^0-9]/g, '');
@@ -50,6 +52,7 @@ function formatMoney(amount: string | undefined): string {
     }
     return `${num.toLocaleString()}원`;
 }
+
 function formatDateTime(dateStr: string | undefined): string {
     if (!dateStr) return '-';
     try {
@@ -67,37 +70,33 @@ function formatDateTime(dateStr: string | undefined): string {
     }
 }
 
-// 통계용 날짜 포맷터 (두 줄 표시)
+// 통계용 날짜 포맷터 (KST 변환)
 const formatStatDateTime = (datetime: string) => {
     if (!datetime || datetime === '-') {
         return '-';
     }
 
-    const parts = datetime.split(' ');
-    // "YYYY-MM-DD HH:MM:SS" or "YYYY-MM-DDTHH:MM:SS" -> handle accordingly
-    // Supabase might return ISO string "2023-12-08T10:00:00+09:00" or just "2023-12-08 10:00:00" if formatted
-    // If it is ISO, split by 'T'
+    try {
+        const date = new Date(datetime);
+        // 날짜가 유효하지 않으면 원래 문자열 반환
+        if (isNaN(date.getTime())) return datetime;
 
-    let datePart = parts[0];
-    let timePart = parts[1] || '';
+        // 브라우저 로컬 시간대(KST)로 포맷팅
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
 
-    if (datetime.includes('T')) {
-        const isoParts = datetime.split('T');
-        datePart = isoParts[0];
-        timePart = isoParts[1].split('+')[0]; // discard timezone offset for display if needed
-    }
-
-    if (datePart && timePart) {
-        const timeWithoutSeconds = timePart.split(':').slice(0, 2).join(':');
         return (
             <div className="flex flex-col leading-tight">
-                <span className="text-sm font-medium">{datePart}</span>
-                <span className="text-2xl font-bold">{timeWithoutSeconds}</span>
+                <span className="text-sm font-medium">{year}-{month}-{day}</span>
+                <span className="text-2xl font-bold">{hours}:{minutes}</span>
             </div>
         );
+    } catch {
+        return datetime;
     }
-
-    return datetime;
 };
 
 export default function G2BPage() {
@@ -117,6 +116,7 @@ export default function G2BPage() {
     const [priceRange, setPriceRange] = useState('all');
     const [agencyFilter, setAgencyFilter] = useState({ label: '전체', keywords: [] as string[] });
     const [dateRange, setDateRange] = useState<number>(30);
+
     const DATE_PRESETS = [
         { label: '오늘', days: 0 },
         { label: '1주일', days: 7 },
@@ -143,6 +143,7 @@ export default function G2BPage() {
         { label: '전력공사', keywords: ['전력공사', '한전', '한국전력'] },
         { label: '주택공사', keywords: ['주택공사', 'LH', '토지주택'] }
     ];
+
     // 검색어 디바운싱
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -150,6 +151,7 @@ export default function G2BPage() {
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm]);
+
     // 데이터 로딩
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -184,6 +186,7 @@ export default function G2BPage() {
             setLoading(false);
         }
     }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange]);
+
     useEffect(() => {
         fetchData();
     }, [fetchData]);
@@ -237,6 +240,7 @@ export default function G2BPage() {
         // ID가 없으면 기존 링크(네이버 검색 등) 사용
         return item.링크 || '#';
     };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -308,6 +312,7 @@ export default function G2BPage() {
                     </Link>
                 </nav>
             </div>
+
             {/* 필터 영역 */}
             <div className="space-y-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                 {/* 1. 검색 입력창 (최상단 배치) */}
@@ -338,7 +343,9 @@ export default function G2BPage() {
                         </select>
                     </div>
                 </div>
+
                 <div className="h-px bg-gray-100 my-2"></div>
+
                 {/* 2. 필터 옵션들 */}
                 {/* 날짜 */}
                 <div className="flex flex-wrap gap-2 items-center">
@@ -353,6 +360,7 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
+
                 {/* 키워드 (추천검색) -> "공고명" */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">공고명</span>
@@ -367,6 +375,7 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
+
                 {/* 발주기관 */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">발주기관</span>
@@ -381,6 +390,7 @@ export default function G2BPage() {
                         </button>
                     ))}
                 </div>
+
                 {/* 금액 */}
                 <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium text-gray-700 w-16">금액</span>
@@ -396,6 +406,7 @@ export default function G2BPage() {
                     ))}
                 </div>
             </div>
+
             {/* 로딩 인디케이터 */}
             {loading ? (
                 <div className="flex justify-center items-center py-20">
@@ -458,6 +469,7 @@ export default function G2BPage() {
                             </tbody>
                         </table>
                     </div>
+
                     {/* 모바일 뷰 */}
                     <div className="md:hidden space-y-4">
                         {data.map((item, idx) => {
