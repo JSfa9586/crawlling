@@ -39,14 +39,25 @@ def upload_pre_specs(csv_file: str, client: Client):
         for _, row in df.iterrows():
             # CSV 컬럼 -> DB 컬럼 매핑
             reg_date = row.get('등록일', None)
-            if reg_date and len(str(reg_date)) == 10: # YYYY-MM-DD
-                 reg_date += " 00:00:00+09" # KST
+            if reg_date and str(reg_date).lower() != 'nan':
+                reg_date = str(reg_date).strip()
+                # 날짜만 있으면 시간 추가, 시간 있으면 그대로
+                if len(reg_date) == 10:
+                    reg_date += " 00:00:00+09"
+                elif len(reg_date) > 10 and '+' not in reg_date:
+                    reg_date += "+09"
+            else:
+                reg_date = None
             
             end_date = row.get('규격공개종료일', '')
-            if end_date and len(str(end_date)) == 10:
-                 end_date += " 23:59:59+09"
-            elif not end_date or end_date == '' or str(end_date).lower() == 'nan':
-                 end_date = None
+            if end_date and str(end_date).lower() != 'nan':
+                end_date = str(end_date).strip()
+                if len(end_date) == 10:
+                    end_date += " 23:59:59+09"
+                elif len(end_date) > 10 and '+' not in end_date:
+                    end_date += "+09"
+            else:
+                end_date = None
 
             record = {
                 'reg_no': str(row.get('등록번호', '')),
@@ -88,16 +99,25 @@ def upload_bids(csv_file: str, client: Client):
         records = []
         for _, row in df.iterrows():
             notice_date = row.get('공고일', None)
-            if notice_date and len(str(notice_date)) == 10:
-                 notice_date += " 00:00:00+09"
+            if notice_date and str(notice_date).lower() != 'nan':
+                notice_date = str(notice_date).strip()
+                if len(notice_date) == 10:
+                    notice_date += " 00:00:00+09"
+                elif len(notice_date) > 10 and '+' not in notice_date:
+                    notice_date += "+09"
+            else:
+                notice_date = None
             
-            # 날짜 필드 처리 (빈 문자열 -> None) 및 KST 타임존 처리
+            # 입찰마감 날짜 처리
             bid_end = row.get('입찰마감', '')
-            if not bid_end or bid_end == '' or str(bid_end).lower() == 'nan':
-                 bid_end = None
-            elif len(str(bid_end)) > 10 and '+' not in str(bid_end):
-                 bid_end = str(bid_end).strip() + "+09"
+            if bid_end and str(bid_end).lower() != 'nan':
+                bid_end = str(bid_end).strip()
+                if len(bid_end) > 10 and '+' not in bid_end:
+                    bid_end += "+09"
+            else:
+                bid_end = None
             
+            # 개찰일 날짜 처리
             open_date = row.get('개찰일', '')
             if not open_date or open_date == '' or str(open_date).lower() == 'nan':
                  open_date = None

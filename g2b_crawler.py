@@ -315,8 +315,8 @@ def normalize_pre_spec(item: Dict, category: str) -> Dict:
         '발주기관': item.get('rlDminsttNm', '') or item.get('dminsttNm', ''),
         '수요기관': item.get('pchrgDminsttNm', ''),
         '배정예산': item.get('asignBdgtAmt', ''),
-        '등록일': item.get('rgstDt', '')[:10] if item.get('rgstDt') else '',
-        '규격공개종료일': item.get('opninRgstClseDt', '')[:10] if item.get('opninRgstClseDt') else '',
+        '등록일': item.get('rgstDt', ''),
+        '규격공개종료일': item.get('opninRgstClseDt', ''),
         '상태': '신규',
         '링크': f"https://www.g2b.go.kr:8101/ep/preparation/prestd/preStdDtl.do?preStdRegNo={item.get('bfSpecRgstNo', '')}"
     }
@@ -338,7 +338,7 @@ def normalize_bid(item: Dict, category: str) -> Dict:
         '추정가격': item.get('presmptPrce', ''),
         '기초금액': item.get('bssamt', ''),
         '입찰방식': item.get('bidMethdNm', ''),
-        '공고일': item.get('bidNtceDt', '')[:10] if item.get('bidNtceDt') else '',
+        '공고일': item.get('bidNtceDt', ''),
         '입찰마감': item.get('bidClseDt', ''),
         '개찰일': item.get('opengDt', ''),
         '상태': '신규',
