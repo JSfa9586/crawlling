@@ -119,10 +119,15 @@ export async function GET(request: NextRequest) {
             query = query.eq('category', category);
         }
 
-        // 5. 정렬 및 제한
+        // 5. 정렬 및 제한 (Hard limit for search pool)
+        // User 요청: 1000건 정도만 보이게 함.
+        const searchLimit = limitParams || 1000;
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        const perPage = parseInt(searchParams.get('per_page') || '20', 10);
+
         const { data, error, count } = await query
             .order(dateColumn, { ascending: false })
-            .limit(limitParams);
+            .limit(searchLimit);
 
         if (error) throw error;
 
@@ -179,7 +184,18 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        return NextResponse.json({ success: true, count: count, data: formattedData, type });
+        // 7. 페이지네이션 (Slice)
+        const totalItems = formattedData.length;
+        const startIdx = (page - 1) * perPage;
+        const endIdx = startIdx + perPage;
+        const paginatedData = formattedData.slice(startIdx, endIdx);
+
+        return NextResponse.json({
+            success: true,
+            count: totalItems, // 필터링된 전체 개수 (페이지네이션 계산용)
+            data: paginatedData,
+            type
+        });
 
     } catch (error) {
         console.error('G2B API Error:', error);

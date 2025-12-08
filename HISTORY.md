@@ -1065,3 +1065,38 @@ oute.ts to prevent mapping errors.
 
 ---
 
+
+### Feature: G2B Dashboard Pagination
+**일시**: 2025-12-08
+
+**작업 내용**:
+1. G2B 대시보드 페이징 기능 구현 (페이지당 20개 표시, 최대 1000건 제한).
+2. API (/api/g2b) 수정:
+   - page, per_page, limit 파라미터 처리 추가.
+   - DB에서 최대 1000건(limit) 조회 후 메모리 필터링 적용.
+   - 필터링된 결과에 대해 슬라이싱하여 현재 페이지 데이터만 반환.
+3. UI (dashboard/app/g2b/page.tsx) 수정:
+   - currentPage 상태 추가 및 데이터 요청 시 페이지 번호 전달.
+   - 하단에 페이지네이션 컨트롤 (이전, 숫자, 다음) 추가.
+   - 필터 변경 시 페이지 1로 초기화 로직 추가.
+
+**수정 파일**:
+- dashboard/app/api/g2b/route.ts
+- dashboard/app/g2b/page.tsx
+
+---
+
+
+### UI UX: G2B Mobile Card View Improvement
+**일시**: 2025-12-08
+
+**작업 내용**:
+1. 모바일 카드 뷰에서 '공고일(등록일)'과 '마감일'을 모두 표시하도록 개선.
+2. 기존에는 마감일만 표시되어 정렬 기준(최신 공고순)이 명확하지 않았던 점 개선.
+3. 좌측 하단에 공고일, 우측 하단에 마감일을 배치하여 정보 계층 구조 개선.
+
+**수정 파일**:
+- dashboard/app/g2b/page.tsx
+
+---
+

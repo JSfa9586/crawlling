@@ -104,6 +104,8 @@ export default function G2BPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids');
     const [totalCount, setTotalCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 20;
     const [stats, setStats] = useState({
         lastExecutionTime: '',
         latestCrawlTime: ''
@@ -148,9 +150,15 @@ export default function G2BPage() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchTerm);
+            setCurrentPage(1); // 검색어 변경 시 1페이지로 리셋
         }, 500);
         return () => clearTimeout(timer);
     }, [searchTerm]);
+
+    // 필터 변경 시 페이지 리셋
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [categoryFilter, agencyFilter, dateRange, priceRange, activeTab]);
 
     // 데이터 로딩
     const fetchData = useCallback(async () => {
@@ -171,7 +179,10 @@ export default function G2BPage() {
                     if (preset.max > 0) params.append('price_max', preset.max.toString());
                 }
             }
-            params.append('limit', '2000');
+            params.append('limit', '1000'); // 전체 검색 풀은 1000개로 제한
+            params.append('page', currentPage.toString());
+            params.append('per_page', ITEMS_PER_PAGE.toString());
+
             const res = await fetch(`/api/g2b?${params.toString()}`);
             if (res.ok) {
                 const json = await res.json();
@@ -185,7 +196,7 @@ export default function G2BPage() {
         } finally {
             setLoading(false);
         }
-    }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange]);
+    }, [activeTab, debouncedSearch, categoryFilter, agencyFilter, dateRange, priceRange, currentPage]);
 
     useEffect(() => {
         fetchData();
@@ -483,18 +494,71 @@ export default function G2BPage() {
                                     <a href={getG2BLink(item)} target="_blank" rel="noreferrer" className="text-lg font-bold text-gray-900 mb-1 block leading-tight">{item.공고명}</a>
                                     <div className="text-sm text-gray-600 mb-2">{item.발주기관}</div>
                                     <div className="flex justify-between items-end border-t border-gray-50 pt-2">
-                                        <div>
+                                        <div className="flex-1">
                                             <div className="text-xs text-gray-400">{activeTab === 'pre_specs' ? '예산' : (item.추정가격 && item.추정가격 !== '0' ? '추정가격' : '기초금액')}</div>
-                                            <div className="font-bold text-blue-600">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 && item.추정가격 !== '0' ? item.추정가격 : item.기초금액))}</div>
+                                            <div className="font-bold text-blue-600 mb-1">{formatMoney(activeTab === 'pre_specs' ? item.배정예산 : (item.추정가격 && item.추정가격 !== '0' ? item.추정가격 : item.기초금액))}</div>
+                                            <div className="text-xs text-gray-500">
+                                                {activeTab === 'pre_specs' ? '등록: ' : '공고: '}
+                                                {formatDateTime(activeTab === 'pre_specs' ? item.등록일 : item.공고일)}
+                                            </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs text-gray-400">마감: {formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}</div>
+                                            <div className="text-xs text-gray-500 font-medium">
+                                                {activeTab === 'pre_specs' ? '공개종료: ' : '입찰마감: '}
+                                                <span className={isExpired(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감) ? 'text-red-500' : 'text-gray-900'}>
+                                                    {formatDateTime(activeTab === 'pre_specs' ? item.규격공개종료일 : item.입찰마감)}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
+
+                    {/* 페이지네이션 */}
+                    {totalCount > 0 && (
+                        <div className="flex justify-center items-center space-x-2 py-6">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className={`px-3 py-1 rounded border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                            >
+                                이전
+                            </button>
+
+                            {/* 페이지 번호 (간단하게 현재 페이지 주변만 표시하거나 전체 표시 - 여기서는 간단히 범위 표시) */}
+                            {Array.from({ length: Math.min(5, Math.ceil(totalCount / ITEMS_PER_PAGE)) }, (_, i) => {
+                                // 현재 페이지를 중심으로 5개 보여주기 로직 (복잡하면 단순 1~N 혹은 현재만 보여줌)
+                                // 간단하게: totalPages가 적으면 다 보여주고, 많으면 현재 페이지 주변
+                                const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+                                let startPage = Math.max(1, currentPage - 2);
+                                if (startPage + 4 > totalPages) {
+                                    startPage = Math.max(1, totalPages - 4);
+                                }
+                                const p = startPage + i;
+                                if (p > totalPages) return null;
+
+                                return (
+                                    <button
+                                        key={p}
+                                        onClick={() => setCurrentPage(p)}
+                                        className={`w-8 h-8 flex items-center justify-center rounded border ${currentPage === p ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                                    >
+                                        {p}
+                                    </button>
+                                );
+                            })}
+
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / ITEMS_PER_PAGE), p + 1))}
+                                disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                                className={`px-3 py-1 rounded border ${currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                            >
+                                다음
+                            </button>
+                        </div>
+                    )}
                 </>
             )}
         </div>
