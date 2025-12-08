@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { StatCard } from '@/components/StatCard';
+
 interface G2BData {
     구분: string;
     카테고리: string;
@@ -60,15 +62,54 @@ function formatDateTime(dateStr: string | undefined): string {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${month}/${day}(${dayOfWeek}) ${hours}:${minutes}`;
-    } catch {
+    } catch (e) {
         return dateStr.split(' ')[0];
     }
 }
+
+// 통계용 날짜 포맷터 (두 줄 표시)
+const formatStatDateTime = (datetime: string) => {
+    if (!datetime || datetime === '-') {
+        return '-';
+    }
+
+    const parts = datetime.split(' ');
+    // "YYYY-MM-DD HH:MM:SS" or "YYYY-MM-DDTHH:MM:SS" -> handle accordingly
+    // Supabase might return ISO string "2023-12-08T10:00:00+09:00" or just "2023-12-08 10:00:00" if formatted
+    // If it is ISO, split by 'T'
+
+    let datePart = parts[0];
+    let timePart = parts[1] || '';
+
+    if (datetime.includes('T')) {
+        const isoParts = datetime.split('T');
+        datePart = isoParts[0];
+        timePart = isoParts[1].split('+')[0]; // discard timezone offset for display if needed
+    }
+
+    if (datePart && timePart) {
+        const timeWithoutSeconds = timePart.split(':').slice(0, 2).join(':');
+        return (
+            <div className="flex flex-col leading-tight">
+                <span className="text-sm font-medium">{datePart}</span>
+                <span className="text-2xl font-bold">{timeWithoutSeconds}</span>
+            </div>
+        );
+    }
+
+    return datetime;
+};
+
 export default function G2BPage() {
     const [data, setData] = useState<G2BData[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'pre_specs' | 'bids'>('bids');
     const [totalCount, setTotalCount] = useState(0);
+    const [stats, setStats] = useState({
+        lastExecutionTime: '',
+        latestCrawlTime: ''
+    });
+
     // 필터 상태
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -146,6 +187,25 @@ export default function G2BPage() {
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+
+    // 통계 데이터 로딩
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await fetch('/api/g2b?type=stats');
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.success) {
+                        setStats(json.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Stats fetch error:', error);
+            }
+        };
+        fetchStats();
+    }, []);
+
     const categories = ['전체', '용역', '물품', '공사', '기타'];
     const getPreSpecStatus = (item: G2BData) => {
         if (isExpired(item.규격공개종료일)) return { text: '마감', color: 'bg-gray-100 text-gray-600' };
@@ -190,6 +250,35 @@ export default function G2BPage() {
                 </div>
                 <Link href="/dashboard" className="text-primary-600 hover:text-primary-700 font-medium">← 대시보드로 돌아가기</Link>
             </div>
+
+            {/* 상단 통계 카드 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                    title="총 게시물"
+                    value={totalCount.toLocaleString()}
+                    icon="📄"
+                    color="primary"
+                />
+                <StatCard
+                    title="모니터링 기관"
+                    value="나라장터"
+                    icon="🏛️"
+                    color="secondary"
+                />
+                <StatCard
+                    title="모니터링 실행"
+                    value={formatStatDateTime(stats.lastExecutionTime)}
+                    icon="⏰"
+                    color="success"
+                />
+                <StatCard
+                    title="신규 게시물"
+                    value={formatStatDateTime(stats.latestCrawlTime)}
+                    icon="🆕"
+                    color="info"
+                />
+            </div>
+
             {/* 탭 네비게이션 */}
             <div className="border-b border-gray-200">
                 <nav className="flex space-x-8">

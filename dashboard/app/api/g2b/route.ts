@@ -27,6 +27,50 @@ export async function GET(request: NextRequest) {
     const startDateStr = startDate.toISOString();
 
     try {
+        if (type === 'stats') {
+            // 통계 데이터 조회
+            // 1. 모니터링 실행 시간 (g2b_crawler_status)
+            const { data: statusData } = await supabase
+                .from('g2b_crawler_status')
+                .select('last_run_at')
+                .eq('service_name', 'g2b_crawler')
+                .single();
+
+            // 2. 신규 게시물 시간 (사전규격/입찰공고 중 가장 최신)
+            const { data: latestPre } = await supabase
+                .from('g2b_pre_specs')
+                .select('reg_date')
+                .order('reg_date', { ascending: false })
+                .limit(1)
+                .single();
+
+            const { data: latestBid } = await supabase
+                .from('g2b_bids')
+                .select('notice_date')
+                .order('notice_date', { ascending: false })
+                .limit(1)
+                .single();
+
+            // 최신 날짜 비교
+            let latestTime = '';
+            const preTime = latestPre?.reg_date ? new Date(latestPre.reg_date).getTime() : 0;
+            const bidTime = latestBid?.notice_date ? new Date(latestBid.notice_date).getTime() : 0;
+
+            if (preTime > bidTime && latestPre?.reg_date) {
+                latestTime = latestPre.reg_date;
+            } else if (latestBid?.notice_date) {
+                latestTime = latestBid.notice_date;
+            }
+
+            return NextResponse.json({
+                success: true,
+                data: {
+                    lastExecutionTime: statusData?.last_run_at || '',
+                    latestCrawlTime: latestTime
+                }
+            });
+        }
+
         let query;
         let dateColumn = '';
 
@@ -39,6 +83,7 @@ export async function GET(request: NextRequest) {
         } else {
             return NextResponse.json({ success: false, error: 'Invalid type parameter' }, { status: 400 });
         }
+
 
         // 1. 날짜 필터
         if (days !== 999) {

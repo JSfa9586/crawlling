@@ -1018,8 +1018,36 @@ oute.ts to prevent mapping errors.
    - page.tsx의 미사용 Link import 제거.
 
 
+
 ## 2025-12-07 (용역 계약 검색 API 수정)
 - **작업 내용**: 용역 계약 검색 기능이 특정 키워드('신평농공단지', '환경영향평가') 검색 시 결과를 반환하지 않는 문제 해결.
 - **원인 분석**: '계약 정보 조회 API'가 키워드 검색을 제대로 지원하지 않음(필수값 에러 등 발생). 반면 '입찰 공고 조회 API'는 해당 키워드로 정상적인 결과를 반환함을 확인.
-- **조치 사항**: 백엔드 API 라우트(oute.ts)를 수정하여 '계약 정보 조회 API' 대신 '입찰 공고 조회 API'(getBidPblancListInfoServcPPSSrch)를 사용하도록 변경. 프론트엔드 호환성을 위해 입찰 공고 데이터 필드(idNtceNm, presmptPrce 등)를 계약 정보 필드(cntrctNm, cntrctAmt 등)로 매핑하여 반환.
-- **결과**: '영향평가' 등의 키워드로 검색 시 정상적으로 목록이 조회됨을 검증 스크립트(erify_api_fix.py)를 통해 확인.
+- **조치 사항**: 백엔드 API 라우트(oute.ts)를 수정하여 '계약 정보 조회 API' 대신 '입찰 공고 조회 API'(getBidPblancListInfoServcPPSSrch)를 사용하도록 변경. 프론트엔드 호환성을 위해 입찰 공고 데이터 필드(idNtceNm, presmptPrce 등)를 계약 정보 필드(cntrctNm, cntrctAmt 등)로 매핑하여 반환.
+- **결과**: '영향평가' 등의 키워드로 검색 시 정상적으로 목록이 조회됨을 검증 스크립(erify_api_fix.py)를 통해 확인.
+
+# 2025-12-08
+
+## Supabase → 로컬 PostgreSQL 계약 데이터 마이그레이션
+
+### 작업 배경
+- Supabase에 기존에 수집해둔 해양수산부 관련 계약 데이터가 있어 로컬 PostgreSQL과 통합 필요
+
+### 분석 결과
+- **Supabase `contracts` 테이블**: 2,077건 (해양 용역 계약)
+- **로컬 PostgreSQL `contracts` 테이블**: 137,600건 (전체 용역 계약)
+- **중복 확인**: Supabase 중 69건만 로컬에 존재, **2,008건이 신규**
+
+### 마이그레이션 결과
+| 항목 | 수치 |
+|------|------|
+| 마이그레이션된 계약 | 2,008건 |
+| 추가된 공동수급체 | 6,353건 |
+| 스킵된 (중복) | 69건 |
+| **최종 로컬 계약** | **139,608건** |
+| **최종 공동수급체** | **162,378건** |
+
+### 생성된 파일
+- `migrate_supabase_to_local.py`: 마이그레이션 스크립트
+- `check_supabase_data.py`: Supabase 데이터 확인
+- `check_local_db.py`: 로컬 DB 확인
+- `check_overlap.py`: 중복 확인

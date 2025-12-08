@@ -11,6 +11,10 @@ import glob
 import pandas as pd
 from datetime import datetime
 from supabase import create_client, Client
+import pytz
+
+# 한국 시간대 설정
+KST = pytz.timezone('Asia/Seoul')
 
 def get_supabase_client() -> Client:
     """Supabase 클라이언트 생성"""
@@ -151,6 +155,25 @@ def upload_bids(csv_file: str, client: Client):
     except Exception as e:
         print(f"[ERROR] 입찰공고 업로드 실패: {e}")
 
+def update_crawler_status(client: Client, status: str = 'success'):
+    """크롤러 실행 상태 업데이트"""
+    try:
+        now = datetime.now(KST).isoformat()
+        
+        data = {
+            'service_name': 'g2b_crawler',
+            'last_run_at': now,
+            'status': status,
+            'updated_at': now
+        }
+        
+        # Upsert operation
+        client.table('g2b_crawler_status').upsert(data, on_conflict='service_name').execute()
+        print(f"[INFO] 크롤러 상태 업데이트 완료: {now}")
+        
+    except Exception as e:
+        print(f"[ERROR] 상태 업데이트 실패: {e}")
+
 def main():
     try:
         client = get_supabase_client()
@@ -167,6 +190,9 @@ def main():
         if bid_files:
             latest_bid = max(bid_files, key=os.path.getmtime)
             upload_bids(latest_bid, client)
+            
+        # 3. 실행 상태 업데이트
+        update_crawler_status(client, 'success')
             
     except Exception as e:
         print(f"[FATAL] 스크립트 실행 중 오류: {e}")

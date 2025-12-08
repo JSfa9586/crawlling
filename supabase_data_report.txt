@@ -1,0 +1,28 @@
+======================================================================
+g2b_contracts 테이블 확인
+======================================================================
+g2b_contracts ERROR: {'message': "Could not find the table 'public.g2b_contracts' in the schema cache", 'code': 'PGRST205', 'hint': "Perhaps you meant the table 'public.contracts'", 'details': None}
+
+
+======================================================================
+g2b_pre_specs 테이블 확인
+======================================================================
+g2b_pre_specs ERROR: {'message': "Could not find the table 'public.g2b_pre_specs' in the schema cache", 'code': 'PGRST205', 'hint': None, 'details': None}
+
+
+======================================================================
+g2b_bids 테이블 확인
+======================================================================
+g2b_bids ERROR: {'message': "Could not find the table 'public.g2b_bids' in the schema cache", 'code': 'PGRST205', 'hint': "Perhaps you meant the table 'public.muted_bids'", 'details': None}
+
+
+======================================================================
+muted_bids 테이블 확인 (숨김 처리된 입찰)
+======================================================================
+
+총 데이터 수: 0건
+
+
+======================================================================
+완료
+======================================================================
