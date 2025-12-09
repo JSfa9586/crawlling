@@ -52,7 +52,9 @@ export default function ImpactSearch() {
 
             <form onSubmit={handleSearch} className="flex gap-4 mb-6 flex-wrap items-end">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">접수연도 (필수)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        접수연도 <span className="text-red-500">(필수)</span>
+                    </label>
                     <input
                         type="text"
                         className="border p-2 rounded text-gray-800 w-24"
