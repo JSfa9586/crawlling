@@ -3,37 +3,49 @@
 import { useState } from 'react';
 import AgencySearch from '@/components/marine/AgencySearch';
 import ConsultationSearch from '@/components/marine/ConsultationSearch';
+import ImpactSearch from '@/components/marine/ImpactSearch';
 
 export default function MarineAssessmentPage() {
-    const [activeTab, setActiveTab] = useState<'agency' | 'consultation'>('agency');
+    const [activeTab, setActiveTab] = useState<'agency' | 'consultation' | 'impact'>('agency');
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-gray-900">해역이용협의 정보 서비스 테스트</h1>
+            <h1 className="text-3xl font-bold mb-8 text-gray-900">해역이용협의 & 영향평가 정보 서비스</h1>
 
-            <div className="flex border-b border-gray-200 mb-6">
+            <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
                 <button
-                    className={`py-2 px-4 font-medium text-lg focus:outline-none ${activeTab === 'agency'
+                    className={`py-2 px-4 font-medium text-lg whitespace-nowrap focus:outline-none ${activeTab === 'agency'
                             ? 'border-b-2 border-blue-600 text-blue-600'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                     onClick={() => setActiveTab('agency')}
                 >
-                    평가대행자 조회
+                    평가대행자
                 </button>
                 <button
-                    className={`py-2 px-4 font-medium text-lg focus:outline-none ${activeTab === 'consultation'
+                    className={`py-2 px-4 font-medium text-lg whitespace-nowrap focus:outline-none ${activeTab === 'consultation'
                             ? 'border-b-2 border-blue-600 text-blue-600'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                     onClick={() => setActiveTab('consultation')}
                 >
-                    해역이용협의 조회
+                    해역이용협의
+                </button>
+                <button
+                    className={`py-2 px-4 font-medium text-lg whitespace-nowrap focus:outline-none ${activeTab === 'impact'
+                            ? 'border-b-2 border-blue-600 text-blue-600'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    onClick={() => setActiveTab('impact')}
+                >
+                    해역이용영향평가
                 </button>
             </div>
 
             <div className="min-h-[500px]">
-                {activeTab === 'agency' ? <AgencySearch /> : <ConsultationSearch />}
+                {activeTab === 'agency' && <AgencySearch />}
+                {activeTab === 'consultation' && <ConsultationSearch />}
+                {activeTab === 'impact' && <ImpactSearch />}
             </div>
         </div>
     );

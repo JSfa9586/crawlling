@@ -4,42 +4,50 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const pageNo = searchParams.get('pageNo') || '1';
     const numOfRows = searchParams.get('numOfRows') || '10';
-    // 가이드 문서기반 파라미터 추정 (실제 문서 텍스트에서 'getOceansUseInfo' 확인)
-    const jrsdSeaOfcNm = searchParams.get('jrsdSeaOfcNm') || ''; // 관할해역청명
-    const bsnsNm = searchParams.get('bsnsNm') || ''; // 사업명
+    const jrsdSeaOfcNm = searchParams.get('jrsdSeaOfcNm') || '';
+    const bsnsNm = searchParams.get('bsnsNm') || '';
 
-    const apiKey = process.env.G2B_API_KEY;
+    const apiKey = process.env.PUBLIC_DATA_API_KEY || process.env.G2B_API_KEY;
 
-    // Base URL (추정)
-    // 해역이용협의 정보서비스 -> getOceansUseInfo
-    // URL 패턴이 비슷할 것으로 예상: http://apis.data.go.kr/1192000/service/OceansUseInfoService/getOceansUseInfo
-    // 정확한 URL은 read_docx.py 결과에서 '1192000'은 기관코드(해양수산부)일 가능성 높음.
-    // 서비스명은 보통 get앞의 명칭 + Service
+    // [수정됨] 해역이용협의 -> getOceansSeaareaImpactInfo (가이드 문서 extraction 기반)
+    // 참고: read_docx.py 분석 결과 해역이용협의 문서에 ImpactInfo Endpoint가 포함되어 있었음.
+    // Base URL: http://apis.data.go.kr/1192000/service/OceansUseInfoService <-- 서비스명도 확인 필요하나 우선 ImpactInfoService로 추정
+    // 그러나 1192000/service/OceansUseInfoService/getOceansSeaareaImpactInfo 일 수도 있음.
+    // 안전하게 문서에서 추출된 Endpoint Pattern을 따르되, Service Name은 기존 추측(UseInfo) 또는 ImpactInfo.
+    // 1192000 코드는 해양수산부.
+    // 보통 getOceansSeaareaImpactInfo의 서비스는 OceansSeaareaImpactInfoService 일 가능성 높음.
+    // 하지만 문서 1(협의)에서 ImpactInfo가 나왔다면..
+    // 일단 'OceansUseInfoService' (해역이용정보서비스) 하위에 'getOceansSeaareaImpactInfo'가 있을 수 있음.
 
-    // read_docx output 134: `.../getOceansAgncyInfo...`
-    // but for UseInfo?
-    // Let's guess typical pattern. Or defaults to same if documents are related.
-    // Actually, let's try 'OceansScopeInfoService' or similar if 'getOceansUseInfo' is the op.
-    // Wait, extraction showed `getOceansAgncyInfo` clearly.
-    // Let's try `OceansScopeInfoService` based on common naming?
-    // NO, let's look at the filename: `해역이용협의 정보서비스`.
-    // Likely `OceansUseInfoService`.
+    // Endpoint: getOceansSeaareaImpactInfo
+    // ServiceName 추정: OceansUseInfoService (기존) -> 실패시 OceansSeaareaImpactInfoService 시도
+    // 여기서는 우선 OceansUseInfoService 하위에 있다고 가정하고 Endpoint만 변경.
+    // 만약 이것도 404라면 Service Name을 변경해야 함.
 
-    const baseUrl = 'http://apis.data.go.kr/1192000/service/OceansUseInfoService/getOceansUseInfo';
+    // 가이드 문서의 예시 URL을 직접 볼 수 없어 추정하지만,
+    // 통상적으로 getOceansSeaareaImpactInfo 라면 OceansSeaareaImpactInfoService 일 확률이 높음.
+    // 그러나 파일 1(협의)의 이름이 '해역이용협의' 이므로 'OceansUseInfoService'가 맞을 수도 있음 (Utilization).
 
-    // Query String 조립
+    // Let's try: http://apis.data.go.kr/1192000/service/OceansUseInfoService/getOceansSeaareaImpactInfo
+    const baseUrl = 'http://apis.data.go.kr/1192000/service/OceansUseInfoService/getOceansSeaareaImpactInfo';
+
     const queryString = `serviceKey=${apiKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
         (jrsdSeaOfcNm ? `&jrsdSeaOfcNm=${encodeURIComponent(jrsdSeaOfcNm)}` : '') +
         (bsnsNm ? `&bsnsNm=${encodeURIComponent(bsnsNm)}` : '');
 
     const url = `${baseUrl}?${queryString}`;
 
-    console.log(`[Proxy] Fetching: ${url}`);
+    console.log(`[Proxy] Fetching Consultation: ${url}`);
 
     try {
         const res = await fetch(url);
-        const text = await res.text();
+        if (!res.ok) {
+            const text = await res.text();
+            console.error(`[Proxy] API Error: ${res.status} ${text}`);
+            return NextResponse.json({ error: 'API Error', details: text }, { status: res.status });
+        }
 
+        const text = await res.text();
         try {
             const data = JSON.parse(text);
             return NextResponse.json(data);

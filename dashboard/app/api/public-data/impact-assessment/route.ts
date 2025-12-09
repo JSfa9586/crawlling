@@ -4,25 +4,25 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const pageNo = searchParams.get('pageNo') || '1';
     const numOfRows = searchParams.get('numOfRows') || '10';
-    const sggNm = searchParams.get('sggNm') || '';
-    const sidoNm = searchParams.get('sidoNm') || '';
-    const cmpnyNm = searchParams.get('cmpnyNm') || '';
+    const bsnsNm = searchParams.get('bsnsNm') || '';
+    // 영향평가는 보통 사업명, 지역 등이 파라미터.
+    // Extraction showed: getOceansUseInfo (from Impact Guide?)
+    // If getOceansUseInfo is indeed Impact Assessment (very weird naming but ok per extraction),
+    // we use it here.
 
-    // 환경변수 변경: G2B_API_KEY -> PUBLIC_DATA_API_KEY
     const apiKey = process.env.PUBLIC_DATA_API_KEY || process.env.G2B_API_KEY;
 
-    if (!apiKey) {
-        return NextResponse.json({ error: 'API Key is missing on server' }, { status: 500 });
-    }
-
-    const baseUrl = 'http://apis.data.go.kr/1192000/service/OceansAgncyService/getOceansAgncyInfo';
+    // Endpoint: getOceansUseInfo
+    // Service: OceansUseInfoService (High probability)
+    const baseUrl = 'http://apis.data.go.kr/1192000/service/OceansUseInfoService/getOceansUseInfo';
 
     const queryString = `serviceKey=${apiKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
-        (sggNm ? `&sggNm=${encodeURIComponent(sggNm)}` : '') +
-        (sidoNm ? `&sidoNm=${encodeURIComponent(sidoNm)}` : '') +
-        (cmpnyNm ? `&cmpnyNm=${encodeURIComponent(cmpnyNm)}` : '');
+        (bsnsNm ? `&bsnsNm=${encodeURIComponent(bsnsNm)}` : '');
+    // 추가 파라미터가 있을 수 있으나(sidoNm 등), 우선 사업명 위주로.
 
     const url = `${baseUrl}?${queryString}`;
+
+    console.log(`[Proxy] Fetching Impact Assessment: ${url}`);
 
     try {
         const res = await fetch(url);
@@ -40,9 +40,7 @@ export async function GET(request: NextRequest) {
             console.error(`[Proxy] JSON Parse Error: ${text}`);
             return NextResponse.json({ error: 'Data Format Error', raw: text }, { status: 500 });
         }
-
     } catch (error) {
-        console.error(`[Proxy] Network Error:`, error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

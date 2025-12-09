@@ -4,6 +4,8 @@
 import { useState } from 'react';
 
 
+import Link from 'next/link';
+
 interface ContractItem {
     cntrctNo: string;
     cntrctNm: string;
@@ -94,6 +96,12 @@ export default function ContractSearchPage() {
                         G2B 나라장터의 용역 계약 정보를 키워드로 검색합니다.
                     </p>
                 </div>
+                <Link
+                    href="/contract/test"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                    🚀 테스트 기능 이동
+                </Link>
             </div>
 
             {/* 검색 필터 영역 */}
