@@ -23,11 +23,16 @@ export async function GET(request: NextRequest) {
             }, { status: 500 });
         }
 
+
+        // 필터가 있으면 더 많은 데이터를 가져와서 클라이언트 필터링
+        const hasFilter = contractName || orgName;
+        const fetchRows = hasFilter ? '1000' : numOfRows;
+
         // API 요청 파라미터 구성
         const params = new URLSearchParams({
             serviceKey: API_KEY,
-            pageNo: page,
-            numOfRows: numOfRows,
+            pageNo: hasFilter ? '1' : page,  // 필터 시 첫 페이지부터
+            numOfRows: fetchRows,
             type: 'json',
             inqryDiv: '1',  // 날짜 기반 조회
             bsnsDivCd: '5', // 용역
@@ -64,7 +69,12 @@ export async function GET(request: NextRequest) {
         const body = data.response?.body || {};
         const totalCount = parseInt(body.totalCount || '0');
 
-        let items = body.items?.item || [];
+        let items = body.items || [];
+        // items가 배열이 아닌 경우 (item 속성이 있는 객체인 경우)
+        if (!Array.isArray(items) && items.item) {
+            items = Array.isArray(items.item) ? items.item : [items.item];
+        }
+        // items 자체가 단일 객체인 경우
         if (!Array.isArray(items)) {
             items = items ? [items] : [];
         }
@@ -105,14 +115,27 @@ export async function GET(request: NextRequest) {
             corpList: item.corpList || '',
         }));
 
+        // 필터 사용 시 클라이언트 페이지네이션
+        const rowsPerPage = parseInt(numOfRows);
+        const pageNum = parseInt(page);
+        let resultItems = mappedItems;
+        let resultTotalCount = hasFilter ? mappedItems.length : totalCount;
+        let resultTotalPages = Math.ceil(resultTotalCount / rowsPerPage);
+
+        if (hasFilter) {
+            // 필터된 결과를 페이지네이션
+            const startIdx = (pageNum - 1) * rowsPerPage;
+            resultItems = mappedItems.slice(startIdx, startIdx + rowsPerPage);
+        }
+
         return NextResponse.json({
             success: true,
-            data: mappedItems,
+            data: resultItems,
             pagination: {
-                page: parseInt(page),
-                numOfRows: parseInt(numOfRows),
-                totalCount: totalCount,
-                totalPages: Math.ceil(totalCount / parseInt(numOfRows))
+                page: pageNum,
+                numOfRows: rowsPerPage,
+                totalCount: resultTotalCount,
+                totalPages: resultTotalPages
             }
         });
 
