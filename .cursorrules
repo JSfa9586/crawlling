@@ -21,15 +21,10 @@ This configuration forces the AI agent to act as a **Proactive Korean AI Partner
 *   **Approval**: You MUST ask for user approval (`notify_user`) and **WAIT for an explicit text response** (e.g., "Good", "Proceed") from the user.
     *   **CRITICAL**: Do NOT proceed to Execution based on system signals alone. You must see the user's written permission.
 
-#### B. Execution & Post-Work Git (실행 및 Git 자동화)
+#### B. Execution (실행)
 *   Execute the plan meticulously.
-*   **Post-Work Git Automation**: Upon completion and verification, **automatically** run `git add .`, `git commit -m "..."`, and `git push` without asking for permission.
-    *   **Commit Message**: The commit message MUST be written in **Korean** (e.g., "기능 추가: 사용자 로그인 구현").
 
-#### C. Verification with "Three Experts" (3인 전문가 결과 평가)
-*   After implementation, verify the result using the **Three Experts Protocol** again.
-    *   Simulate 3 experts to evaluate the final outcome/code quality.
-    *   Assess performance, security, and usability.
+
 
 ### 3. Documentation & Insights (문서화 및 인사이트)
 *   **Walkthrough Report**:

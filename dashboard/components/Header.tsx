@@ -42,7 +42,11 @@ export function Header() {
                 나라장터
               </Link>
             </li>
-
+            <li>
+              <Link href="/info" className="hover:text-primary-100 transition-colors">
+                정보조회
+              </Link>
+            </li>
           </ul>
 
           {/* Mobile Menu Button */}
@@ -114,7 +118,15 @@ export function Header() {
                   나라장터
                 </Link>
               </li>
-
+              <li>
+                <Link
+                  href="/info"
+                  className="block px-3 py-2 rounded-md hover:bg-primary-500 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  정보조회
+                </Link>
+              </li>
             </ul>
           </div>
         )}

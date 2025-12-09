@@ -83,7 +83,14 @@ export default function LocalContractsPage() {
 
     const formatDate = (dateStr: string) => {
         if (!dateStr) return '-';
-        return new Date(dateStr).toLocaleDateString('ko-KR');
+        try {
+            const date = new Date(dateStr);
+            // 1970년이거나 유효하지 않은 날짜인 경우
+            if (isNaN(date.getTime()) || date.getFullYear() < 2000) return '-';
+            return date.toLocaleDateString('ko-KR');
+        } catch {
+            return '-';
+        }
     };
 
     return (
@@ -98,8 +105,8 @@ export default function LocalContractsPage() {
                                 로컬 DB 저장 데이터: 총 {totalCount.toLocaleString()}건
                             </p>
                         </div>
-                        <Link href="/dashboard" className="text-primary-600 hover:text-primary-700 font-medium">
-                            ← 대시보드로 돌아가기
+                        <Link href="/g2b" className="text-primary-600 hover:text-primary-700 font-medium">
+                            ← 나라장터로 돌아가기
                         </Link>
                     </div>
                 </div>
@@ -153,12 +160,12 @@ export default function LocalContractsPage() {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">계약일</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">계약명</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">발주기관</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">계약업체</th>
-                                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">계약금액</th>
-                                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">공동</th>
+                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[90px]">계약일</th>
+                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">계약명</th>
+                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px]">발주기관</th>
+                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[130px]">계약업체</th>
+                                        <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-[110px]">계약금액</th>
+                                        <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-[50px]">공동</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -168,11 +175,11 @@ export default function LocalContractsPage() {
                                             className="hover:bg-gray-50 cursor-pointer"
                                             onClick={() => setSelectedContract(contract)}
                                         >
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500">
                                                 {formatDate(contract.contract_date)}
                                             </td>
-                                            <td className="px-4 py-4 text-sm text-gray-900">
-                                                <div className="max-w-md truncate" title={contract.contract_name}>
+                                            <td className="px-3 py-3 text-sm text-gray-900">
+                                                <div title={contract.contract_name}>
                                                     {contract.detail_url ? (
                                                         <a
                                                             href={contract.detail_url}
@@ -188,15 +195,17 @@ export default function LocalContractsPage() {
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <div className="max-w-[150px] truncate" title={contract.order_org_name}>
+                                            <td className="px-3 py-3 text-sm text-gray-500">
+                                                <div className="truncate" title={contract.order_org_name}>
                                                     {contract.order_org_name}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                                {contract.contractor_name || '-'}
+                                            <td className="px-3 py-3 text-sm text-gray-900 font-medium">
+                                                <div className="truncate" title={contract.contractor_name}>
+                                                    {contract.contractor_name || '-'}
+                                                </div>
                                             </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                                            <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-right">
                                                 {formatAmount(contract.contract_amount)}
                                             </td>
                                             <td className="px-4 py-4 whitespace-nowrap text-center">
@@ -304,7 +313,7 @@ export default function LocalContractsPage() {
                                                     <td className="py-3 text-gray-600 text-sm">{partner.partner_type}</td>
                                                     <td className="py-3 text-right">
                                                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                                            {partner.share_ratio}%
+                                                            {partner.share_ratio ? `${partner.share_ratio}%` : '-'}
                                                         </span>
                                                     </td>
                                                 </tr>

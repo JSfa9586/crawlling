@@ -12,10 +12,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'API Key is missing on server' }, { status: 500 });
     }
 
-    // URL from MD: http://apis.data.go.kr/1192000/EvaluationAgentInfoService/getEvaluationAgentInfo
-    const baseUrl = 'http://apis.data.go.kr/1192000/EvaluationAgentInfoService/getEvaluationAgentInfo';
+    // URL from public data portal: https://apis.data.go.kr/1192000/EvaluationAgentInfoService/EvaluationAgentInfo
+    const baseUrl = 'https://apis.data.go.kr/1192000/EvaluationAgentInfoService/EvaluationAgentInfo';
 
-    const queryString = `ServiceKey=${apiKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
+    const queryString = `ServiceKey=${encodeURIComponent(apiKey)}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
         (cmpnyNm ? `&AGENT_NM=${encodeURIComponent(cmpnyNm)}` : '');
 
     const url = `${baseUrl}?${queryString}`;

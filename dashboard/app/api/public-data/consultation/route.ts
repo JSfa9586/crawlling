@@ -5,20 +5,18 @@ export async function GET(request: NextRequest) {
     const pageNo = searchParams.get('pageNo') || '1';
     const numOfRows = searchParams.get('numOfRows') || '10';
     const bsnsNm = searchParams.get('bsnsNm') || '';
-    const acpYear = searchParams.get('acpYear') || ''; // Required from Client
+    const acpYear = searchParams.get('acpYear') || '';
 
     const apiKey = process.env.PUBLIC_DATA_API_KEY || process.env.G2B_API_KEY;
 
-    // URL: http://apis.data.go.kr/1192000/service/OceansUseService2/getOceansUseInfo2
-    const baseUrl = 'http://apis.data.go.kr/1192000/service/OceansUseService2/getOceansUseInfo2';
-
-    if (!acpYear) {
-        // Return error if year missing? Or default?
-        // Guide says Mandatory.
-        // Let's default to 2024 if missing for safety? Or let it fail.
+    if (!apiKey) {
+        return NextResponse.json({ error: 'API Key is missing on server' }, { status: 500 });
     }
 
-    const queryString = `ServiceKey=${apiKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
+    // 실제 공공데이터포털 URL (https 사용)
+    const baseUrl = 'https://apis.data.go.kr/1192000/service/OceansUseService2/getOceansUseInfo2';
+
+    const queryString = `ServiceKey=${encodeURIComponent(apiKey)}&pageNo=${pageNo}&numOfRows=${numOfRows}&resultType=JSON` +
         (acpYear ? `&ACP_YEAR=${encodeURIComponent(acpYear)}` : '') +
         (bsnsNm ? `&BIZ_NAM=${encodeURIComponent(bsnsNm)}` : '');
 
