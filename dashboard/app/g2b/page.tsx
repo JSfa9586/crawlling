@@ -2,75 +2,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { StatCard } from '@/components/StatCard';
+import { G2BData } from '@/lib/types';
+import { isExpired, formatMoney, formatDateTime } from '@/lib/formatters';
 
-interface G2BData {
-    구분: string;
-    카테고리: string;
-    공고명: string;
-    발주기관: string;
-    수요기관?: string;
-    배정예산?: string;
-    추정가격?: string;
-    기초금액?: string;
-    입찰마감?: string;
-    개찰일?: string;
-    규격공개종료일?: string;
-    등록일?: string;
-    공고일?: string;
-    공고차수?: string;
-    입찰방식?: string;
-    상태?: string;
-    링크: string;
-    등록번호?: string;
-    공고번호?: string;
-    [key: string]: string | undefined;
-}
-
-// 유틸리티 함수들
-function isExpired(dateStr: string | undefined): boolean {
-    if (!dateStr) return false;
-    try {
-        const dateOnly = dateStr.split(' ')[0];
-        const endDate = new Date(dateOnly);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return endDate < today;
-    } catch {
-        return false;
-    }
-}
-
-function formatMoney(amount: string | undefined): string {
-    if (!amount || amount === '0') return '-';
-    const cleanAmount = amount.replace(/[^0-9]/g, '');
-    const num = parseInt(cleanAmount, 10);
-    if (isNaN(num)) return '-';
-    if (num >= 100000000) {
-        return `${(num / 100000000).toFixed(1)}억원`;
-    } else if (num >= 10000) {
-        return `${Math.round(num / 10000).toLocaleString()}만원`;
-    }
-    return `${num.toLocaleString()}원`;
-}
-
-function formatDateTime(dateStr: string | undefined): string {
-    if (!dateStr) return '-';
-    try {
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return dateStr.split(' ')[0];
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const dayOfWeek = days[date.getDay()];
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${month}/${day}(${dayOfWeek}) ${hours}:${minutes}`;
-    } catch (e) {
-        return dateStr.split(' ')[0];
-    }
-}
-
-// 통계용 날짜 포맷터 (KST 변환)
+// 통계용 날짜 포맷터 (KST 변환) - 컴포넌트 내부 사용 유지 (JSX 반환)
 const formatStatDateTime = (datetime: string) => {
     if (!datetime || datetime === '-') {
         return '-';
@@ -266,8 +201,8 @@ export default function G2BPage() {
                 <Link href="/dashboard" className="text-primary-600 hover:text-primary-700 font-medium">← 대시보드로 돌아가기</Link>
             </div>
 
-            {/* 상단 통계 카드 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* 상단 통계 카드 - 모바일 2열(grid-cols-2), 데스크탑 4열 */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <StatCard
                     title="총 게시물"
                     value={totalCount.toLocaleString()}

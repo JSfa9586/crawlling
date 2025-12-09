@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { G2BData } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -146,7 +147,7 @@ export async function GET(request: NextRequest) {
                     규격공개종료일: item.end_date,
                     상태: item.status,
                     링크: item.link
-                };
+                } as G2BData;
             } else {
                 return {
                     구분: '입찰공고',
@@ -164,7 +165,7 @@ export async function GET(request: NextRequest) {
                     개찰일: item.open_date,
                     상태: item.status,
                     링크: item.link
-                };
+                } as G2BData;
             }
         });
 

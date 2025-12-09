@@ -66,6 +66,10 @@ def parse_corp_list(corp_list_raw):
     return partners
 
 
+
+class QuotaExceededError(Exception):
+    pass
+
 def fetch_contracts(start_date, end_date, page=1, num_rows=100):
     """G2B API에서 계약 데이터 조회"""
     params = {
@@ -83,6 +87,11 @@ def fetch_contracts(start_date, end_date, page=1, num_rows=100):
     
     try:
         response = requests.get(full_url, timeout=30)
+        
+        # 429 Quota Exceeded Check
+        if response.status_code == 429:
+            raise QuotaExceededError("API Quota Exceeded (429)")
+
         if response.status_code == 200:
             data = response.json()
             
@@ -107,6 +116,8 @@ def fetch_contracts(start_date, end_date, page=1, num_rows=100):
         else:
             print(f"HTTP 에러: {response.status_code}")
             return None, 0
+    except QuotaExceededError:
+        raise # Re-raise for caller to handle
     except Exception as e:
         print(f"요청 예외: {e}")
         return None, 0

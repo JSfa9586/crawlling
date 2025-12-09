@@ -1,36 +1,25 @@
-$TaskName = "EIAA_Crawler_Daily"
-$ScriptPath = "c:\AI\251118 크롤링\run_crawler_auto.bat"
+
+$TaskName = "G2B_Auto_Collector"
+$ScriptPath = "c:\AI\251118 크롤링\auto_collector.py"
+$PythonPath = "python"
 $WorkDir = "c:\AI\251118 크롤링"
-$Time = "09:00" # 매일 오전 9시 실행
 
-Write-Host "작업 스케줄러 등록을 시작합니다..." -ForegroundColor Cyan
-
-# 기존 작업이 있으면 삭제
-Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
-
-# 작업 동작 정의 (배치 파일 실행)
-$Action = New-ScheduledTaskAction -Execute $ScriptPath -WorkingDirectory $WorkDir
-
-# 작업 트리거 정의 (매일 08, 11, 15, 20시)
-$Trigger1 = New-ScheduledTaskTrigger -Daily -At "08:00"
-$Trigger2 = New-ScheduledTaskTrigger -Daily -At "11:00"
-$Trigger3 = New-ScheduledTaskTrigger -Daily -At "15:00"
-$Trigger4 = New-ScheduledTaskTrigger -Daily -At "20:00"
-$Triggers = @($Trigger1, $Trigger2, $Trigger3, $Trigger4)
-
-# 작업 설정 (배터리 모드에서도 실행, 실패 시 재시도 등)
-$Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
-
-# 작업 등록
+# Trigger: Daily at 01:00 AM
 try {
-    Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Triggers -Settings $Settings -Description "환경영향평가협회 크롤링 자동화 작업"
-    Write-Host "✅ 작업이 성공적으로 등록되었습니다!" -ForegroundColor Green
-    Write-Host "   - 작업명: $TaskName"
-    Write-Host "   - 실행 시간: 매일 08:00, 11:00, 15:00, 20:00"
-    Write-Host "   - 실행 파일: $ScriptPath"
-} catch {
-    Write-Host "❌ 작업 등록 실패: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "관리자 권한으로 실행해 보세요." -ForegroundColor Yellow
+    $Trigger = New-ScheduledTaskTrigger -Daily -At "01:00am"
+    
+    # Action: Run Python script (Quote script path to handle spaces)
+    $Action = New-ScheduledTaskAction -Execute $PythonPath -Argument "`"$ScriptPath`"" -WorkingDirectory $WorkDir
+    
+    # Settings: Allow running on demand, stop if runs longer than 23 hours
+    $Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Hours 23)
+    
+    # Register Task
+    Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger -Settings $Settings -Description "Daily G2B Contract Collection (2025->2005)" -Force
+    
+    Write-Host "Task '$TaskName' registered successfully to run daily at 01:00 AM."
 }
-
-Read-Host "엔터 키를 누르면 종료합니다..."
+catch {
+    Write-Error "Failed to register task: $_"
+    exit 1
+}

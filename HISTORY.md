@@ -1119,3 +1119,45 @@ oute.ts to prevent mapping errors.
 - dashboard/app/g2b/page.tsx
 ---
 
+
+### Automation: Long-term G2B Contract Collection
+**일시**: 2025-12-09
+
+**작업 내용**:
+1. **장기 자동 수집 드라이버 개발 (uto_collector.py)**:
+   - 2025년부터 2005년까지 월 단위 역순 수집 로직 구현.
+   - collection_state.json을 통한 상태 영구 저장 및 재개 기능.
+   - 수집 완료(END_YEAR 도달) 시 schtasks 명령어로 스케줄러 자동 비활성화 기능 추가.
+2. **API 예외 처리 강화 (collect_contracts.py)**:
+   - QuotaExceededError 클래스 추가 및 429 상태 코드 처리 로직 구현.
+3. **윈도우 작업 스케줄러 등록**:
+   - 매일 오전 01:00에 실행되도록 'G2B_Auto_Collector' 작업 등록 완료.
+
+**수정 파일**:
+- uto_collector.py (신규)
+- collect_contracts.py (수정)
+- setup_scheduler.ps1 (신규 - 사용 안 함, 직접 명령어 실행)
+---
+
+
+### Verification: G2B Auto Collector
+**일시**: 2025-12-09
+
+**작업 내용**:
+- uto_collector.py 수동 실행 테스트 완료.
+- 결과: 2025년 11월 데이터 수집 시도 중 API 한도 초과 감지 -> 상태 저장(STOPPED_QUOTA) 후 정상 종료 확인.
+
+---
+
+
+### Configuration: Global AI Rules
+**일시**: 2025-12-09
+
+**작업 내용**:
+- .cursorrules 파일 생성.
+- 전역 규칙 설정: 모든 대화 및 산출물의 주 언어를 한국어로 강제.
+
+**수정 파일**:
+- .cursorrules (신규)
+---
+
