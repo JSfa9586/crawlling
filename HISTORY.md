@@ -798,6 +798,48 @@ SPREADSHEET_ID=<Google Sheets ID>
 - **Solution**: Changed `h1` title from "관련법령" to "관련법령 예고" in `dashboard/app/dashboard/laws/page.tsx`.
 - **Files Modified**: `dashboard/app/dashboard/laws/page.tsx`.
 
+---
+
+## Phase 35: G2B Contract Database Schema Fix (2025-12-10)
+
+### 문제
+- G2B 계약 데이터 수집 중 `contract_partners` 테이블의 `bizno` 필드에서 길이 제한 초과 오류 발생
+- 오류 메시지: "character varying(50) 자료형에 너무 긴 자료를 담으려고 합니다"
+- 문제 계약: R25TE09458478
+- 문제 데이터: "한국사회보장정보원 (Korea Social Security Information Service)" (53자)
+
+### 진단 과정
+1. 데이터베이스 스키마 분석 (contracts, contract_partners 테이블)
+2. 2025-11-25 API 데이터 7,720건 전수 조사
+3. corpList 파싱 데이터에서 bizno 필드 53자 데이터 발견
+
+### 해결 방안
+- 3인 전문가 교차검증 수행 (DB 아키텍트, 데이터 품질 전문가, 시스템 안정성 전문가)
+- 최종 결정: `bizno` 필드를 VARCHAR(50)에서 VARCHAR(100)으로 확장
+
+### 실행
+1. 스키마 변경: `ALTER TABLE contract_partners ALTER COLUMN bizno TYPE VARCHAR(100)`
+2. 11월 25일 데이터 재수집: 7,720건 모두 저장 성공
+3. 역순 수집 재개: 2025-12-10 → 2005-01-01 진행 중
+
+### 결과
+- ✓ 문제 계약 R25TE09458478 정상 저장
+- ✓ DB 총 계약 수: 328,943건
+- ✓ DB 총 공동수급체 수: 373,732건
+- ✓ 크롤러 정상 작동
+
+### 생성 파일
+- `fix_bizno_length.sql`: 스키마 변경 SQL 스크립트
+- `apply_schema_fix.py`: 스키마 변경 실행 및 검증 스크립트
+- `check_bizno_length.py`: bizno 필드 길이 분석 스크립트
+- `verify_fix.py`: 문제 해결 검증 스크립트
+- 기타 진단 스크립트: `check_contract_no_length.py`, `check_all_fields.py`, `check_partners_fields.py`, `find_long_fields.py`, `check_specific_contract.py`
+
+**커밋**: `55f06ac` - 수정: contract_partners 테이블 bizno 필드 길이 확장 (VARCHAR(50) → VARCHAR(100))
+
+---
+
+
 ## Phase 52: 나라장터 API 시스템 구현 및 개선 (2025-12-06)
 - **Goal**: 나라장터 공공데이터 API를 활용하여 회사가 참여 가능한 입찰 공고를 자동 검색
 - **Implementation**:

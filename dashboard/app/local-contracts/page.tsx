@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 
 interface Partner {
@@ -33,6 +33,15 @@ interface ApiResponse {
     };
 }
 
+// 금액 프리셋 정의
+const AMOUNT_PRESETS = [
+    { label: '전체', min: 0, max: 0 },
+    { label: '1억 미만', min: 0, max: 100000000 },
+    { label: '1~5억', min: 100000000, max: 500000000 },
+    { label: '5~10억', min: 500000000, max: 1000000000 },
+    { label: '10억 이상', min: 1000000000, max: 0 },
+];
+
 export default function LocalContractsPage() {
     const [contracts, setContracts] = useState<Contract[]>([]);
     const [loading, setLoading] = useState(false);
@@ -43,14 +52,40 @@ export default function LocalContractsPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
 
+    // 년도 필터 상태
+    const currentYear = new Date().getFullYear();
+    const [startYear, setStartYear] = useState<number>(currentYear);
+    const [endYear, setEndYear] = useState<number>(currentYear);
+
+    // 금액 필터 상태
+    const [amountPreset, setAmountPreset] = useState(0); // 인덱스
+
+    // 년도 옵션 생성 (2005년부터 현재까지)
+    const yearOptions = useMemo(() => {
+        const years: number[] = [];
+        for (let y = currentYear; y >= 2005; y--) {
+            years.push(y);
+        }
+        return years;
+    }, [currentYear]);
+
     const fetchContracts = async () => {
         setLoading(true);
         try {
             const params = new URLSearchParams({
                 page: page.toString(),
                 limit: '20',
-                ...(keyword && { keyword })
             });
+
+            if (keyword) params.append('keyword', keyword);
+            if (startYear) params.append('startYear', startYear.toString());
+            if (endYear) params.append('endYear', endYear.toString());
+
+            // 금액 프리셋 적용
+            const preset = AMOUNT_PRESETS[amountPreset];
+            if (preset.min > 0) params.append('minAmount', preset.min.toString());
+            if (preset.max > 0) params.append('maxAmount', preset.max.toString());
+
             const response = await fetch(`/api/local-contracts?${params}`);
             const data: ApiResponse = await response.json();
 
@@ -66,14 +101,24 @@ export default function LocalContractsPage() {
         }
     };
 
+    // 필터 변경 시 자동 검색
     useEffect(() => {
         fetchContracts();
-    }, [page, keyword]);
+    }, [page, keyword, startYear, endYear, amountPreset]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         setPage(1);
         setKeyword(searchInput);
+    };
+
+    const handleReset = () => {
+        setSearchInput('');
+        setKeyword('');
+        setStartYear(currentYear);
+        setEndYear(currentYear);
+        setAmountPreset(0);
+        setPage(1);
     };
 
     const formatAmount = (amount: number) => {
@@ -113,7 +158,7 @@ export default function LocalContractsPage() {
 
                 {/* 검색 폼 */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <form onSubmit={handleSearch} className="flex gap-4">
+                    <form onSubmit={handleSearch} className="flex gap-4 mb-4">
                         <input
                             type="text"
                             value={searchInput}
@@ -127,21 +172,78 @@ export default function LocalContractsPage() {
                         >
                             검색
                         </button>
-                        {keyword && (
-                            <button
-                                type="button"
-                                onClick={() => { setSearchInput(''); setKeyword(''); setPage(1); }}
-                                className="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                            >
-                                초기화
-                            </button>
-                        )}
+                        <button
+                            type="button"
+                            onClick={handleReset}
+                            className="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                            초기화
+                        </button>
                     </form>
-                    {keyword && (
-                        <p className="mt-3 text-sm text-gray-600">
-                            검색어: <span className="font-semibold text-primary-600">"{keyword}"</span> ({totalCount.toLocaleString()}건)
-                        </p>
-                    )}
+
+                    {/* 필터 영역 */}
+                    <div className="flex flex-wrap gap-4 items-center border-t pt-4">
+                        {/* 년도 필터 */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-700">기간:</span>
+                            <select
+                                value={startYear}
+                                onChange={(e) => {
+                                    const newStartYear = parseInt(e.target.value);
+                                    setStartYear(newStartYear);
+                                    if (newStartYear > endYear) setEndYear(newStartYear);
+                                    setPage(1);
+                                }}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            >
+                                {yearOptions.map(year => (
+                                    <option key={year} value={year}>{year}년</option>
+                                ))}
+                            </select>
+                            <span className="text-gray-500">~</span>
+                            <select
+                                value={endYear}
+                                onChange={(e) => {
+                                    const newEndYear = parseInt(e.target.value);
+                                    setEndYear(newEndYear);
+                                    if (newEndYear < startYear) setStartYear(newEndYear);
+                                    setPage(1);
+                                }}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            >
+                                {yearOptions.map(year => (
+                                    <option key={year} value={year}>{year}년</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* 금액 프리셋 */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-700">금액:</span>
+                            <div className="flex gap-1 flex-wrap">
+                                {AMOUNT_PRESETS.map((preset, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        onClick={() => { setAmountPreset(index); setPage(1); }}
+                                        className={`px-3 py-1.5 text-sm rounded-full transition-colors ${amountPreset === index
+                                                ? 'bg-primary-600 text-white'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            }`}
+                                    >
+                                        {preset.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 검색 결과 요약 */}
+                    <div className="mt-3 text-sm text-gray-600">
+                        검색결과: <span className="font-semibold text-primary-600">{totalCount.toLocaleString()}건</span>
+                        {keyword && <> (검색어: "{keyword}")</>}
+                        {' '}| {startYear}~{endYear}년 | {AMOUNT_PRESETS[amountPreset].label}
+                    </div>
                 </div>
 
                 {/* 계약 목록 */}

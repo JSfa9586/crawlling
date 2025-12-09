@@ -19,77 +19,101 @@ export async function GET(request: NextRequest) {
         const limit = parseInt(searchParams.get('limit') || '20');
         const offset = (page - 1) * limit;
 
+        // 년도 필터
+        const startYear = searchParams.get('startYear') || '';
+        const endYear = searchParams.get('endYear') || '';
+
+        // 금액 필터
+        const minAmount = searchParams.get('minAmount') || '';
+        const maxAmount = searchParams.get('maxAmount') || '';
+
         const client = await pool.connect();
 
         try {
-            // 검색 쿼리
-            let query: string;
-            let countQuery: string;
-            let queryParams: any[];
+            // 동적으로 WHERE 조건 구성
+            let conditions: string[] = [];
+            let paramIndex = 1;
+            let queryParams: any[] = [];
 
-            if (keyword) {
-                // 공동수급체(partner_name)도 검색 대상에 포함
-                query = `
-                    SELECT DISTINCT
-                        c.contract_no,
-                        c.contract_name,
-                        c.product_name,
-                        c.contract_amount,
-                        c.contract_date,
-                        c.order_org_name,
-                        c.contractor_name,
-                        c.detail_url,
-                        (SELECT COUNT(*) FROM contract_partners cp2 WHERE cp2.contract_no = c.contract_no) as partner_count
-                    FROM contracts c
-                    LEFT JOIN contract_partners cp ON c.contract_no = cp.contract_no
-                    WHERE 
-                        c.contract_name ILIKE $1
-                        OR c.product_name ILIKE $1
-                        OR c.contractor_name ILIKE $1
-                        OR c.order_org_name ILIKE $1
-                        OR cp.partner_name ILIKE $1
-                    ORDER BY c.contract_date DESC
-                    LIMIT $2 OFFSET $3
-                `;
-                countQuery = `
-                    SELECT COUNT(DISTINCT c.contract_no) FROM contracts c
-                    LEFT JOIN contract_partners cp ON c.contract_no = cp.contract_no
-                    WHERE 
-                        c.contract_name ILIKE $1
-                        OR c.product_name ILIKE $1
-                        OR c.contractor_name ILIKE $1
-                        OR c.order_org_name ILIKE $1
-                        OR cp.partner_name ILIKE $1
-                `;
-                queryParams = [`%${keyword}%`, limit, offset];
-            } else {
-                query = `
-                    SELECT 
-                        c.contract_no,
-                        c.contract_name,
-                        c.product_name,
-                        c.contract_amount,
-                        c.contract_date,
-                        c.order_org_name,
-                        c.contractor_name,
-                        c.detail_url,
-                        (SELECT COUNT(*) FROM contract_partners cp WHERE cp.contract_no = c.contract_no) as partner_count
-                    FROM contracts c
-                    ORDER BY c.contract_date DESC
-                    LIMIT $1 OFFSET $2
-                `;
-                countQuery = `SELECT COUNT(*) FROM contracts`;
-                queryParams = [limit, offset];
+            // 년도 필터 조건
+            if (startYear) {
+                conditions.push(`EXTRACT(YEAR FROM c.contract_date) >= $${paramIndex}`);
+                queryParams.push(parseInt(startYear));
+                paramIndex++;
+            }
+            if (endYear) {
+                conditions.push(`EXTRACT(YEAR FROM c.contract_date) <= $${paramIndex}`);
+                queryParams.push(parseInt(endYear));
+                paramIndex++;
             }
 
+            // 금액 필터 조건
+            if (minAmount) {
+                conditions.push(`c.contract_amount >= $${paramIndex}`);
+                queryParams.push(parseInt(minAmount));
+                paramIndex++;
+            }
+            if (maxAmount) {
+                conditions.push(`c.contract_amount <= $${paramIndex}`);
+                queryParams.push(parseInt(maxAmount));
+                paramIndex++;
+            }
+
+            // 키워드 필터 조건
+            let keywordCondition = '';
+            if (keyword) {
+                keywordCondition = `(
+                    c.contract_name ILIKE $${paramIndex}
+                    OR c.product_name ILIKE $${paramIndex}
+                    OR c.contractor_name ILIKE $${paramIndex}
+                    OR c.order_org_name ILIKE $${paramIndex}
+                    OR cp.partner_name ILIKE $${paramIndex}
+                )`;
+                queryParams.push(`%${keyword}%`);
+                paramIndex++;
+            }
+
+            // 전체 WHERE 절 구성
+            let whereClause = '';
+            if (conditions.length > 0 || keywordCondition) {
+                const allConditions = [...conditions];
+                if (keywordCondition) allConditions.push(keywordCondition);
+                whereClause = 'WHERE ' + allConditions.join(' AND ');
+            }
+
+            // 데이터 조회 쿼리
+            const query = `
+                SELECT DISTINCT
+                    c.contract_no,
+                    c.contract_name,
+                    c.product_name,
+                    c.contract_amount,
+                    c.contract_date,
+                    c.order_org_name,
+                    c.contractor_name,
+                    c.detail_url,
+                    (SELECT COUNT(*) FROM contract_partners cp2 WHERE cp2.contract_no = c.contract_no) as partner_count
+                FROM contracts c
+                LEFT JOIN contract_partners cp ON c.contract_no = cp.contract_no
+                ${whereClause}
+                ORDER BY c.contract_date DESC
+                LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+            `;
+
+            const dataParams = [...queryParams, limit, offset];
+
+            // 카운트 쿼리
+            const countQuery = `
+                SELECT COUNT(DISTINCT c.contract_no) FROM contracts c
+                LEFT JOIN contract_partners cp ON c.contract_no = cp.contract_no
+                ${whereClause}
+            `;
+
             // 데이터 조회
-            const result = await client.query(query, queryParams);
+            const result = await client.query(query, dataParams);
 
             // 총 개수 조회
-            const countResult = await client.query(
-                countQuery,
-                keyword ? [`%${keyword}%`] : []
-            );
+            const countResult = await client.query(countQuery, queryParams);
             const totalCount = parseInt(countResult.rows[0].count);
 
             // 각 계약의 공동수급체 정보 조회
