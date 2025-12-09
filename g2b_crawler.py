@@ -32,10 +32,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # ==================== 설정 ====================
 
-# API 키 (환경변수에서 로드)
-API_KEY = os.environ.get('G2B_API_KEY', '')
+# API 키 (환경변수 + 하드코딩)
+# 기존 키(환경변수)와 신규 키를 모두 사용
+RAW_NEW_KEY = '3aa8be53451db70ab496024bc5e726947aa641a2333bc7a59a420c2b431ff872'
+API_KEYS = [
+    os.environ.get('G2B_API_KEY'),         # 기존 키 (1순위)
+    RAW_NEW_KEY                           # 신규 키 (2순위)
+]
+# None이나 빈 문자열 제거
+API_KEYS = [k for k in API_KEYS if k]
 
 # 검색 키워드 (회사 관련 분야)
 SEARCH_KEYWORDS = [
@@ -67,45 +75,101 @@ CATEGORIES = {
 # ==================== API 클라이언트 ====================
 
 class G2BAPIClient:
-    """나라장터 API 클라이언트"""
+    """나라장터 API 클라이언트 (다중 키 지원)"""
     
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self, api_keys: List[str]):
+        self.api_keys = api_keys
+        self.current_key_idx = 0
         self.session = requests.Session()
         self.session.headers.update({
             'Accept': 'application/json',
             'User-Agent': 'G2B-Crawler/1.0'
         })
-    
+        logger.info(f"사용 가능한 API 키: {len(self.api_keys)}개")
+
+    def _get_current_key(self) -> str:
+        return self.api_keys[self.current_key_idx]
+
+    def _rotate_key(self):
+        """다음 API 키로 전환"""
+        prev_idx = self.current_key_idx
+        self.current_key_idx = (self.current_key_idx + 1) % len(self.api_keys)
+        logger.warning(f"API 키 전환: {prev_idx} -> {self.current_key_idx}")
+
     def _make_request(self, base_url: str, endpoint: str, params: Dict) -> Optional[Dict]:
-        """API 요청 실행"""
-        params['serviceKey'] = self.api_key
-        params['type'] = 'json'
+        """API 요청 실행 (Failover 지원)"""
         
-        url = f"{base_url}/{endpoint}"
+        # 최대 재시도 횟수 = 키 개수 (한 바퀴 돌 때까지)
+        max_retries = len(self.api_keys)
         
-        try:
-            response = self.session.get(url, params=params, timeout=30)
-            response.raise_for_status()
+        for attempt in range(max_retries):
+            current_key = self._get_current_key()
             
-            data = response.json()
+            # 파라미터 복사본 사용 (수정 방지)
+            current_params = params.copy()
+            current_params['serviceKey'] = current_key
+            current_params['type'] = 'json'
             
-            # 응답 코드 확인
-            if 'response' in data:
-                header = data['response'].get('header', {})
-                if header.get('resultCode') != '00':
-                    logger.warning(f"API 오류: {header.get('resultMsg')}")
+            url = f"{base_url}/{endpoint}"
+            
+            try:
+                response = self.session.get(url, params=current_params, timeout=30)
+                
+                # 401(Unauthorized)이나 429(Too Many Requests), 500(Server Error) 등 발생 시 키 교체 시도
+                if response.status_code in [401, 403, 429, 500]:
+                    logger.warning(f"HTTP {response.status_code} 오류 발생 (키 인덱스: {self.current_key_idx})")
+                    if attempt < max_retries - 1:
+                        self._rotate_key()
+                        continue
+                    else:
+                        logger.error("모든 API 키 시도 실패")
+                        return None
+
+                response.raise_for_status()
+                
+                # JSON 파싱
+                try:
+                    data = response.json()
+                except json.JSONDecodeError:
+                    # 가끔 HTML 에러 페이지가 올 수 있음
+                    logger.error("JSON 파싱 실패 (응답이 JSON이 아님)")
+                    if attempt < max_retries - 1:
+                        self._rotate_key()
+                        continue
                     return None
-                return data['response'].get('body', {})
-            
-            return data.get('body', data)
-            
-        except requests.exceptions.RequestException as e:
-            logger.error(f"API 요청 실패: {e}")
-            return None
-        except json.JSONDecodeError as e:
-            logger.error(f"JSON 파싱 실패: {e}")
-            return None
+
+                # 응답 코드 확인
+                if 'response' in data:
+                    header = data['response'].get('header', {})
+                    result_code = header.get('resultCode')
+                    
+                    # 정상 성공
+                    if result_code == '00':
+                        return data['response'].get('body', {})
+                    
+                    # 에러 메시지 확인
+                    result_msg = header.get('resultMsg', '')
+                    logger.warning(f"API 논리 오류: {result_msg} (코드: {result_code})")
+                    
+                    # 쿼터 초과(DEADLINE_HAS_EXPIRED 등) 시 키 교체
+                    # 정확한 에러 코드를 모를 때는 일반적인 키 관련 에러라고 가정하고 교체 시도
+                    if attempt < max_retries - 1:
+                        logger.warning("다른 API 키로 재시도합니다.")
+                        self._rotate_key()
+                        continue
+                    
+                    return None
+                
+                return data.get('body', data)
+
+            except requests.exceptions.RequestException as e:
+                logger.error(f"요청 중 예외 발생: {e}")
+                if attempt < max_retries - 1:
+                    self._rotate_key()
+                    continue
+                return None
+                
+        return None
     
     # ========== 사전규격 API ==========
     
@@ -358,11 +422,11 @@ def crawl_g2b(days_back: int = 1, output_dir: str = '.') -> Dict[str, List[Dict]
     Returns:
         {'pre_specs': [...], 'bids': [...]}
     """
-    if not API_KEY:
-        logger.error("API 키가 설정되지 않았습니다. G2B_API_KEY 환경변수를 설정하세요.")
+    if not API_KEYS:
+        logger.error("API 키가 설정되지 않았습니다. G2B_API_KEY 환경변수를 설정하거나 코드를 확인하세요.")
         return {'pre_specs': [], 'bids': []}
     
-    client = G2BAPIClient(API_KEY)
+    client = G2BAPIClient(API_KEYS)
     
     # 날짜 범위 계산
     end_date = datetime.now()
