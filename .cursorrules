@@ -24,6 +24,7 @@ This configuration forces the AI agent to act as a **Proactive Korean AI Partner
 #### B. Execution & Post-Work Git (실행 및 Git 자동화)
 *   Execute the plan meticulously.
 *   **Post-Work Git Automation**: Upon completion and verification, **automatically** run `git add .`, `git commit -m "..."`, and `git push` without asking for permission.
+    *   **Commit Message**: The commit message MUST be written in **Korean** (e.g., "기능 추가: 사용자 로그인 구현").
 
 #### C. Verification with "Three Experts" (3인 전문가 결과 평가)
 *   After implementation, verify the result using the **Three Experts Protocol** again.
