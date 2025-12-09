@@ -34,15 +34,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b %ERRORLEVEL%
 )
 
-:: 4. AI 뉴스 크롤러 실행
-echo.
-echo [3/5] AI 뉴스/프로모션 크롤러 실행 중...
-python ai_news_crawler.py
-if %ERRORLEVEL% NEQ 0 (
-    echo [오류] AI 뉴스 크롤링 실패.
-    pause
-    exit /b %ERRORLEVEL%
-)
+
 
 :: 5. 나라장터 크롤러 실행
 echo.
