@@ -63,9 +63,13 @@ export async function GET(request: NextRequest) {
         // 분석 모드: 'order' = 수주 분석, 'revenue' = 매출 분석
         const analysisMode = searchParams.get('mode') || 'order';
 
-        // 계약명 키워드 필터
+        // 계약명 키워드 필터 (포함)
         const contractKeywordsParam = searchParams.get('contractKeywords') || '';
         const contractKeywords = contractKeywordsParam.split(',').map(k => k.trim()).filter(k => k.length > 0);
+
+        // 계약명 키워드 필터 (제외)
+        const excludeKeywordsParam = searchParams.get('excludeKeywords') || '';
+        const excludeKeywords = excludeKeywordsParam.split(',').map(k => k.trim()).filter(k => k.length > 0);
 
         // 시작일, 종료일 계산
         const startDate = `${startYear}-${String(startMonth).padStart(2, '0')}-01`;
@@ -148,6 +152,9 @@ export async function GET(request: NextRequest) {
                     ${contractKeywords.length > 0
                         ? `AND (${contractKeywords.map((_, i) => `c.contract_name ILIKE $${5 + i}`).join(' OR ')})`
                         : ''}
+                    ${excludeKeywords.length > 0
+                        ? `AND NOT (${excludeKeywords.map((_, i) => `c.contract_name ILIKE $${5 + contractKeywords.length + i}`).join(' OR ')})`
+                        : ''}
                     GROUP BY c.contract_name, c.contract_date, c.order_org_name, c.contractor_name
                     ORDER BY c.contract_date DESC
                 `;
@@ -157,7 +164,8 @@ export async function GET(request: NextRequest) {
                     startDate,
                     endDate,
                     analysisMode,
-                    ...contractKeywords.map(k => `%${k}%`)
+                    ...contractKeywords.map(k => `%${k}%`),
+                    ...excludeKeywords.map(k => `%${k}%`)
                 ];
                 const contractsResult = await client.query(contractsQuery, queryParams);
 

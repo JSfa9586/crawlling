@@ -177,9 +177,13 @@ export default function CompanyAnalysisPage() {
         }
     };
 
-    // 계약명 키워드 필터
+    // 계약명 키워드 필터 (포함)
     const [contractKeywordInput, setContractKeywordInput] = useState('');
     const [contractKeywords, setContractKeywords] = useState<string[]>([]);
+
+    // 계약명 키워드 필터 (제외)
+    const [excludeKeywordInput, setExcludeKeywordInput] = useState('');
+    const [excludeKeywords, setExcludeKeywords] = useState<string[]>([]);
 
     // 년도 옵션 생성 (2005 ~ 현재)
     const yearOptions = Array.from({ length: currentYear - 2004 }, (_, i) => currentYear - i);
@@ -209,6 +213,18 @@ export default function CompanyAnalysisPage() {
         setContractKeywords(contractKeywords.filter(k => k !== keyword));
     };
 
+    const addExcludeKeyword = () => {
+        const trimmed = excludeKeywordInput.trim();
+        if (trimmed && !excludeKeywords.includes(trimmed)) {
+            setExcludeKeywords([...excludeKeywords, trimmed]);
+            setExcludeKeywordInput('');
+        }
+    };
+
+    const removeExcludeKeyword = (keyword: string) => {
+        setExcludeKeywords(excludeKeywords.filter(k => k !== keyword));
+    };
+
     const fetchStats = async () => {
         if (companies.length === 0) return;
 
@@ -217,6 +233,7 @@ export default function CompanyAnalysisPage() {
             const params = new URLSearchParams({
                 companies: companies.join(','),
                 contractKeywords: contractKeywords.join(','),
+                excludeKeywords: excludeKeywords.join(','),
                 startYear: startYear.toString(),
                 startMonth: startMonth.toString(),
                 endYear: endYear.toString(),
@@ -417,6 +434,45 @@ export default function CompanyAnalysisPage() {
                                         <button
                                             onClick={() => removeContractKeyword(keyword)}
                                             className="text-blue-600 hover:text-blue-800"
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 제외 키워드 필터 */}
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">제외할 키워드 (선택)</label>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={excludeKeywordInput}
+                                onChange={(e) => setExcludeKeywordInput(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && addExcludeKeyword()}
+                                placeholder="제외할 키워드 (예: 착수, 설계변경)"
+                                className="flex-1 px-4 py-2 border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                            />
+                            <button
+                                onClick={addExcludeKeyword}
+                                className="px-4 py-2 bg-red-600 text-white text-sm font-medium hover:bg-red-500 transition-colors"
+                            >
+                                추가
+                            </button>
+                        </div>
+                        {excludeKeywords.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {excludeKeywords.map(keyword => (
+                                    <span
+                                        key={keyword}
+                                        className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-800 text-sm"
+                                    >
+                                        🚫 {keyword}
+                                        <button
+                                            onClick={() => removeExcludeKeyword(keyword)}
+                                            className="text-red-600 hover:text-red-800"
                                         >
                                             ×
                                         </button>
