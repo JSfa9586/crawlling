@@ -1203,3 +1203,31 @@ oute.ts to prevent mapping errors.
 - .cursorrules (신규)
 ---
 
+
+### Enhancement: 용역 계약 검색 UI 개선
+**일시**: 2025-12-10
+
+**작업 내용**:
+1. **월 선택 기능 추가**
+   - 기존 년도 선택에 월 선택 드롭다운 추가
+   - 시작년월 ~ 종료년월 형식으로 기간 필터링 가능
+   
+2. **2줄 카드 레이아웃 구현**
+   - 기존 테이블 형식에서 2줄 카드 레이아웃으로 변경
+   - 1줄: 계약일, 계약명, 계약금액
+   - 2줄: 발주기관, 착수일, 완수일, 완수일수, 공동수급체 정보
+   
+3. **API 개선**
+   - 월 필터 파라미터 추가 (startMonth, endMonth)
+   - 추가 필드 반환: start_date(착수일), current_complete_date, total_complete_date
+
+**수정 파일**:
+- dashboard/app/api/local-contracts/route.ts (월 필터 및 추가 필드)
+- dashboard/app/local-contracts/page.tsx (월 선택 UI, 2줄 레이아웃)
+- check_schema.py (DB 스키마 확인 스크립트)
+
+**참고**:
+- 사용자 요청: "기간에서 월도 선택할 수 있게 하자. 검색결과는 하나의 계약을 2줄로 표현"
+- contracts 테이블에 start_date, current_complete_date, total_complete_date 필드 존재 확인
+
+---

@@ -1,0 +1,12 @@
+URL: https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TE09777401&ctrtChgOrd=00&prcmBsneSeCd=조070003&srchName=ctrtCrst&openUrl=Y
+페이지 타이틀: 나라장터
+페이지 소스 길이: 845515
+
+'지분율' 문자열 발견 위치: 732267
+주변 텍스트: div></th><th or_wd="70" inputtype="text" id="mf_wfm_container_ctrtWfrm_gridView10_column390" value="지분율(%)" displaymode="label" colindex="6" class="gridHeaderTDDefault gridHeaderTDDefault_data mf_wfm_container_ctrtWfrm_gridView10_header__column6 w2grid_head_sortable" style="text-align:center" col_id
+
+
+=== 모든 테이블 헤더 ===
+테이블 18: ['사무관 또는 서기관', '공정계약 서약서 동의']...
+테이블 19: ['수요기관', '수요기관 전화번호', '업체 담당자']...
+테이블 20: ['계약번호', '계약일자', '신규장기구분', '장기여부', '계약방법', '총 계약금액(원)', '금차 계약금액(원)', '계약보증금율(%)']...

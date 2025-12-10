@@ -10,14 +10,21 @@ interface Partner {
 }
 
 interface Contract {
-    contract_no: string;
+    contract_no: string;              // 대표 계약번호
+    contract_nos: string[];           // 모든 계약번호 (그룹화된 경우)
     contract_name: string;
     product_name: string;
-    contract_amount: number;
+    contract_amount: number;          // 금차년도 계약금액
+    total_contract_amount: number;    // 총 용역금액
     contract_date: string;
+    start_date: string;               // 착수일
+    current_complete_date: string;    // 현재 완수일
+    total_complete_date: string;      // 총 완수일
     order_org_name: string;
     contractor_name: string;
-    detail_url: string;
+    detail_url: string;               // 대표 URL
+    detail_urls: string[];            // 모든 URL
+    duplicate_count: number;          // 동일 계약 수
     partner_count: number;
     partners: Partner[];
 }
@@ -54,8 +61,11 @@ export default function LocalContractsPage() {
 
     // 년도 필터 상태
     const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
     const [startYear, setStartYear] = useState<number>(currentYear);
     const [endYear, setEndYear] = useState<number>(currentYear);
+    const [startMonth, setStartMonth] = useState<number>(1);
+    const [endMonth, setEndMonth] = useState<number>(currentMonth);
 
     // 금액 필터 상태
     const [amountPreset, setAmountPreset] = useState(0); // 인덱스
@@ -69,6 +79,11 @@ export default function LocalContractsPage() {
         return years;
     }, [currentYear]);
 
+    // 월 옵션 (1~12)
+    const monthOptions = useMemo(() => {
+        return Array.from({ length: 12 }, (_, i) => i + 1);
+    }, []);
+
     const fetchContracts = async () => {
         setLoading(true);
         try {
@@ -80,6 +95,8 @@ export default function LocalContractsPage() {
             if (keyword) params.append('keyword', keyword);
             if (startYear) params.append('startYear', startYear.toString());
             if (endYear) params.append('endYear', endYear.toString());
+            if (startMonth) params.append('startMonth', startMonth.toString());
+            if (endMonth) params.append('endMonth', endMonth.toString());
 
             // 금액 프리셋 적용
             const preset = AMOUNT_PRESETS[amountPreset];
@@ -104,7 +121,7 @@ export default function LocalContractsPage() {
     // 필터 변경 시 자동 검색
     useEffect(() => {
         fetchContracts();
-    }, [page, keyword, startYear, endYear, amountPreset]);
+    }, [page, keyword, startYear, endYear, startMonth, endMonth, amountPreset]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -117,6 +134,8 @@ export default function LocalContractsPage() {
         setKeyword('');
         setStartYear(currentYear);
         setEndYear(currentYear);
+        setStartMonth(1);
+        setEndMonth(currentMonth);
         setAmountPreset(0);
         setPage(1);
     };
@@ -183,7 +202,7 @@ export default function LocalContractsPage() {
 
                     {/* 필터 영역 */}
                     <div className="flex flex-wrap gap-4 items-center border-t pt-4">
-                        {/* 년도 필터 */}
+                        {/* 년월 필터 */}
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-gray-700">기간:</span>
                             <select
@@ -191,13 +210,27 @@ export default function LocalContractsPage() {
                                 onChange={(e) => {
                                     const newStartYear = parseInt(e.target.value);
                                     setStartYear(newStartYear);
-                                    if (newStartYear > endYear) setEndYear(newStartYear);
+                                    if (newStartYear > endYear) {
+                                        setEndYear(newStartYear);
+                                    }
                                     setPage(1);
                                 }}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                className="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
                             >
                                 {yearOptions.map(year => (
                                     <option key={year} value={year}>{year}년</option>
+                                ))}
+                            </select>
+                            <select
+                                value={startMonth}
+                                onChange={(e) => {
+                                    setStartMonth(parseInt(e.target.value));
+                                    setPage(1);
+                                }}
+                                className="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                            >
+                                {monthOptions.map(month => (
+                                    <option key={month} value={month}>{month}월</option>
                                 ))}
                             </select>
                             <span className="text-gray-500">~</span>
@@ -206,13 +239,27 @@ export default function LocalContractsPage() {
                                 onChange={(e) => {
                                     const newEndYear = parseInt(e.target.value);
                                     setEndYear(newEndYear);
-                                    if (newEndYear < startYear) setStartYear(newEndYear);
+                                    if (newEndYear < startYear) {
+                                        setStartYear(newEndYear);
+                                    }
                                     setPage(1);
                                 }}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                className="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
                             >
                                 {yearOptions.map(year => (
                                     <option key={year} value={year}>{year}년</option>
+                                ))}
+                            </select>
+                            <select
+                                value={endMonth}
+                                onChange={(e) => {
+                                    setEndMonth(parseInt(e.target.value));
+                                    setPage(1);
+                                }}
+                                className="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                            >
+                                {monthOptions.map(month => (
+                                    <option key={month} value={month}>{month}월</option>
                                 ))}
                             </select>
                         </div>
@@ -227,8 +274,8 @@ export default function LocalContractsPage() {
                                         type="button"
                                         onClick={() => { setAmountPreset(index); setPage(1); }}
                                         className={`px-3 py-1.5 text-sm rounded-full transition-colors ${amountPreset === index
-                                                ? 'bg-primary-600 text-white'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            ? 'bg-primary-600 text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                             }`}
                                     >
                                         {preset.label}
@@ -242,7 +289,7 @@ export default function LocalContractsPage() {
                     <div className="mt-3 text-sm text-gray-600">
                         검색결과: <span className="font-semibold text-primary-600">{totalCount.toLocaleString()}건</span>
                         {keyword && <> (검색어: "{keyword}")</>}
-                        {' '}| {startYear}~{endYear}년 | {AMOUNT_PRESETS[amountPreset].label}
+                        {' '}| {startYear}.{startMonth}~{endYear}.{endMonth} | {AMOUNT_PRESETS[amountPreset].label}
                     </div>
                 </div>
 
@@ -258,71 +305,121 @@ export default function LocalContractsPage() {
                             검색 결과가 없습니다.
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[90px]">계약일</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">계약명</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[140px]">발주기관</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[130px]">계약업체</th>
-                                        <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-[110px]">계약금액</th>
-                                        <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-[50px]">공동</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {contracts.map((contract) => (
-                                        <tr
-                                            key={contract.contract_no}
-                                            className="hover:bg-gray-50 cursor-pointer"
-                                            onClick={() => setSelectedContract(contract)}
-                                        >
-                                            <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <div className="divide-y divide-gray-200">
+                            {contracts.map((contract) => {
+                                // 완수일수 계산
+                                const calculateDays = (start: string, end: string) => {
+                                    if (!start || !end) return null;
+                                    const startDate = new Date(start);
+                                    const endDate = new Date(end);
+                                    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return null;
+                                    const diffTime = endDate.getTime() - startDate.getTime();
+                                    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                };
+                                const completeDays = calculateDays(contract.start_date, contract.total_complete_date);
+
+                                return (
+                                    <div
+                                        key={contract.contract_no}
+                                        className="hover:bg-gray-50 cursor-pointer p-4"
+                                        onClick={() => setSelectedContract(contract)}
+                                    >
+                                        {/* 1줄: 기본 정보 */}
+                                        <div className="flex items-start gap-4 mb-2">
+                                            <div className="text-sm text-gray-500 whitespace-nowrap w-[80px]">
                                                 {formatDate(contract.contract_date)}
-                                            </td>
-                                            <td className="px-3 py-3 text-sm text-gray-900">
-                                                <div title={contract.contract_name}>
-                                                    {contract.detail_url ? (
-                                                        <a
-                                                            href={contract.detail_url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-600 hover:underline"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            {contract.contract_name}
-                                                        </a>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                {contract.detail_url ? (
+                                                    <a
+                                                        href={contract.detail_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:underline font-medium"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {contract.contract_name}
+                                                    </a>
+                                                ) : (
+                                                    <span className="font-medium text-gray-900">{contract.contract_name}</span>
+                                                )}
+                                                <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
+                                                    {contract.duplicate_count > 1 ? (
+                                                        <>
+                                                            <span className="text-orange-500 font-medium">
+                                                                동일계약 {contract.duplicate_count}건
+                                                            </span>
+                                                            <span className="text-gray-300">|</span>
+                                                            {contract.contract_nos?.slice(0, 3).map((no, idx) => (
+                                                                <a
+                                                                    key={no}
+                                                                    href={contract.detail_urls?.[idx] || '#'}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="hover:text-blue-500"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    {no.slice(-8)}
+                                                                </a>
+                                                            ))}
+                                                            {contract.contract_nos?.length > 3 && <span>...</span>}
+                                                        </>
                                                     ) : (
-                                                        contract.contract_name
+                                                        <span>계약번호: {contract.contract_no}</span>
                                                     )}
                                                 </div>
-                                            </td>
-                                            <td className="px-3 py-3 text-sm text-gray-500">
-                                                <div className="truncate" title={contract.order_org_name}>
-                                                    {contract.order_org_name}
+                                            </div>
+                                            <div className="text-right whitespace-nowrap">
+                                                <div className="font-semibold text-gray-900">
+                                                    {formatAmount(contract.total_contract_amount || contract.contract_amount)}
                                                 </div>
-                                            </td>
-                                            <td className="px-3 py-3 text-sm text-gray-900 font-medium">
-                                                <div className="truncate" title={contract.contractor_name}>
-                                                    {contract.contractor_name || '-'}
-                                                </div>
-                                            </td>
-                                            <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-900 text-right">
-                                                {formatAmount(contract.contract_amount)}
-                                            </td>
-                                            <td className="px-4 py-4 whitespace-nowrap text-center">
-                                                {parseInt(contract.partner_count as any) > 1 ? (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                        {contract.partner_count}사
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-gray-400 text-xs">단독</span>
+                                                {contract.total_contract_amount && contract.total_contract_amount !== contract.contract_amount && (
+                                                    <div className="text-xs text-gray-500">
+                                                        금차: {formatAmount(contract.contract_amount)}
+                                                    </div>
                                                 )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                            </div>
+                                        </div>
+
+                                        {/* 2줄: 상세 정보 */}
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 ml-[80px] pl-4 border-l-2 border-gray-200">
+                                            <span className="truncate max-w-[150px]" title={contract.order_org_name}>
+                                                📍 {contract.order_org_name}
+                                            </span>
+                                            {contract.start_date && (
+                                                <span>
+                                                    착수: {formatDate(contract.start_date)}
+                                                </span>
+                                            )}
+                                            {contract.total_complete_date && (
+                                                <span>
+                                                    완료: {formatDate(contract.total_complete_date)}
+                                                </span>
+                                            )}
+                                            {completeDays && completeDays > 0 && (
+                                                <span className="bg-gray-100 px-2 py-0.5 rounded">
+                                                    {completeDays}일
+                                                </span>
+                                            )}
+                                            {parseInt(contract.partner_count as any) > 1 ? (
+                                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                                    공동 {contract.partner_count}사
+                                                </span>
+                                            ) : (
+                                                <span className="text-gray-400">단독</span>
+                                            )}
+                                            {/* 공동수급체 이름과 지분율 표시 */}
+                                            {contract.partners && contract.partners.length > 0 && (
+                                                <span className="text-gray-600">
+                                                    | {contract.partners.map(p =>
+                                                        `${p.partner_name}${p.share_ratio ? ` ${p.share_ratio}%` : ''}`
+                                                    ).join(', ')}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
 
@@ -395,7 +492,14 @@ export default function LocalContractsPage() {
 
                                 <div className="mb-4">
                                     <p className="text-sm text-gray-600 mb-1">계약금액</p>
-                                    <p className="font-medium text-gray-900">{formatAmount(selectedContract.contract_amount)}</p>
+                                    <p className="font-medium text-gray-900">
+                                        {formatAmount(selectedContract.total_contract_amount || selectedContract.contract_amount)}
+                                        {selectedContract.total_contract_amount && selectedContract.total_contract_amount !== selectedContract.contract_amount && (
+                                            <span className="text-sm text-gray-500 ml-2">
+                                                (금차: {formatAmount(selectedContract.contract_amount)})
+                                            </span>
+                                        )}
+                                    </p>
                                 </div>
 
                                 <div className="border-t pt-4">
