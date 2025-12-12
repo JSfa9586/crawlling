@@ -269,7 +269,7 @@ export default function G2BPage() {
                             onClick={() => setSearchTerm(KEYWORD_PRESETS.join(','))}
                             className="px-2 py-0.5 text-xs rounded border bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-50 font-bold"
                         >
-                            즐겨찾기 1
+                            항만환경사업부 공고검색
                         </button>
                     </div>
                     <div className="flex gap-2">

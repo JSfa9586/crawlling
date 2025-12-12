@@ -19,6 +19,7 @@ interface ContractDetail {
     is_modified_contract?: boolean;
     joint_type?: string;
     is_joint_contract?: boolean;
+    is_mixed_contract?: boolean;  // 혼합 계약 여부
     partners?: Array<{ name: string; share_ratio: number }>;
 }
 
@@ -283,9 +284,10 @@ export default function CompanyAnalysisPage() {
         company.yearly_data.forEach(yearData => {
             yearData.contracts.forEach(contract => {
                 const key = `${company.company_name}-${contract.contract_no}`;
-                // 분담이행이거나 사용자가 제외한 계약은 합계에서 제외
+                // 분담이행이거나, 혼합계약에서 100% 지분율이거나, 사용자가 제외한 계약은 합계에서 제외
                 const isDivision = contract.joint_type === '분담이행';
-                if (!isDivision && !excludedContracts.has(key)) {
+                const isMixedWith100 = contract.is_mixed_contract && contract.share_ratio === 100;
+                if (!isDivision && !isMixedWith100 && !excludedContracts.has(key)) {
                     adjustedTotalAmount += contract.contract_amount * contract.share_ratio / 100;
                     adjustedTotalCount += 1;
                 }
@@ -302,9 +304,10 @@ export default function CompanyAnalysisPage() {
 
         yearData.contracts.forEach(contract => {
             const key = `${companyName}-${contract.contract_no}`;
-            // 분담이행이거나 사용자가 제외한 계약은 합계에서 제외
+            // 분담이행이거나, 혼합계약에서 100% 지분율이거나, 사용자가 제외한 계약은 합계에서 제외
             const isDivision = contract.joint_type === '분담이행';
-            if (!isDivision && !excludedContracts.has(key)) {
+            const isMixedWith100 = contract.is_mixed_contract && contract.share_ratio === 100;
+            if (!isDivision && !isMixedWith100 && !excludedContracts.has(key)) {
                 adjustedAmount += contract.contract_amount * contract.share_ratio / 100;
                 adjustedCount += 1;
             }
@@ -736,6 +739,11 @@ export default function CompanyAnalysisPage() {
                                                                                                 분담이행
                                                                                             </span>
                                                                                         )}
+                                                                                        {contract.is_mixed_contract && (
+                                                                                            <span className="inline-flex px-1.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 mr-2" title="혼합 계약: 100% 지분율은 분담이행으로 금액 산정에서 제외됩니다">
+                                                                                                혼합
+                                                                                            </span>
+                                                                                        )}
                                                                                         {contract.is_modified_contract && (
                                                                                             <span className="inline-flex px-1.5 py-0.5 text-xs font-medium bg-orange-100 text-orange-700 mr-2" title={`착수일: ${contract.start_date ? new Date(contract.start_date).toLocaleDateString('ko-KR') : '없음'}`}>
                                                                                                 변경
@@ -762,7 +770,9 @@ export default function CompanyAnalysisPage() {
                                                                                                         <span key={pIdx} className="inline-flex items-center mr-2">
                                                                                                             <span className="text-gray-400">•</span>
                                                                                                             <span className="ml-1">{p.name}</span>
-                                                                                                            <span className="ml-1 text-amber-600">({p.share_ratio}%)</span>
+                                                                                                            <span className={`ml-1 ${contract.is_mixed_contract && p.share_ratio === 100 ? 'text-red-500' : 'text-amber-600'}`}>
+                                                                                                                ({p.share_ratio}%{contract.is_mixed_contract && p.share_ratio === 100 ? ' 분담' : ''})
+                                                                                                            </span>
                                                                                                         </span>
                                                                                                     ))}
                                                                                                 </div>

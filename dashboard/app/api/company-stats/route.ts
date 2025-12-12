@@ -29,6 +29,7 @@ interface YearlyData {
         is_modified_contract?: boolean;
         joint_type?: string;  // 분담이행 / 공동이행
         is_joint_contract?: boolean;  // 공동도급 여부
+        is_mixed_contract?: boolean;  // 혼합 계약 여부 (공동이행 + 분담이행 혼재)
         partners?: Array<{ name: string; share_ratio: number }>;  // 공동수급 파트너 목록
     }>;
 }
@@ -265,6 +266,13 @@ export async function GET(request: NextRequest) {
                                 name: p.partner_name,
                                 share_ratio: parseFloat(p.share_ratio) || 0
                             }));
+
+                            // 혼합 계약 판별: 100%와 100% 미만이 동시에 존재하는 경우
+                            if (contract.partners && contract.partners.length > 1) {
+                                const has100 = contract.partners.some(p => p.share_ratio === 100);
+                                const hasLessThan100 = contract.partners.some(p => p.share_ratio > 0 && p.share_ratio < 100);
+                                contract.is_mixed_contract = has100 && hasLessThan100;
+                            }
                         }
                     }
                 }
