@@ -42,11 +42,9 @@ export default function InfoPage() {
                     해역이용영향평가
                 </button>
                 <button
-                    className={`py-2 px-4 font-medium text-lg whitespace-nowrap focus:outline-none ${activeTab === 'contract'
-                        ? 'border-b-2 border-green-600 text-green-600'
-                        : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                    onClick={() => setActiveTab('contract')}
+                    className="py-2 px-4 font-medium text-lg whitespace-nowrap focus:outline-none text-gray-300 cursor-not-allowed"
+                    disabled
+                    title="서비스 준비 중"
                 >
                     계약정보(실시간)
                 </button>
